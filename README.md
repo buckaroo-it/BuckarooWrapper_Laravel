@@ -1,1 +1,1 @@
-# laravel-buckaroo
+# Laravel Buckaroo

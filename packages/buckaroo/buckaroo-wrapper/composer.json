@@ -1,0 +1,24 @@
+{
+    "name": "buckaroo/buckaroowrapper",
+    "description": "Laravel Wrapper package for Buckaroo Payments Gateway",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Amar Beka",
+            "email": "a.beka@buckaroo-kos.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Buckaroo\\BuckarooWrapper\\" : "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Buckaroo\\BuckarooWrapper\\BuckarooServiceProvider"
+            ]
+        }
+    }
+}

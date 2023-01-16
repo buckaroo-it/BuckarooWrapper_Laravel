@@ -9,7 +9,6 @@
         }
     ],
     "require": {
-        "guzzlehttp/guzzle": "^7.5",
         "buckaroo/sdk": "^1.0"
     },
     "autoload": {

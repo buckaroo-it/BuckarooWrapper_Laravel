@@ -9,13 +9,12 @@ class BuckarooController extends Controller
 {
     public function buckaroo(Buckaroo $buckaroo) {
         $payementType = 'creditcard';
-        $method = 'pay';
         $data = [
-            'amountDebit'   => 'asdasd',
+            'amountDebit'   => 22.44,
             'invoice'       => uniqid(),
             'name'          => 'visa'
         ];
-
+        $method = 'pay';
 
         return $buckaroo->payment($payementType, $method, $data);
     }

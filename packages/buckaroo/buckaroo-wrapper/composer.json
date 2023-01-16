@@ -8,7 +8,9 @@
             "email": "a.beka@buckaroo-kos.com"
         }
     ],
-    "require": {},
+    "require": {
+        "guzzlehttp/guzzle": "^7.5"
+    },
     "autoload": {
         "psr-4": {
             "Buckaroo\\BuckarooWrapper\\" : "src/"

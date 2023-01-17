@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b3ca3eff84bf48e4dd2086f520e68a70",
+    "content-hash": "35acc793e6e6aec194ebd3bd336d1696",
     "packages": [
         {
             "name": "buckaroo/sdk",

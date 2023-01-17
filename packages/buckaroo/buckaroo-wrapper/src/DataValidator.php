@@ -7,7 +7,7 @@ use Buckaroo\BuckarooWrapper\Validate\CreditCard;
 trait DataValidator
 {
 
-    public function validate(string $payementType,string $method,array $data){
+    public function validate(string $payementType,string $methodName,array $data){
 
         $className = $this->getPaymentClass($payementType);
 
@@ -16,8 +16,8 @@ trait DataValidator
         }
 
         switch($className) {
-            case (method_exists($className, $method)) :
-                return  $className::$method($data);
+            case (method_exists($className, $methodName)) :
+                return  $className::$methodName($data);
             default:
                 return false;
         }

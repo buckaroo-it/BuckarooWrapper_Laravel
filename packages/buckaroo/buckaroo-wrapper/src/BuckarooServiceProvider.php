@@ -18,6 +18,7 @@ class BuckarooServiceProvider extends ServiceProvider
             __DIR__ . '/../config/buckaroo.php' => config_path('buckaroo.php')
         ]);
     }
+
     /**
      * Register any application services.
      *

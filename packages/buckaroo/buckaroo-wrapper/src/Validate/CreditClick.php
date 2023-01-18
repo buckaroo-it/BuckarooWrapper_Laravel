@@ -11,12 +11,12 @@ class CreditClick
      * @param array $data
      */
 
-    public static function pay(array $data){
-        //Validate PayRecurrent
-
+    public static function pay(array $data)
+    {
+        //Validate Pay
         $validator = Validator::make($data, [
             'amountDebit' => 'required|numeric',
-            'invoice' => 'string',
+            'invoice' => 'required|string',
             'email' => 'required|email',
             'customer.firstName' => 'required|string',
             'customer.lastName' => 'required|string'
@@ -27,15 +27,15 @@ class CreditClick
     /**
      * @param array $data
      */
-    public static function refund(array $data){
-        //Validate PayRecurrent
-        
+    public static function refund(array $data)
+    {
+        //Validate Refund
         $validator = Validator::make($data, [
             'amountCredit' => 'required|numeric',
-            'invoice'       => 'string',
-            'description'   => 'required|string',
+            'invoice' => 'required|string',
+            'description' => 'required|string',
             'originalTransactionKey' => 'required|string',
-            'serviceParameters.reason' => 'required|string'
+            'refundreason' => 'required|string'
         ]);
 
         return $validator;

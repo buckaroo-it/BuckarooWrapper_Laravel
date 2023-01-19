@@ -15,6 +15,10 @@ use Buckaroo\BuckarooWrapper\Validate\BuckarooWallet;
 use Buckaroo\BuckarooWrapper\Validate\CreditCard;
 use Buckaroo\BuckarooWrapper\Validate\CreditClick;
 use Buckaroo\BuckarooWrapper\Validate\Emandates;
+use Buckaroo\BuckarooWrapper\Validate\EPS;
+use Buckaroo\BuckarooWrapper\Validate\GiftCard;
+use Buckaroo\BuckarooWrapper\Validate\Giropay;
+
 trait DataValidator
 {
 

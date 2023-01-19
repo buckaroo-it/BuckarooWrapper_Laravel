@@ -30,6 +30,6 @@ class Buckaroo
 
         $response = $client->method($payementType)->$methodName($validator->validated());
 
-        return $response->toArray();
+        return $response;
     }
 }

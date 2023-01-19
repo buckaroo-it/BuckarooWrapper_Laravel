@@ -10,8 +10,8 @@ class AfterpayDigiAccept
 
     /**
      * @param array $data
+     * @return void
      */
-
     public static function pay(array $data)
     {
         //Validate Pay
@@ -66,8 +66,8 @@ class AfterpayDigiAccept
 
     /**
      * @param array $data
+     * @return void
      */
-
     public static function authorize(array $data)
     {
         //Validate Authorize
@@ -117,13 +117,14 @@ class AfterpayDigiAccept
             'articles.*.quantity' => 'required|numeric',
             'articles.*.vatCategory' => 'required|numeric'
         ]);
+
         return $validator;
     }
 
     /**
      * @param array $data
+     * @return void
      */
-
     public static function capture(array $data)
     {
         //Validate Capture
@@ -179,6 +180,7 @@ class AfterpayDigiAccept
 
     /**
      * @param array $data
+     * @return void
      */
 
     public static function refund(array $data)

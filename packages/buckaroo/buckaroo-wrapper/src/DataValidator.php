@@ -2,11 +2,19 @@
 
 namespace Buckaroo\BuckarooWrapper;
 
+use Buckaroo\BuckarooWrapper\Validate\AfterpayDigiAccept;
+use Buckaroo\BuckarooWrapper\Validate\Afterpay;
+use Buckaroo\BuckarooWrapper\Validate\Alipay;
+use Buckaroo\BuckarooWrapper\Validate\ApplePay;
+use Buckaroo\BuckarooWrapper\Validate\Bancontact;
+use Buckaroo\BuckarooWrapper\Validate\BankTransfer;
+use Buckaroo\BuckarooWrapper\Validate\Belfius;
+use Buckaroo\BuckarooWrapper\Validate\Billink;
+use Buckaroo\BuckarooWrapper\Validate\BuckarooVoucher;
+use Buckaroo\BuckarooWrapper\Validate\BuckarooWallet;
 use Buckaroo\BuckarooWrapper\Validate\CreditCard;
 use Buckaroo\BuckarooWrapper\Validate\CreditClick;
-use Buckaroo\BuckarooWrapper\Validate\Afterpay;
-use Buckaroo\BuckarooWrapper\Validate\AfterpayDigiAccept;
-
+use Buckaroo\BuckarooWrapper\Validate\Emandates;
 trait DataValidator
 {
 

@@ -9,8 +9,8 @@ class Afterpay
 
     /**
      * @param array $data
+     * @return void
      */
-
     public static function pay(array $data)
     {
         //Validate Pay
@@ -19,7 +19,6 @@ class Afterpay
             'order' => 'required|string',
             'invoice' => 'required|string',
             'clientIP' => 'nullable|string',
-
             'billing.recipient.category' => 'required|string',
             'billing.recipient.careOf' => 'required|string',
             'billing.recipient.title' => 'required|string',
@@ -29,7 +28,6 @@ class Afterpay
             'billing.recipient.conversationLanguage' => 'required|string',
             'billing.recipient.identificationNumber' => 'required|string',
             'billing.recipient.customerNumber' => 'required|string',
-
             'billing.address.street' => 'nullable|string',
             'billing.address.houseNumber' => 'nullable|string',
             'billing.address.houseNumberAdditional' => 'nullable|string',
@@ -39,21 +37,18 @@ class Afterpay
             'billing.address.phone.landline' => 'nullable|string',
             'billing.address.country' => 'nullable|string',
             'billing.address.email' => 'nullable|email',
-
             'shipping.recipient.category' => 'nullable|string',
             'shipping.recipient.careOf' => 'nullable|string',
             'shipping.recipient.companyName' => 'nullable|string',
             'shipping.recipient.firstName' => 'nullable|string',
             'shipping.recipient.lastName' => 'nullable|string',
             'shipping.recipient.chamberOfCommerce' => 'nullable|string',
-
             'shipping.address.street' => 'nullable|string',
             'shipping.address.houseNumber' => 'nullable|string',
             'shipping.address.houseNumberAdditional' => 'nullable|string',
             'shipping.address.zipcode' => 'nullable|string',
             'shipping.address.city' => 'nullable|string',
             'shipping.address.country' => 'nullable|string',
-
             'articles.*.identifier' => 'nullable|string',
             'articles.*.description' => 'nullable|string',
             'articles.*.vatPercentage' => 'nullable|numeric',
@@ -67,6 +62,7 @@ class Afterpay
 
     /**
      * @param array $data
+     * @return void
      */
     public static function authorize(array $data)
     {
@@ -76,13 +72,11 @@ class Afterpay
             'order' => 'required|string',
             'invoice' => 'required|string',
             'clientIP' => 'nullable|ip',
-
             'articles.*.identifier' => 'nullable|string',
             'articles.*.description' => 'nullable|string',
             'articles.*.vatPercentage' => 'nullable|numeric',
             'articles.*.quantity' => 'nullable|integer',
             'articles.*.price' => 'nullable|numeric',
-
             'customer.useBillingInfoForShipping' => 'required|boolean',
             'customer.billing.firstName' => 'required|string',
             'customer.billing.lastName' => 'required|string',
@@ -96,7 +90,6 @@ class Afterpay
             'customer.billing.country' => 'required|string',
             'customer.billing.salutation' => 'required|string',
             'customer.billing.birthDate' => 'required|date',
-
             'customer.shipping.firstName' => 'required_if:useBillingInfoForShipping,true|string',
             'customer.shipping.lastName' => 'required_if:useBillingInfoForShipping,true|string',
             'customer.shipping.email' => 'required_if:useBillingInfoForShipping,true|email',
@@ -116,12 +109,12 @@ class Afterpay
 
     /**
      * @param array $data
+     * @return void
      */
     public static function refund(array $data)
     {
         //Validate Capture
         $validator = Validator::make($data, [
-
             'originalTransactionKey' => 'required|string',
             'invoice' => 'required|string',
             'amountCredit' => 'required|numeric',
@@ -131,8 +124,7 @@ class Afterpay
             'articles.*.description' => 'required|string',
             'articles.*.vatPercentage' => 'required|numeric',
             'articles.*.quantity' => 'required|integer',
-            'articles.*.price' => 'required|numeric',
-
+            'articles.*.price' => 'required|numeric'
         ]);
 
         return $validator;

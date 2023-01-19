@@ -9,8 +9,8 @@ class CreditClick
 
     /**
      * @param array $data
+     * @return void
      */
-
     public static function pay(array $data)
     {
         //Validate Pay
@@ -26,6 +26,7 @@ class CreditClick
 
     /**
      * @param array $data
+     * @return void
      */
     public static function refund(array $data)
     {

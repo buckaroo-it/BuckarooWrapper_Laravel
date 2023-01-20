@@ -32,7 +32,7 @@ class GiftCard
         $validator = Validator::make($data, [
             'originalTransactionKey' => 'required|string',
             'invoice' => 'required|string',
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'issuer' => 'required|string'
         ]);
 

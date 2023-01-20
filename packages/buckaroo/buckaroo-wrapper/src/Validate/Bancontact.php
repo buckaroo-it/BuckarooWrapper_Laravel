@@ -14,7 +14,7 @@ class Bancontact
     {
         //Validate Pay
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'saveToken' => 'required|boolean'
         ]);
@@ -30,7 +30,7 @@ class Bancontact
     {
         //Validate Refund
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string'
         ]);
@@ -47,7 +47,7 @@ class Bancontact
         //Validate Pay Encrypted
         $validator = Validator::make($data, [
             'invoice' => 'required|string',
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'description' => 'required|string',
             'encryptedCardData' => 'required|string'
         ]);

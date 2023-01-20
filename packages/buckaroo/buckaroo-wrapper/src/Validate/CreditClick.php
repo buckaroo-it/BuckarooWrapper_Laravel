@@ -15,7 +15,7 @@ class CreditClick
     {
         //Validate Pay
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'email' => 'required|email',
             'customer.firstName' => 'required|string',
@@ -32,7 +32,7 @@ class CreditClick
     {
         //Validate Refund
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'description' => 'required|string',
             'originalTransactionKey' => 'required|string',

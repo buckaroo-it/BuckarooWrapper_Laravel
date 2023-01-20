@@ -15,7 +15,7 @@ class Afterpay
     {
         //Validate Pay
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'order' => 'required|string',
             'invoice' => 'required|string',
             'clientIP' => 'nullable|string',
@@ -68,7 +68,7 @@ class Afterpay
     {
         //Validate Authorize
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'order' => 'required|string',
             'invoice' => 'required|string',
             'clientIP' => 'nullable|ip',
@@ -117,7 +117,7 @@ class Afterpay
         $validator = Validator::make($data, [
             'originalTransactionKey' => 'required|string',
             'invoice' => 'required|string',
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'clientIP' => 'nullable|string',
 
             'articles.*.identifier' => 'required|string',

@@ -151,7 +151,7 @@ class BuckarooWallet
         $validator = Validator::make($data, [
             'invoice' => 'required|string',
             'description' => 'required|string',
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'walletId' => 'required|numeric'
         ]);
 
@@ -166,7 +166,7 @@ class BuckarooWallet
     {
         //Validate Refund
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string',
         ]);

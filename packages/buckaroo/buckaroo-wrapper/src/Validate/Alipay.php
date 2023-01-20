@@ -15,7 +15,7 @@ class Alipay
     {
         //Validate Pay
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'useMobileView' => 'required|boolean',
         ]);
@@ -31,7 +31,7 @@ class Alipay
     {
         //Validate Pay Redirect
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string'
         ]);

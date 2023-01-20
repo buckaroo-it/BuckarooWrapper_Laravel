@@ -13,7 +13,7 @@ class EPS
     public static function pay(array $data)
     {
         $validator = Validator::make($data, [
-            'invoice' => 'required|string',
+            'invoice' => 'required|string|between:0,99999999.99',
             'amountDebit' => 'required|numeric'
         ]);
 
@@ -27,7 +27,7 @@ class EPS
     public static function refund(array $data)
     {
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'description' => 'nullable|string',
             'originalTransactionKey' => 'required|string'

@@ -3,6 +3,7 @@
 namespace Buckaroo\BuckarooWrapper\Validate;
 
 use Illuminate\Support\Facades\Validator;
+use Buckaroo\Resources\Constants\Gender;
 
 class CreditManagement
 {
@@ -35,7 +36,7 @@ class CreditManagement
             'person.firstName' => 'required|string',
             'person.lastNamePrefix' => 'required|string',
             'person.lastName' => 'required|string',
-            'person.gender' => 'required',
+            'person.gender' => 'required|in:' . Gender::MALE . ',' . Gender::FEMALE,
 
             'company.culture' => 'required|string',
             'company.name' => 'required|string',

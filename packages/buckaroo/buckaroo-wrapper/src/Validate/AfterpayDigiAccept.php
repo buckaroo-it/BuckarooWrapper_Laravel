@@ -72,7 +72,7 @@ class AfterpayDigiAccept
     {
         //Validate Authorize
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'order' => 'required|string',
             'invoice' => 'required|string',
             'b2b' => 'required|boolean',
@@ -130,7 +130,7 @@ class AfterpayDigiAccept
         //Validate Capture
         $validator = Validator::make($data, [
             'originalTransactionKey' => 'required',
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'order' => 'required|string',
             'invoice' => 'required|string',
             'b2b' => 'required|boolean',
@@ -187,7 +187,7 @@ class AfterpayDigiAccept
     {
         //Validate Refund
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string',
         ]);

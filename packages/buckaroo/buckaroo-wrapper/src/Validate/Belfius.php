@@ -14,7 +14,7 @@ class Belfius
     {
         //Validate Pay
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string'
         ]);
 
@@ -29,7 +29,7 @@ class Belfius
     {
         //Validate Refund
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string'
         ]);

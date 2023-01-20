@@ -14,7 +14,7 @@ class CreditCard
     {
         //Validate Pay
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'string',
             'name' => 'required|string'
         ]);
@@ -30,7 +30,7 @@ class CreditCard
     {
         //Validate Pay Encrypted
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'string',
             'name' => 'required|string',
             'encryptedCardData' => 'required|string',
@@ -47,7 +47,7 @@ class CreditCard
     {
         //Validate Pay With Security Code
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'string',
             'originalTransactionKey' => 'required|string',
             'name' => 'required|string',
@@ -65,7 +65,7 @@ class CreditCard
     {
         //Validate Refund
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'string',
             'originalTransactionKey' => 'required|string',
             'name' => 'required|string',
@@ -82,7 +82,7 @@ class CreditCard
     {
         //Validate Authorize
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'string',
             'name' => 'required|string',
         ]);
@@ -98,7 +98,7 @@ class CreditCard
     {
         //Validate Card Authorize Encrypted
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'string',
             'name' => 'required|string',
             'encryptedCardData' => 'required|string',
@@ -115,7 +115,7 @@ class CreditCard
     {
         //Validate Authorize With Security Code
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string',
             'name' => 'required|string',
@@ -133,7 +133,7 @@ class CreditCard
     {
         //Validate Capture
         $validator = Validator::make($data, [
-            'amountDebit' => 'required|numeric',
+            'amountDebit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string',
             'name' => 'required|string'
@@ -149,7 +149,7 @@ class CreditCard
     {
         //Validate Cancel Authorize
         $validator = Validator::make($data, [
-            'amountCredit' => 'required|numeric',
+            'amountCredit' => 'required|numeric|between:0,99999999.99',
             'invoice' => 'required|string',
             'originalTransactionKey' => 'required|string',
             'name' => 'required|string'

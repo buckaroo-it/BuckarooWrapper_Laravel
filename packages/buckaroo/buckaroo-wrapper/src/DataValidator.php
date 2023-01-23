@@ -39,6 +39,7 @@ use Buckaroo\BuckarooWrapper\Validate\Surepay;
 use Buckaroo\BuckarooWrapper\Validate\Tinka;
 use Buckaroo\BuckarooWrapper\Validate\Trustly;
 use Buckaroo\BuckarooWrapper\Validate\WeChatPay;
+use Buckaroo\BuckarooWrapper\Validate\CreditManagement;
 
 trait DataValidator
 {

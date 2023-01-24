@@ -13,7 +13,7 @@ class Buckaroo extends BaseService
         $this->client = $this->client();
     }
 
-    public function payment(string $payementType, string $methodName, array $data)
+    public function payment(string $payementType, string $methodName, array $data = null)
     {
         $validator = $this->validateInput($payementType, $methodName, $data);
         try {
@@ -29,7 +29,7 @@ class Buckaroo extends BaseService
             if ($validator->fails()) {
                 return $validator->errors();
             }
-            return $this->client->method($payementType)->$methodName($validator->validated())->toArray();
+            return $this->client->method($payementType)->$methodName($validator->validated());
         } catch (\Exception $e) {
             return 'Error: ' . $e->getMessage();
         }

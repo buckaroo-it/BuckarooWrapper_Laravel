@@ -44,7 +44,7 @@ use Buckaroo\BuckarooWrapper\Validate\CreditManagement;
 trait DataValidator
 {
 
-    public function validateInput(string $payementType, string $method, array $data)
+    public function validateInput(string $payementType, string $method, array $data = null)
     {
         foreach (self::$payments as $class => $values) {
             if (in_array($payementType, $values)) {

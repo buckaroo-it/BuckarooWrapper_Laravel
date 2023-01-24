@@ -33,7 +33,7 @@ class Afterpay
             'billing.address.houseNumberAdditional' => 'nullable|string',
             'billing.address.zipcode' => 'nullable|string',
             'billing.address.city' => 'nullable|string',
-            'billing.address.phone.mobile' => 'required|string',
+            'billing.address.phone.mobile' => 'nullable|string',
             'billing.address.phone.landline' => 'nullable|string',
             'billing.address.country' => 'nullable|string',
             'billing.address.email' => 'nullable|email',

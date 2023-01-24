@@ -22,5 +22,8 @@
                 "Buckaroo\\BuckarooWrapper\\BuckarooServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
 }

@@ -87,6 +87,6 @@ class BuckarooController extends Controller
 
       //  dd($response->isRejected());
 
-        return response()->json($response);
+        return response()->json($response->toArray());
     }
 }

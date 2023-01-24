@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "buckaroo/sdk": "^1.0"
+        "buckaroo/sdk": "^1.0",
+        "illuminate/support": "^9.48"
     },
     "autoload": {
         "psr-4": {

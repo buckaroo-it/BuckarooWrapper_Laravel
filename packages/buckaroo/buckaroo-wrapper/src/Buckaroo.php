@@ -21,7 +21,7 @@ class Buckaroo extends BaseService
                 return $validator;
             }
             if (!$validator) {
-                return 'Your Payment Method does not exist';
+                return response('Your Payment Method does not exist', 422);
             }
             if ($validator == 'withOutData') {
                 return $this->client->method($payementType)->$methodName()->toArray();

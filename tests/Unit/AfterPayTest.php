@@ -4,8 +4,8 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use Buckaroo\BuckarooWrapper\Buckaroo;
+use Buckaroo\BuckarooWrapper\Tests\TestCase;
 use Buckaroo\Resources\Constants\RecipientCategory;
 
 class AfterPayTest extends TestCase

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Buckaroo\BuckarooWrapper\Tests\TestCase;
 
 class ExampleTest extends TestCase
 {

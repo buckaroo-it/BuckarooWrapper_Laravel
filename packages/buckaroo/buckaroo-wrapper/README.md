@@ -59,6 +59,10 @@ BPE_WEBSITE_MOOD=
 
 You should replace the empty values with the appropriate keys provided by Buckaroo.
 
+Add the service provider in your config/app.php file:
+```php
+Buckaroo\BuckarooWrapper\BuckarooServiceProvider::class,
+```
 Then run the following command to publish the Buckaroo config file:
 ```php
 php artisan vendor:publish --provider="Buckaroo\BuckarooWrapper\BuckarooServiceProvider"

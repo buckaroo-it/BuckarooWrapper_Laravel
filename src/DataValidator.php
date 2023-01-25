@@ -1,45 +1,45 @@
 <?php
 
-namespace Buckaroo\BuckarooWrapper;
+namespace Buckaroo\Laravel;
 
-use Buckaroo\BuckarooWrapper\Validate\AfterpayDigiAccept;
-use Buckaroo\BuckarooWrapper\Validate\Afterpay;
-use Buckaroo\BuckarooWrapper\Validate\Alipay;
-use Buckaroo\BuckarooWrapper\Validate\ApplePay;
-use Buckaroo\BuckarooWrapper\Validate\Bancontact;
-use Buckaroo\BuckarooWrapper\Validate\BankTransfer;
-use Buckaroo\BuckarooWrapper\Validate\Belfius;
-use Buckaroo\BuckarooWrapper\Validate\Billink;
-use Buckaroo\BuckarooWrapper\Validate\BuckarooVoucher;
-use Buckaroo\BuckarooWrapper\Validate\BuckarooWallet;
-use Buckaroo\BuckarooWrapper\Validate\CreditCard;
-use Buckaroo\BuckarooWrapper\Validate\CreditClick;
-use Buckaroo\BuckarooWrapper\Validate\Emandates;
-use Buckaroo\BuckarooWrapper\Validate\EPS;
-use Buckaroo\BuckarooWrapper\Validate\GiftCard;
-use Buckaroo\BuckarooWrapper\Validate\Giropay;
-use Buckaroo\BuckarooWrapper\Validate\iDeal;
-use Buckaroo\BuckarooWrapper\Validate\iDealQR;
-use Buckaroo\BuckarooWrapper\Validate\iDin;
-use Buckaroo\BuckarooWrapper\Validate\In3;
-use Buckaroo\BuckarooWrapper\Validate\KBC;
-use Buckaroo\BuckarooWrapper\Validate\KlarnaKP;
-use Buckaroo\BuckarooWrapper\Validate\KlarnaPay;
-use Buckaroo\BuckarooWrapper\Validate\Marketplaces;
-use Buckaroo\BuckarooWrapper\Validate\Payconiq;
-use Buckaroo\BuckarooWrapper\Validate\Paypal;
-use Buckaroo\BuckarooWrapper\Validate\PayPerEmail;
-use Buckaroo\BuckarooWrapper\Validate\PointOfSale;
-use Buckaroo\BuckarooWrapper\Validate\Przelewy24;
-use Buckaroo\BuckarooWrapper\Validate\RequestToPay;
-use Buckaroo\BuckarooWrapper\Validate\SEPA;
-use Buckaroo\BuckarooWrapper\Validate\Sofort;
-use Buckaroo\BuckarooWrapper\Validate\Subscriptions;
-use Buckaroo\BuckarooWrapper\Validate\Surepay;
-use Buckaroo\BuckarooWrapper\Validate\Tinka;
-use Buckaroo\BuckarooWrapper\Validate\Trustly;
-use Buckaroo\BuckarooWrapper\Validate\WeChatPay;
-use Buckaroo\BuckarooWrapper\Validate\CreditManagement;
+use Buckaroo\Laravel\Validate\AfterpayDigiAccept;
+use Buckaroo\Laravel\Validate\Afterpay;
+use Buckaroo\Laravel\Validate\Alipay;
+use Buckaroo\Laravel\Validate\ApplePay;
+use Buckaroo\Laravel\Validate\Bancontact;
+use Buckaroo\Laravel\Validate\BankTransfer;
+use Buckaroo\Laravel\Validate\Belfius;
+use Buckaroo\Laravel\Validate\Billink;
+use Buckaroo\Laravel\Validate\BuckarooVoucher;
+use Buckaroo\Laravel\Validate\BuckarooWallet;
+use Buckaroo\Laravel\Validate\CreditCard;
+use Buckaroo\Laravel\Validate\CreditClick;
+use Buckaroo\Laravel\Validate\Emandates;
+use Buckaroo\Laravel\Validate\EPS;
+use Buckaroo\Laravel\Validate\GiftCard;
+use Buckaroo\Laravel\Validate\Giropay;
+use Buckaroo\Laravel\Validate\iDeal;
+use Buckaroo\Laravel\Validate\iDealQR;
+use Buckaroo\Laravel\Validate\iDin;
+use Buckaroo\Laravel\Validate\In3;
+use Buckaroo\Laravel\Validate\KBC;
+use Buckaroo\Laravel\Validate\KlarnaKP;
+use Buckaroo\Laravel\Validate\KlarnaPay;
+use Buckaroo\Laravel\Validate\Marketplaces;
+use Buckaroo\Laravel\Validate\Payconiq;
+use Buckaroo\Laravel\Validate\Paypal;
+use Buckaroo\Laravel\Validate\PayPerEmail;
+use Buckaroo\Laravel\Validate\PointOfSale;
+use Buckaroo\Laravel\Validate\Przelewy24;
+use Buckaroo\Laravel\Validate\RequestToPay;
+use Buckaroo\Laravel\Validate\SEPA;
+use Buckaroo\Laravel\Validate\Sofort;
+use Buckaroo\Laravel\Validate\Subscriptions;
+use Buckaroo\Laravel\Validate\Surepay;
+use Buckaroo\Laravel\Validate\Tinka;
+use Buckaroo\Laravel\Validate\Trustly;
+use Buckaroo\Laravel\Validate\WeChatPay;
+use Buckaroo\Laravel\Validate\CreditManagement;
 
 trait DataValidator
 {
@@ -51,7 +51,6 @@ trait DataValidator
                 return method_exists($class, $method) ? $class::$method($data) : false;
             }
         }
-
     }
 
     private static array $payments = [

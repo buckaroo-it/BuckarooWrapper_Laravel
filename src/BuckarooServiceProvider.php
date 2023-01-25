@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\BuckarooWrapper;
+namespace Buckaroo\Laravel;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -14,11 +14,16 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->publishConfig();
+
+    }
+
+    private function publishConfig()
+    {
         $this->publishes([
             __DIR__ . '/../config/buckaroo.php' => config_path('buckaroo.php')
         ]);
     }
-
     /**
      * Register any application services.
      *

@@ -1,11 +1,17 @@
 <?php
 
-namespace Buckaroo\BuckarooWrapper;
+namespace Buckaroo\Laravel;
 
 use Buckaroo\BuckarooClient;
 
 class BaseService
 {
+    protected $client;
+
+    public function __construct()
+    {
+        $this->client = $this->client();
+    }
     public  function client()
     {
         try {

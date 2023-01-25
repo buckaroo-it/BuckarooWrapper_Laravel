@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\BuckarooWrapper\Validate;
+namespace Buckaroo\Laravel\Validate;
 
 use Illuminate\Support\Facades\Validator;
 use Buckaroo\BuckarooClient;

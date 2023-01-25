@@ -1,12 +1,10 @@
 <?php
 
-
-namespace Buckaroo\BuckarooWrapper\Tests\Payments;
+namespace Buckaroo\Laravel\Tests;
 
 use Buckaroo\Resources\Constants\RecipientCategory;
-use Buckaroo\BuckarooWrapper\Buckaroo;
 
-use Buckaroo\BuckarooWrapper\Tests\TestCase;
+use Buckaroo\Laravel\Buckaroo;
 
 class AfterPayTest extends TestCase
 {
@@ -87,9 +85,11 @@ class AfterPayTest extends TestCase
                 ],
             ]
         ];
-
-        $buckaroo = new Buckaroo();
-        $response = $buckaroo->payment($payementType, $method, $data);
-        $this->assertTrue(true);
+        dd(app());
+//        $buckaroo = new Buckaroo();
+//
+//        $response = $buckaroo->payment($payementType, $method, $data);
+//
+//        $this->assertTrue(true);
     }
 }

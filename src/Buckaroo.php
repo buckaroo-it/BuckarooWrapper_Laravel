@@ -1,21 +1,15 @@
 <?php
 
-namespace Buckaroo\BuckarooWrapper;
+namespace Buckaroo\Laravel;
 
 class Buckaroo extends BaseService
 {
     use DataValidator;
 
-    private $client;
-
-    public function __construct()
-    {
-        $this->client = $this->client();
-    }
-
     public function payment(string $payementType, string $methodName, array $data = null)
     {
         $validator = $this->validateInput($payementType, $methodName, $data);
+
         try {
             if (is_array($validator)) {
                 return $validator;

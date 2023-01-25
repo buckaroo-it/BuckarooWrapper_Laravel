@@ -6,7 +6,7 @@
 >
     <testsuites>
         <testsuite name="Unit">
-            <directory>./src/Tests</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">

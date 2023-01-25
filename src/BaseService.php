@@ -15,7 +15,7 @@ class BaseService
     public  function client()
     {
         try {
-            return new BuckarooClient(config('buckaroo.website_key'), config('buckaroo.secret_key'), config('buckaroo.website'));
+            return new BuckarooClient(config('buckaroo.website_key','test'), config('buckaroo.secret_key', 'test'), config('buckaroo.mode', 'test'));
         } catch (\Exception $e) {
             return 'Error: ' . $e->getMessage();
         }

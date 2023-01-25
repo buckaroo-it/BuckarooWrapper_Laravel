@@ -85,11 +85,11 @@ class AfterPayTest extends TestCase
                 ],
             ]
         ];
-        dd(app());
-//        $buckaroo = new Buckaroo();
-//
-//        $response = $buckaroo->payment($payementType, $method, $data);
-//
-//        $this->assertTrue(true);
+
+        $buckaroo = new Buckaroo();
+
+        $response = $buckaroo->payment($payementType, $method, $data);
+
+        $this->assertTrue(true);
     }
 }

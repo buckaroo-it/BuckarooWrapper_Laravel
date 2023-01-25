@@ -494,9 +494,9 @@
             'dev_requirement' => false,
         ),
         'symfony/translation' => array(
-            'pretty_version' => 'v6.2.3',
-            'version' => '6.2.3.0',
-            'reference' => 'a2a15404ef4c15d92c205718eb828b225a144379',
+            'pretty_version' => 'v6.2.5',
+            'version' => '6.2.5.0',
+            'reference' => '60556925a703cfbc1581cde3b3f35b0bb0ea904c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/translation',
             'aliases' => array(),

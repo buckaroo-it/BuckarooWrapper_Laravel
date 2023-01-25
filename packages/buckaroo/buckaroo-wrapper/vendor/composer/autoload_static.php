@@ -69,6 +69,7 @@ class ComposerStaticInit17f44d993ad7ef4177b9a430f1166f2e
         ),
         'B' => 
         array (
+            'Buckaroo\\BuckarooWrapper\\Tests\\' => 31,
             'Buckaroo\\BuckarooWrapper\\' => 25,
             'Buckaroo\\' => 9,
         ),
@@ -126,9 +127,9 @@ class ComposerStaticInit17f44d993ad7ef4177b9a430f1166f2e
         ),
         'Illuminate\\Support\\' => 
         array (
-            0 => __DIR__ . '/..' . '/illuminate/macroable',
+            0 => __DIR__ . '/..' . '/illuminate/collections',
             1 => __DIR__ . '/..' . '/illuminate/conditionable',
-            2 => __DIR__ . '/..' . '/illuminate/collections',
+            2 => __DIR__ . '/..' . '/illuminate/macroable',
             3 => __DIR__ . '/..' . '/illuminate/support',
         ),
         'Illuminate\\Contracts\\' => 
@@ -166,6 +167,10 @@ class ComposerStaticInit17f44d993ad7ef4177b9a430f1166f2e
         'Carbon\\' => 
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
+        ),
+        'Buckaroo\\BuckarooWrapper\\Tests\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/tests',
         ),
         'Buckaroo\\BuckarooWrapper\\' => 
         array (

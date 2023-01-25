@@ -1,9 +1,0 @@
-.idea/
-vendor/
-composer.lock
-phpcs.txt
-example/logs
-.env
-.phpunit.result.cache
-
-logs/

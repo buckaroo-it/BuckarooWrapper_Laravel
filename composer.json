@@ -16,7 +16,8 @@
     "require-dev": {
         "graham-campbell/testbench": "^5.0",
         "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^3.13"
+        "friendsofphp/php-cs-fixer": "^3.13",
+        "vlucas/phpdotenv": "^5.5"
     },
     "autoload": {
         "psr-4": {

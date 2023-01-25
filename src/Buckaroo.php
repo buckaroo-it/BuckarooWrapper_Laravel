@@ -11,19 +11,17 @@ class Buckaroo extends BaseService
         $validator = $this->validateInput($payementType, $methodName, $data);
 
         try {
-            if (is_array($validator)) {
-                return $validator;
-            }
             if (!$validator) {
                 return response('Your Payment Method does not exist', 422);
-            }
-            if ($validator == 'withOutData') {
-                return $this->client->method($payementType)->$methodName()->toArray();
-            }
-            if ($validator->fails()) {
+            } elseif (is_array($validator)) {
+                return $validator;
+            } elseif ($validator == 'withOutData') {
+                return $this->client->method($payementType)->$methodName();
+            } elseif ($validator->fails()) {
                 return $validator->errors();
+            } else {
+                return $this->client->method($payementType)->$methodName($validator->validated());
             }
-            return $this->client->method($payementType)->$methodName($validator->validated());
         } catch (\Exception $e) {
             return 'Error: ' . $e->getMessage();
         }

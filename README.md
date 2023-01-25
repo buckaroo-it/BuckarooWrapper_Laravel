@@ -54,7 +54,7 @@ In order to use the Laravel Buckaroo Wrapper in your application, you need to ad
 ```php
 BPE_WEBSITE_KEY=
 BPE_SECRET_KEY=
-BPE_WEBSITE_MOOD=
+BPE_MODE=
 ```
 
 You should replace the empty values with the appropriate keys provided by Buckaroo.
@@ -88,7 +88,7 @@ To ensure that the data passed to the payment method is valid and secure, Larave
 
 ### Conclusion
 
-By following the steps outlined in this documentation, you can easily integrate Laravel validation with the Buckaroo PHP SDK in your application. This will allow you to securely process payments, subscriptions, and unpaid invoices with the Buckaroo platform. Remember to add the BPE_WEBSITE_KEY, BPE_SECRET_KEY, and BPE_WEBSITE_MOOD to your .env file and run
+By following the steps outlined in this documentation, you can easily integrate Laravel validation with the Buckaroo PHP SDK in your application. This will allow you to securely process payments, subscriptions, and unpaid invoices with the Buckaroo platform. Remember to add the BPE_WEBSITE_KEY, BPE_SECRET_KEY, and BPE_MODE to your .env file and run
 ```php
 php artisan vendor:publish --provider="Buckaroo\BuckarooWrapper\BuckarooServiceProvider"
 ```

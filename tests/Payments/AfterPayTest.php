@@ -14,13 +14,62 @@ class AfterPayTest extends TestCase
      * @return void
      */
 
-    public function test_example()
+    public function it_creates_a_afterpay_payment()
     {
-        $payementType = 'afterpay';
+        $buckaroo = new Buckaroo();
 
-        $method = 'pay';
+        $response = $buckaroo->payment('afterpay', 'pay', $this->getPaymentPayload());
 
-        $data = [
+        $this->assertTrue($response->isRejected());
+    }
+
+    /**
+     * @return void
+     * @test
+     */
+    public function it_creates_a_afterpay_authorize()
+    {
+        $buckaroo = new Buckaroo();
+
+        $response = $buckaroo->payment('afterpay', 'authorize', $this->getPaymentPayload());
+
+        $this->assertTrue($response->isRejected());
+    }
+    /**
+     * @return void
+     * @test
+     */
+    public function it_creates_a_afterpay_capture()
+    {
+        $buckaroo = new Buckaroo();
+
+        $response = $buckaroo->payment('afterpay', 'capture', $this->getPaymentPayload([
+            'originalTransactionKey'    => 'D5127080BA1D4644856FECDC560FXXXX'
+        ]));
+
+        $this->assertTrue($response->isValidationFailure());
+    }
+
+    /**
+     * @return void
+     * @test
+     */
+    public function it_creates_a_afterpay_refund()
+    {
+        $buckaroo = new Buckaroo();
+
+        $response = $buckaroo->payment('afterpay', 'refund',[
+            'invoice'   => 'testinvoice 123', //Set invoice number of the transaction to refund
+            'originalTransactionKey' => '4E8BD922192746C3918BF4077CXXXXXX', //Set transaction key of the transaction to refund
+            'amountCredit' => 1.23
+        ]);
+
+        $this->assertTrue($response->isValidationFailure());
+    }
+
+    private function getPaymentPayload(?array $additional = null): array
+    {
+        $payload = [
             'amountDebit' => 50.30,
             'order' => uniqid(),
             'invoice' => uniqid(),
@@ -86,10 +135,10 @@ class AfterPayTest extends TestCase
             ]
         ];
 
-        $buckaroo = new Buckaroo();
+        if ($additional) {
+            return array_merge($additional, $payload);
+        }
 
-        $response = $buckaroo->payment($payementType, $method, $data);
-
-        $this->assertTrue(true);
+        return $payload;
     }
 }

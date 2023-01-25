@@ -1,12 +1,12 @@
 
 <p align="center">
-  <img src="https://cdn.document360.io/3755cd8f-a525-4879-b7dc-6e806f8d24fd/Images/Documentation/LARAVEL-SDK.png" width="250px" position="center">
+  <img src="https://www.buckaroo.nl/media/3870/laravel-logo.png" width="250px" position="center">
 </p>
 
 # Laravel Buckaroo Payment Integration
 
 <p align="center">
-  <img src="https://cdn.document360.io/3755cd8f-a525-4879-b7dc-6e806f8d24fd/Images/Documentation/LARAVEL-SDK-EXAMPLE.png" width="500px" position="center">
+  <img src="https://www.buckaroo.nl/media/3869/laravel-code.png" width="500px" position="center">
 </p>
 
 ---

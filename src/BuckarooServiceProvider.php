@@ -14,7 +14,9 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->publishes([
+            __DIR__ . '/Payments' =>  base_path('app/Http/Requests/Buckaroo'),
+        ]);
     }
 
     /**

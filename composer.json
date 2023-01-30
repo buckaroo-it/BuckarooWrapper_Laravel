@@ -32,7 +32,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Buckaroo\\BuckarooWrapper\\BuckarooServiceProvider"
+                "Buckaroo\\Laravel\\BuckarooServiceProvider"
             ]
         }
     }

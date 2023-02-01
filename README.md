@@ -1,12 +1,12 @@
 
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3870/laravel-logo.png" width="250px" position="center">
+  <img src="https://www.buckaroo.nl/media/3877/laravel-logo-github.png" width="250px" position="center">
 </p>
 
 # Laravel Buckaroo Payment Integration
 
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3869/laravel-code.png" width="500px" position="center">
+  <img src="https://www.buckaroo.nl/media/3876/laravel-example2.png" width="800px" position="center">
 </p>
 
 ---
@@ -22,9 +22,7 @@
 ---
 
 ### Introduction
-
-This documentation describes the process of integrating Laravel validation with the Buckaroo PHP SDK in your application. Buckaroo is a Payment Service Provider that is used by over 15,000 companies to securely process payments, subscriptions, and unpaid invoices. The Buckaroo SDK is a modern, open-source library that simplifies integration with Buckaroo's services in PHP applications.
-
+The documentation explains how to integrate Laravel validation with the Buckaroo PHP SDK in your application. Buckaroo is a Payment Service Provider used by many companies to securely handle payments, subscriptions, and invoices. The Buckaroo SDK is a modern, open-source library that makes it easier to integrate Buckaroo's services into PHP apps. The SDK also supports webhooks.
 ### Installation
 
 To install the Laravel Buckaroo Wrapper, you can use Composer by running the following command:
@@ -35,13 +33,13 @@ To install the Laravel Buckaroo Wrapper, you can use Composer by running the fol
 
 ### Composer Installation
 
-By far the easiest way to install the Laravel Buckaroo Wrapper client is to require it with [Composer](http://getcomposer.org/doc/00-intro.md).
+By far the easiest way to install the Laravel Buckaroo client is to require it with [Composer](http://getcomposer.org/doc/00-intro.md).
 
-    $ composer require buckaroo/buckaroo-wrapper:^1.0
+    $ composer require buckaroo/laravel-buckaroo:^1.0
 
     {
         "require": {
-            "buckaroo/buckaroo-wrapper": "^1.0"
+            "buckaroo/laravel-laravel": "^1.0"
         }
     }
 
@@ -61,36 +59,76 @@ You should replace the empty values with the appropriate keys provided by Buckar
 
 Add the service provider in your config/app.php file:
 ```php
-Buckaroo\BuckarooWrapper\BuckarooServiceProvider::class,
+Buckaroo\Laravel\BuckarooServiceProvider::class,
 ```
 Then run the following command to publish the Buckaroo config file:
 ```php
-php artisan vendor:publish --provider="Buckaroo\BuckarooWrapper\BuckarooServiceProvider"
+php artisan vendor:publish --provider="Buckaroo\Laravel\BuckarooServiceProvider"
+```
+Buckaroo service provider loads its own database migrations, so remember to run the necessary migrations to update your database after installing the package.
+```php
+php artisan migrate
 ```
 To use the  Laravel Buckaroo Wrapper, you first need to create an instance of the Buckaroo class:
 ```php
-use Buckaroo\BuckarooWrapper\Buckaroo;
+use Buckaroo\BuckarooClient;
 
-$buckaroo = new Buckaroo();
+$buckaroo = new BuckarooClient(env('BPE_WEBSITE_KEY'), env('BPE_SECRET_KEY'), env('BPE_MODE'));
 ```
-You can then call the payment method on the Buckaroo object, passing in the desired payment method, action, and other parameters. For example, the following code initiates a credit card payment for an amount of 10.25 and a unique invoice number:
+The $buckaroo object is the instance of the Buckaroo PHP SDK.
+The method method is called with the argument "creditcard", which indicates that the payment method used is a credit card.
+
+The pay method is called with an associative array as its argument, which contains the details of the payment.
+<ul>
+<li><b>name:</b> the name of the credit card payment method (e.g. "visa").</li>
+<li><b>amountDebit:</b> the amount of the payment.</li>
+<li><b>invoice:</b> the invoice number associated with the payment.</li>
+<li><b>pushURL:</b> the URL to which Buckaroo will send a push notification when the payment is processed.</li>
+</ul>
+This is set to the result of the route method with the argument "buckaroo.push".
+</br>This code initiates a payment using the credit card payment method with the specified details.
+</ul>
+
 ```php
-$buckaroo->payment('creditcard', 'pay', [
+$buckaroo->method('creditcard')->pay([
     'name'          => 'visa',
     'amountDebit'   => 10.25,
-    'invoice'       => uniqid()
+    'invoice'       => 'inv-123',
+    'pushURL'      => route('buckaroo.push')
 ]);
 ```
 Find our full documentation online on [dev.buckaroo.nl](https://dev.buckaroo.nl/).
 ### Validation
 
-To ensure that the data passed to the payment method is valid and secure, Laravel validation is used. This validation is based on the method used and ensures that the parameters passed to the payment method are correct and complete. This can help to prevent errors and ensure that payments are processed correctly.
+Laravel validation is used to ensure the data passed to the payment method is valid and secure. This validation checks the parameters passed to the payment method and confirms that they are correct and complete. This helps to prevent errors and guarantees that payments are processed accurately.
+
+```php
+use Buckaroo\BuckarooClient;
+use Buckaroo\Laravel\Payments\CreditCard\CreditCardPayRequest;
+
+    public function preparePayment(CreditCardPayRequest $request)
+    {
+        $buckaroo = new BuckarooClient(env('BPE_WEBSITE_KEY'), env('BPE_SECRET_KEY'), env('BPE_MODE'));
+
+        $response = $buckaroo->method('creditcard')->pay($request->all());
+
+        return response($response->toArray());
+    }
+```
+
+Behind the scenes, this will register a POST route to a controller provided by this package. Because the app that sends webhooks to you has no way of getting a csrf-token, you must add that route to the except array of the VerifyCsrfToken middleware:
+```php
+    protected $except = [
+        'webhook/*',
+    ];
+```
 
 ### Conclusion
 
 By following the steps outlined in this documentation, you can easily integrate Laravel validation with the Buckaroo PHP SDK in your application. This will allow you to securely process payments, subscriptions, and unpaid invoices with the Buckaroo platform. Remember to add the BPE_WEBSITE_KEY, BPE_SECRET_KEY, and BPE_MODE to your .env file and run
 ```php
-php artisan vendor:publish --provider="Buckaroo\BuckarooWrapper\BuckarooServiceProvider"
+php artisan vendor:publish --provider="Buckaroo\Laravel\BuckarooServiceProvider"
+php artisan migrate
 ```
 to make sure everything runs smoothly.
 

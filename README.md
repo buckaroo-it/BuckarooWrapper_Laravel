@@ -61,6 +61,10 @@ Add the service provider in your config/app.php file:
 ```php
 Buckaroo\Laravel\BuckarooServiceProvider::class,
 ```
+Add the class Aliases in your config/app.php file:
+```php
+  'Buckaroo' => Buckaroo\Laravel\Facades\Buckaroo::class
+```
 Then run the following command to publish the Buckaroo config file:
 ```php
 php artisan vendor:publish --provider="Buckaroo\Laravel\BuckarooServiceProvider"
@@ -69,12 +73,7 @@ Buckaroo service provider loads its own database migrations, so remember to run 
 ```php
 php artisan migrate
 ```
-To use the  Laravel Buckaroo Wrapper, you first need to create an instance of the Buckaroo class:
-```php
-use Buckaroo\BuckarooClient;
 
-$buckaroo = new BuckarooClient(env('BPE_WEBSITE_KEY'), env('BPE_SECRET_KEY'), env('BPE_MODE'));
-```
 The $buckaroo object is the instance of the Buckaroo PHP SDK.
 The method method is called with the argument "creditcard", which indicates that the payment method used is a credit card.
 
@@ -90,7 +89,7 @@ This is set to the result of the route method with the argument "buckaroo.push".
 </ul>
 
 ```php
-$buckaroo->method('creditcard')->pay([
+Buckaroo::api()->method('creditcard')->pay([
     'name'          => 'visa',
     'amountDebit'   => 10.25,
     'invoice'       => 'inv-123',
@@ -103,14 +102,11 @@ Find our full documentation online on [dev.buckaroo.nl](https://dev.buckaroo.nl/
 Laravel validation is used to ensure the data passed to the payment method is valid and secure. This validation checks the parameters passed to the payment method and confirms that they are correct and complete. This helps to prevent errors and guarantees that payments are processed accurately.
 
 ```php
-use Buckaroo\BuckarooClient;
 use Buckaroo\Laravel\Payments\CreditCard\CreditCardPayRequest;
 
     public function preparePayment(CreditCardPayRequest $request)
     {
-        $buckaroo = new BuckarooClient(env('BPE_WEBSITE_KEY'), env('BPE_SECRET_KEY'), env('BPE_MODE'));
-
-        $response = $buckaroo->method('creditcard')->pay($request->all());
+        $response = \Buckaroo::api()->method('creditcard')->pay($request->all());
 
         return response($response->toArray());
     }

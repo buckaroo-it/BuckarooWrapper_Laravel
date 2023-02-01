@@ -3,6 +3,7 @@
 namespace Buckaroo\Laravel;
 
 use Illuminate\Support\ServiceProvider;
+use Buckaroo\Laravel\BuckarooApi;
 
 class BuckarooServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,13 @@ class BuckarooServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 
+    protected function registerBuckarooApi()
+    {
+        $this->app->bind('buckaroo', function ($app) {
+            return new BuckarooApi();
+        });
+    }
+
     /**
      * Register any application services.
      *
@@ -35,8 +43,6 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerBuckarooApi();
     }
-
-
 }

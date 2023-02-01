@@ -5,11 +5,11 @@ namespace Buckaroo\Laravel\Http\Controller;
 use Buckaroo\Laravel\Payments\Webhook\PayloadRequest;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 
-class BuckarooController extends Controller
+class BuckarooController
 {
-    public function handle(PayloadRequest $request)
+    public function handlePush(PayloadRequest $request)
     {
         BuckarooTransaction::create($request->all());
-        return response('ok!', 200);
+        return array('status' => true);
     }
 }

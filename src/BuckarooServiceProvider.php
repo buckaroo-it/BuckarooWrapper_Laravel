@@ -14,21 +14,20 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-           // __DIR__ . '/Payments' =>  base_path('app/Http/Requests/Buckaroo'),
-        $this->publishMigrations();
+        $this->registerMigrations();
         $this->registerRoutes();
     }
 
     protected function registerRoutes()
     {
-        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/routes/buckaroo.php');
     }
 
-    private function publishMigrations(){
-        $this->publishes([
-            __DIR__ . '/database/migrations/create_buckaroo_transactions_table.php.stub' => database_path('migrations/2023_01_31_084950_create_buckaroo_transactions_table.php'),
-        ], 'migrations');
+    protected function registerMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
+
     /**
      * Register any application services.
      *

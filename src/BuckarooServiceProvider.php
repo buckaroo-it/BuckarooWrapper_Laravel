@@ -1,8 +1,9 @@
 <?php
 
-namespace Buckaroo\BuckarooWrapper;
+namespace Buckaroo\Laravel;
 
 use Illuminate\Support\ServiceProvider;
+use Buckaroo\Laravel\BuckarooApi;
 
 class BuckarooServiceProvider extends ServiceProvider
 {
@@ -14,9 +15,25 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../config/buckaroo.php' => config_path('buckaroo.php')
-        ]);
+        $this->registerMigrations();
+        $this->registerRoutes();
+    }
+
+    protected function registerRoutes()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/routes/buckaroo.php');
+    }
+
+    protected function registerMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+    }
+
+    protected function registerBuckarooApi()
+    {
+        $this->app->bind('buckaroo', function ($app) {
+            return new BuckarooApi();
+        });
     }
 
     /**
@@ -26,8 +43,6 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerBuckarooApi();
     }
-
-
 }

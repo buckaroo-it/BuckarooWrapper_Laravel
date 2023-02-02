@@ -2,7 +2,6 @@
 
 namespace Buckaroo\Laravel;
 
-use Buckaroo\Laravel;
 use Buckaroo\BuckarooClient;
 
 class BuckarooApi

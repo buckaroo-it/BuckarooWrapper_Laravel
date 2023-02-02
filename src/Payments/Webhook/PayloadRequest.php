@@ -3,10 +3,6 @@
 namespace Buckaroo\Laravel\Payments\Webhook;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Carbon\Carbon;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class PayloadRequest extends FormRequest
 {
@@ -38,29 +34,11 @@ class PayloadRequest extends FormRequest
     public function rules()
     {
         return [
-
             'brq_statuscode' => 'nullable|numeric',
             'brq_statuscode_detail' => 'nullable|string',
             'brq_statusmessage' => 'nullable|string',
+            'brq_transactions' => 'required|string',
             'brq_websitekey' => 'required|in:' . env('BPE_WEBSITE_KEY')
-
         ];
-    }
-
-    /**
-     * Handle a failed validation attempt.
-     *
-     * @param \Illuminate\Contracts\Validation\Validator $validator
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        $errors = (new ValidationException($validator))->errors();
-
-        throw new HttpResponseException(
-            response()->json(['errors' => $errors])
-        );
     }
 }

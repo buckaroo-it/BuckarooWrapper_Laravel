@@ -115,7 +115,7 @@ use Buckaroo\Laravel\Payments\CreditCard\CreditCardPayRequest;
 Behind the scenes, this will register a POST route to a controller provided by this package. Because the app that sends webhooks to you has no way of getting a csrf-token, you must add that route to the except array of the VerifyCsrfToken middleware:
 ```php
     protected $except = [
-        'webhook/*',
+        'buckaroo/*',
     ];
 ```
 

@@ -4,8 +4,9 @@ namespace Buckaroo\Laravel\Http\Controller;
 
 use Buckaroo\Laravel\Payments\Webhook\PayloadRequest;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
+use Illuminate\Routing\Controller as BaseController;
 
-class BuckarooController
+class BuckarooController extends BaseController
 {
     public function handlePush(PayloadRequest $request)
     {

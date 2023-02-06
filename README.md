@@ -6,7 +6,7 @@
 # Laravel Buckaroo Payment Integration
 
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3876/laravel-example2.png" width="800px" position="center">
+  <img src="https://www.buckaroo.nl/media/3878/laravel-example3.png" width="800px" position="center">
 </p>
 
 ---

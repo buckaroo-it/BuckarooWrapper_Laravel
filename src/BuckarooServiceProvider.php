@@ -1,48 +1,53 @@
 <?php
 
-namespace Buckaroo\Laravel;
+namespace App\Buckaroo;
 
+use App\Buckaroo\Wrappers\BuckarooWrapper;
+use Illuminate\Contracts\Container\Container;
+use Buckaroo\BuckarooClient;
 use Illuminate\Support\ServiceProvider;
-use Buckaroo\Laravel\BuckarooApi;
+use Illuminate\Support\Facades\Route;
 
 class BuckarooServiceProvider extends ServiceProvider
 {
-
     /**
-     * Bootstrap any application services.
-     *
-     * @return void
+     * Register services.
      */
-    public function boot()
+    public function register(): void
     {
-        $this->registerMigrations();
+        $this->registerBuckarooClient();
         $this->registerRoutes();
+    }
+
+    private function registerBuckarooClient()
+    {
+        $this->app->singleton('buckaroo', function (Container $app) {
+            return new BuckarooWrapper($app);
+        });
+
+        $this->app->alias('buckaroo', BuckarooClient::class);
     }
 
     protected function registerRoutes()
     {
-        $this->loadRoutesFrom(__DIR__ . '/routes/buckaroo.php');
-    }
-
-    protected function registerMigrations()
-    {
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-    }
-
-    protected function registerBuckarooApi()
-    {
-        $this->app->bind('buckaroo', function ($app) {
-            return new BuckarooApi();
-        });
+        Route::middleware(['api'])
+            ->prefix('api/buckaroo/v1')
+            ->name('buckaroo_api.')
+            ->group(base_path('app/Buckaroo/Routes/buckaroo_api.php'));
     }
 
     /**
-     * Register any application services.
-     *
-     * @return void
+     * Bootstrap services.
      */
-    public function register()
+    public function boot(): void
     {
-        $this->registerBuckarooApi();
+        //
+    }
+
+    public function provides()
+    {
+        return [
+            'buckaroo'
+        ];
     }
 }

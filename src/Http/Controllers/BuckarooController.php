@@ -12,8 +12,23 @@ class BuckarooController extends Controller
         //Return
     }
 
+    public function returnCancel()
+    {
+        //Return Cancel
+    }
+
     public function returnError()
     {
         //Return Error
+    }
+
+    public function returnReject()
+    {
+        //Return Reject
+    }
+
+    public function push()
+    {
+        //Check push
     }
 }

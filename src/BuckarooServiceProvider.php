@@ -1,39 +1,23 @@
 <?php
 
-namespace Buckaroo\Laravel;
+namespace App\Buckaroo;
 
+use App\Buckaroo\Wrappers\BuckarooWrapper;
+use Illuminate\Contracts\Container\Container;
+use Buckaroo\BuckarooClient;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Container\Container;
+
 use Buckaroo\Laravel\BuckarooApi;
 
 class BuckarooServiceProvider extends ServiceProvider
 {
-
     /**
-     * Bootstrap any application services.
-     *
-     * @return void
+     * Register services.
      */
-    public function boot()
+    public function register(): void
     {
-        $this->registerMigrations();
-        $this->registerRoutes();
-    }
-
-    protected function registerRoutes()
-    {
-        $this->loadRoutesFrom(__DIR__ . '/routes/buckaroo.php');
-    }
-
-    protected function registerMigrations()
-    {
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-    }
-
-    protected function registerBuckarooApi()
-    {
-        $this->app->bind('buckaroo', function ($app) {
-            return new BuckarooApi();
-        });
+        $this->setupConfig();
     }
 
     /**
@@ -44,5 +28,35 @@ class BuckarooServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerBuckarooApi();
+        $this->registerMigrations();
+        $this->registerRoutes();
+    }
+
+    protected function setupConfig()
+    {
+        $source = realpath(__DIR__.'/../config/buckaroo.php');
+
+        if($this->app instanceof LaravelApplication && $this->app->runningInConsole())
+        {
+            $this->publishes([$source => config_path('buckaroo.php')]);
+        }
+
+        $this->mergeConfigFrom($source, 'buckaroo');
+    }
+
+    protected function registerRoutes()
+    {
+        $this->app->singleton('buckaroo', function (Container $app) {
+            return new BuckarooWrapper($app);
+        });
+
+        $this->app->alias('buckaroo', BuckarooClient::class);
+    }
+
+    protected function registerRoutes()
+    {
+        $this->app->singleton('buckaroo.client', function (Container $app) {
+            return new BuckarooApi();
+        });
     }
 }

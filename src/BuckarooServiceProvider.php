@@ -6,7 +6,9 @@ use App\Buckaroo\Wrappers\BuckarooWrapper;
 use Illuminate\Contracts\Container\Container;
 use Buckaroo\BuckarooClient;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Contracts\Container\Container;
+
+use Buckaroo\Laravel\BuckarooApi;
 
 class BuckarooServiceProvider extends ServiceProvider
 {
@@ -15,11 +17,34 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->registerBuckarooClient();
+        $this->setupConfig();
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->registerBuckarooApi();
+        $this->registerMigrations();
         $this->registerRoutes();
     }
 
-    private function registerBuckarooClient()
+    protected function setupConfig()
+    {
+        $source = realpath(__DIR__.'/../config/buckaroo.php');
+
+        if($this->app instanceof LaravelApplication && $this->app->runningInConsole())
+        {
+            $this->publishes([$source => config_path('buckaroo.php')]);
+        }
+
+        $this->mergeConfigFrom($source, 'buckaroo');
+    }
+
+    protected function registerRoutes()
     {
         $this->app->singleton('buckaroo', function (Container $app) {
             return new BuckarooWrapper($app);
@@ -30,24 +55,8 @@ class BuckarooServiceProvider extends ServiceProvider
 
     protected function registerRoutes()
     {
-        Route::middleware(['api'])
-            ->prefix('api/buckaroo/v1')
-            ->name('buckaroo_api.')
-            ->group(base_path('app/Buckaroo/Routes/buckaroo_api.php'));
-    }
-
-    /**
-     * Bootstrap services.
-     */
-    public function boot(): void
-    {
-        //
-    }
-
-    public function provides()
-    {
-        return [
-            'buckaroo'
-        ];
+        $this->app->singleton('buckaroo.client', function (Container $app) {
+            return new BuckarooApi();
+        });
     }
 }

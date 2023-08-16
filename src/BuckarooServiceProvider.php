@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Buckaroo;
+namespace Buckaroo\Laravel;
 
-use App\Buckaroo\Wrappers\BuckarooWrapper;
 use Illuminate\Contracts\Container\Container;
-use Buckaroo\BuckarooClient;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Contracts\Container\Container;
 
-use Buckaroo\Laravel\BuckarooApi;
+use Buckaroo\BuckarooClient;
+use Buckaroo\Laravel\Wrappers\BuckarooApi;
 
 class BuckarooServiceProvider extends ServiceProvider
 {

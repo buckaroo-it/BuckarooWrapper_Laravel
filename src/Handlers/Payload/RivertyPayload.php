@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Buckaroo\Handlers\Payload;
-
-use Buckaroo\Exceptions\BuckarooException;
+namespace Buckaroo\Laravel\Handlers\Payload;
 
 class RivertyPayload extends DefaultPayload
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Buckaroo\Facades;
+namespace Buckaroo\Laravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

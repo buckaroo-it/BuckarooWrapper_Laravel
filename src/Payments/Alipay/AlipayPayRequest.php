@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\Laravel\Payments\AliPay;
+namespace Buckaroo\Laravel\Payments\Alipay;
 
 use Illuminate\Foundation\Http\FormRequest;
 

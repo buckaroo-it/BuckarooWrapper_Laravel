@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\Laravel;
+namespace Buckaroo\Laravel\Wrappers;
 
 use Buckaroo\BuckarooClient;
 

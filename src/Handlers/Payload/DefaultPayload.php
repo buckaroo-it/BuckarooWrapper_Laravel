@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Buckaroo\Handlers\Payload;
+namespace Buckaroo\Laravel\Handlers\Payload;
 
 class DefaultPayload
 {

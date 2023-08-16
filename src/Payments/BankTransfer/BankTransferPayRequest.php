@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\Laravel\Payments\BankTrasnfer;
+namespace Buckaroo\Laravel\Payments\BankTransfer;
 
 use Buckaroo\Resources\Constants\Gender;
 use Illuminate\Foundation\Http\FormRequest;

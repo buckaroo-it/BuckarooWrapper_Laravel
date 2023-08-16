@@ -11,6 +11,7 @@ class BuckarooController extends BaseController
     public function handlePush(PayloadRequest $request)
     {
         BuckarooTransaction::create($request->all());
+
         return array('status' => true);
     }
 }

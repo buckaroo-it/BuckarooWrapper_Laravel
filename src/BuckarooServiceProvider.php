@@ -3,6 +3,8 @@
 namespace Buckaroo\Laravel;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Container\Container;
+
 use Buckaroo\Laravel\BuckarooApi;
 
 class BuckarooServiceProvider extends ServiceProvider
@@ -15,8 +17,31 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->setupConfig();
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->registerBuckarooApi();
         $this->registerMigrations();
         $this->registerRoutes();
+    }
+
+    protected function setupConfig()
+    {
+        $source = realpath(__DIR__.'/../config/buckaroo.php');
+
+        if($this->app instanceof LaravelApplication && $this->app->runningInConsole())
+        {
+            $this->publishes([$source => config_path('buckaroo.php')]);
+        }
+
+        $this->mergeConfigFrom($source, 'buckaroo');
     }
 
     protected function registerRoutes()
@@ -31,18 +56,8 @@ class BuckarooServiceProvider extends ServiceProvider
 
     protected function registerBuckarooApi()
     {
-        $this->app->bind('buckaroo', function ($app) {
+        $this->app->singleton('buckaroo.client', function (Container $app) {
             return new BuckarooApi();
         });
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->registerBuckarooApi();
     }
 }

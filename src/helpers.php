@@ -2,7 +2,7 @@
 
 if (! function_exists('buckaroo')) {
     /**
-     * @return \Mollie\Laravel\Wrappers\BuckarooWrapper
+     * @return \Buckaroo\Laravel\Wrappers\BuckarooWrapper
      */
     function buckaroo()
     {

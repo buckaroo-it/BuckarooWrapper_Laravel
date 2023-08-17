@@ -18,22 +18,4 @@ abstract class TestCase extends AbstractPackageTestCase
 
         parent::__construct();
     }
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        // additional setup
-    }
-
-    protected function getPackageProviders($app)
-    {
-        return [
-            BuckarooServiceProvider::class,
-        ];
-    }
-
-    protected function getEnvironmentSetUp($app)
-    {
-        // perform environment setup
-    }
 }

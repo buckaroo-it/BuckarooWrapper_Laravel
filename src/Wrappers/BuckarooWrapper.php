@@ -2,12 +2,29 @@
 
 namespace Buckaroo\Laravel\Wrappers;
 
+use Illuminate\Contracts\Config\Repository;
+
+
 use Buckaroo\BuckarooClient;
 
 class BuckarooWrapper
 {
-    public function api()
+    protected Repository $config;
+    protected BuckarooClient $buckarooClient;
+
+    public function __construct(Repository $config)
     {
-         return new BuckarooClient(env('BPE_WEBSITE_KEY'), env('BPE_SECRET_KEY'), env('BPE_MODE'));
+        $this->config = $config;
+
+        $websiteKey = $this->config->get('buckaroo.website_key');
+        $secretKey = $this->config->get('buckaroo.secret_key');
+        $mode = $this->config->get('buckaroo.mode');
+
+        $this->buckarooClient = new BuckarooClient($websiteKey, $secretKey, $mode);
+    }
+
+    public function test()
+    {
+        dd($this->buckarooClient);
     }
 }

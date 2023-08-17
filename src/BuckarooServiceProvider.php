@@ -18,18 +18,11 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->setupConfig();
         $this->configurePublishing();
 
         $this->loadRoutesFrom(__DIR__.'/../routes/buckaroo.php');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-    }
-
-    protected function setupConfig()
-    {
-        $source = realpath(__DIR__.'/../config/buckaroo.php');
-
-        $this->mergeConfigFrom($source, 'buckaroo');
+        $this->mergeConfigFrom(__DIR__.'/../config/buckaroo.php', 'buckaroo');
     }
 
     /**
@@ -39,24 +32,27 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerApiAdapter();
+        $this->registerClient();
+        $this->registerManager();
         $this->registerCommands();
     }
 
-    /**
-     * Register the Buckaroo API adapter class.
-     *
-     * @return void
-     */
-    protected function registerApiAdapter()
+    protected function registerClient()
     {
-        $this->app->singleton('buckaroo.api', function (Container $app) {
-            $config = $app['config'];
-
-            return new BuckarooWrapper($config, $app['buckaroo.api.client']);
+        $this->app->singleton('buckaroo.client', function (Container $app) {
+            return new BuckarooWrapper($app['config']);
         });
 
-        $this->app->alias('buckaroo.api', BuckarooWrapper::class);
+        $this->app->alias('buckaroo.client', BuckarooWrapper::class);
+    }
+
+    protected function registerManager()
+    {
+        $this->app->singleton('buckaroo', function (Container $app) {
+            return new BuckarooManager($app);
+        });
+
+        $this->app->alias('buckaroo', BuckarooManager::class);
     }
 
     protected function registerCommands()
@@ -84,5 +80,12 @@ class BuckarooServiceProvider extends ServiceProvider
                 __DIR__ . '/Http' => $this->app->basePath('app/Http'),
             ], ['buckaroo', 'buckaroo-controllers']);
         }
+    }
+
+    public function provides()
+    {
+        return [
+            'buckaroo'
+        ];
     }
 }

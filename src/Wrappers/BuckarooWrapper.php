@@ -20,11 +20,28 @@ class BuckarooWrapper
         $secretKey = $this->config->get('buckaroo.secret_key');
         $mode = $this->config->get('buckaroo.mode');
 
-        $this->buckarooClient = new BuckarooClient($websiteKey, $secretKey, $mode);
+        $this->setBuckarooClient($websiteKey, $secretKey, $mode);
     }
 
-    public function test()
+    public function client()
     {
-        dd($this->buckarooClient);
+        return $this->buckarooClient;
+    }
+
+    public function confirmCredential(): bool
+    {
+        return $this->buckarooClient->confirmCredential();
+    }
+
+    public function updateCredential(string $websiteKey, string $secretKey, string $mode = 'live')
+    {
+        return $this->setBuckarooClient($websiteKey, $secretKey, $mode);
+    }
+
+    public function setBuckarooClient(string $websiteKey, string $secretKey, string $mode)
+    {
+        $this->buckarooClient = new BuckarooClient($websiteKey, $secretKey, $mode);
+
+        return $this;
     }
 }

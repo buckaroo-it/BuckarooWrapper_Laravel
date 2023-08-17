@@ -6,6 +6,6 @@ if (! function_exists('buckaroo')) {
      */
     function buckaroo()
     {
-        return app('buckaroo');
+        return app('buckaroo.client');
     }
 }

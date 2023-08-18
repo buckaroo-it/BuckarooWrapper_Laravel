@@ -28,6 +28,11 @@ class BuckarooWrapper
         return $this->buckarooClient;
     }
 
+    public function method(string $method)
+    {
+        return $this->buckarooClient->method($method);
+    }
+
     public function confirmCredential(): bool
     {
         return $this->buckarooClient->confirmCredential();

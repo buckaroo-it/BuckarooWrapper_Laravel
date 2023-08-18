@@ -26,12 +26,12 @@ class DefaultPayload
             'currency'              => $this->currency(),
             'description'           => $this->description(),
             'clientIP'              => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '',
-            'pushURL'               => route('buckaroo_api.push'),
-            'pushURLFailure'        => route('buckaroo_api.push'),
-            'returnURL'             => route('buckaroo_api.return'),
-            'returnURLCancel'       => route('buckaroo_api.return-cancel'),
-            'returnURLError'        => route('buckaroo_api.return-error'),
-            'returnURLReject'       => route('buckaroo_api.return-reject')
+            'pushURL'               => route('buckaroo.push'),
+            'pushURLFailure'        => route('buckaroo.push'),
+            'returnURL'             => route('buckaroo.return'),
+            'returnURLCancel'       => route('buckaroo.return-cancel'),
+            'returnURLError'        => route('buckaroo.return-error'),
+            'returnURLReject'       => route('buckaroo.return-reject')
         );
 
         $this->payload = array_merge($this->payload, $payload);

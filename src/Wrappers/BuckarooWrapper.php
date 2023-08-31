@@ -2,6 +2,7 @@
 
 namespace Buckaroo\Laravel\Wrappers;
 
+use Buckaroo\Handlers\Reply\ReplyHandler;
 use Illuminate\Contracts\Config\Repository;
 
 
@@ -48,5 +49,13 @@ class BuckarooWrapper
         $this->buckarooClient = new BuckarooClient($websiteKey, $secretKey, $mode);
 
         return $this;
+    }
+
+    public function validateBody(array|string $body, $header = '', $url = ''): bool
+    {
+        $reply_handler = new ReplyHandler($this->buckarooClient->client()->config(), $body,  $header, $url);
+        $reply_handler->validate();
+
+        return $reply_handler->isValid();
     }
 }

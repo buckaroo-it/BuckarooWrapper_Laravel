@@ -2,47 +2,90 @@
 
 namespace Buckaroo\Laravel;
 
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\ServiceProvider;
-use Buckaroo\Laravel\BuckarooApi;
+
+use Buckaroo\Laravel\Wrappers\BuckarooWrapper;
+use Buckaroo\Laravel\Console\PublishCommand;
+use Buckaroo\Laravel\Console\TransactionCommand;
 
 class BuckarooServiceProvider extends ServiceProvider
 {
-
     /**
-     * Bootstrap any application services.
+     * Boot the service provider.
      *
      * @return void
      */
     public function boot()
     {
-        $this->registerMigrations();
-        $this->registerRoutes();
-    }
+        $this->configurePublishing();
 
-    protected function registerRoutes()
-    {
-        $this->loadRoutesFrom(__DIR__ . '/routes/buckaroo.php');
-    }
-
-    protected function registerMigrations()
-    {
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-    }
-
-    protected function registerBuckarooApi()
-    {
-        $this->app->bind('buckaroo', function ($app) {
-            return new BuckarooApi();
-        });
+        $this->loadRoutesFrom(__DIR__.'/../routes/buckaroo.php');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->mergeConfigFrom(__DIR__.'/../config/buckaroo.php', 'buckaroo');
     }
 
     /**
-     * Register any application services.
+     * Register the service provider.
      *
      * @return void
      */
     public function register()
     {
-        $this->registerBuckarooApi();
+        $this->registerClient();
+        $this->registerManager();
+        $this->registerCommands();
+    }
+
+    protected function registerClient()
+    {
+        $this->app->singleton('buckaroo.client', function (Container $app) {
+            return new BuckarooWrapper($app['config']);
+        });
+
+        $this->app->alias('buckaroo.client', BuckarooWrapper::class);
+    }
+
+    protected function registerManager()
+    {
+        $this->app->singleton('buckaroo', function (Container $app) {
+            return new BuckarooManager($app);
+        });
+
+        $this->app->alias('buckaroo', BuckarooManager::class);
+    }
+
+    protected function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                PublishCommand::class,
+                TransactionCommand::class
+            ]);
+        }
+    }
+
+    protected function configurePublishing()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config' => $this->app->basePath('config'),
+            ], ['buckaroo', 'buckaroo-config']);
+
+            $this->publishes([
+                __DIR__ . '/../database' => $this->app->basePath('database'),
+            ], ['buckaroo', 'buckaroo-database']);
+
+            $this->publishes([
+                __DIR__ . '/Http' => $this->app->basePath('app/Http'),
+            ], ['buckaroo', 'buckaroo-controllers']);
+        }
+    }
+
+    public function provides()
+    {
+        return [
+            'buckaroo'
+        ];
     }
 }

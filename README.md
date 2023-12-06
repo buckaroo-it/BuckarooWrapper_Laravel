@@ -3,10 +3,10 @@
   <img src="https://www.buckaroo.nl/media/3877/laravel-logo-github.png" width="250px" position="center">
 </p>
 
-# Laravel Buckaroo Payment Integration
+# (ALPHA) Laravel Buckaroo Payment Integration
 
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3876/laravel-example2.png" width="800px" position="center">
+  <img src="https://www.buckaroo.nl/media/3878/laravel-example3.png" width="800px" position="center">
 </p>
 
 ---
@@ -102,7 +102,7 @@ Find our full documentation online on [dev.buckaroo.nl](https://dev.buckaroo.nl/
 Laravel validation is used to ensure the data passed to the payment method is valid and secure. This validation checks the parameters passed to the payment method and confirms that they are correct and complete. This helps to prevent errors and guarantees that payments are processed accurately.
 
 ```php
-use Buckaroo\Laravel\Payments\CreditCard\CreditCardPayRequest;
+use App\BuckarooLaravelWrapper\src\Http\Requests\Payments\CreditCard\CreditCardPayRequest;
 
     public function preparePayment(CreditCardPayRequest $request)
     {

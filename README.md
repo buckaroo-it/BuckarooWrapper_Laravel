@@ -3,7 +3,7 @@
   <img src="https://www.buckaroo.nl/media/3877/laravel-logo-github.png" width="250px" position="center">
 </p>
 
-# Laravel Buckaroo Payment Integration
+# (ALPHA) Laravel Buckaroo Payment Integration
 
 <p align="center">
   <img src="https://www.buckaroo.nl/media/3878/laravel-example3.png" width="800px" position="center">
@@ -20,7 +20,6 @@
 - [Versioning](#versioning)
 - [Additional information](#additional-information)
 ---
-#THIS PACKAGE IS STILL IN ALPHA PHASE
 
 ### Introduction
 The documentation explains how to integrate Laravel validation with the Buckaroo PHP SDK in your application. Buckaroo is a Payment Service Provider used by many companies to securely handle payments, subscriptions, and invoices. The Buckaroo SDK is a modern, open-source library that makes it easier to integrate Buckaroo's services into PHP apps. The SDK also supports webhooks.

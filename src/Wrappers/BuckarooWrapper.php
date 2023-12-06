@@ -5,7 +5,6 @@ namespace Buckaroo\Laravel\Wrappers;
 use Buckaroo\Handlers\Reply\ReplyHandler;
 use Illuminate\Contracts\Config\Repository;
 
-
 use Buckaroo\BuckarooClient;
 
 class BuckarooWrapper

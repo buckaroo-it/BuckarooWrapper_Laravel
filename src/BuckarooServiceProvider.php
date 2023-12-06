@@ -32,18 +32,18 @@ class BuckarooServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerClient();
+        $this->registerApi();
         $this->registerManager();
         $this->registerCommands();
     }
 
-    protected function registerClient()
+    protected function registerApi()
     {
-        $this->app->singleton('buckaroo.client', function (Container $app) {
+        $this->app->singleton('buckaroo.api', function (Container $app) {
             return new BuckarooWrapper($app['config']);
         });
 
-        $this->app->alias('buckaroo.client', BuckarooWrapper::class);
+        $this->app->alias('buckaroo.api', BuckarooWrapper::class);
     }
 
     protected function registerManager()

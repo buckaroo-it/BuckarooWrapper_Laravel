@@ -21,6 +21,6 @@ class BuckarooManager
      */
     public function client()
     {
-        return $this->app['buckaroo.client'];
+        return $this->app['buckaroo.api'];
     }
 }

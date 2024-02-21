@@ -19,7 +19,7 @@ class BuckarooManager
     /**
      * @return mixed
      */
-    public function client()
+    public function api()
     {
         return $this->app['buckaroo.api'];
     }

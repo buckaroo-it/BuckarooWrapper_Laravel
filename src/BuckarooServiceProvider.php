@@ -73,6 +73,10 @@ class BuckarooServiceProvider extends ServiceProvider
             ], ['buckaroo', 'buckaroo-config']);
 
             $this->publishes([
+                __DIR__ . '/../routes' => $this->app->basePath('routes'),
+            ], ['buckaroo', 'buckaroo-routes']);
+
+            $this->publishes([
                 __DIR__ . '/../database' => $this->app->basePath('database'),
             ], ['buckaroo', 'buckaroo-database']);
 

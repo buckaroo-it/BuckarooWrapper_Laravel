@@ -89,6 +89,11 @@ class DefaultPayload
         return $this->description;
     }
 
+    public function getPayAction()
+    {
+        return 'pay';
+    }
+
     public function __call($method, $args)
     {
         if(method_exists($this, $method))

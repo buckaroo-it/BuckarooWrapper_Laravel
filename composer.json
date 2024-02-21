@@ -2,7 +2,7 @@
     "name": "buckaroo/laravel",
     "description": "Laravel Wrapper package for Buckaroo Payments Gateway",
     "license": "MIT",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "authors": [{
         "name": "Buckaroo",
         "email": "support@buckaroo.nl",
@@ -11,8 +11,8 @@
     }],
     "require": {
         "php": ">=7.4|^8.0",
-        "buckaroo/sdk": "^1.9.0",
-        "illuminate/support": "^v9.48.0"
+        "buckaroo/sdk": "^1.10.0",
+        "illuminate/support": "^9.0|^10.0"
     },
     "require-dev": {
         "graham-campbell/testbench": "^5.0",

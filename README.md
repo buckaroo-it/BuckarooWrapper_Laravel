@@ -3,7 +3,7 @@
   <img src="https://www.buckaroo.nl/media/3877/laravel-logo-github.png" width="250px" position="center">
 </p>
 
-# (ALPHA) Laravel Buckaroo Payment Integration
+# Laravel Buckaroo Payment Integration
 
 <p align="center">
   <img src="https://www.buckaroo.nl/media/3878/laravel-example3.png" width="800px" position="center">

@@ -11,11 +11,12 @@
 
 ---
 ### Index
-- [About](#about)
-- [Requirements](#requirements)
+- [Introduction](#introduction)
+- [Installation](#installation)
 - [Composer Installation](#composer-installation)
-- [Requirements](#requirements)
-- [Example](#example)
+- [Usage](#usage)
+- [Validation](#validation)
+- [Conclusion](#conclusion)
 - [Contribute](#contribute)
 - [Versioning](#versioning)
 - [Additional information](#additional-information)

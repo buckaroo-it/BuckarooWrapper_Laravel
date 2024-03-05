@@ -11,11 +11,12 @@
 
 ---
 ### Index
-- [About](#about)
-- [Requirements](#requirements)
+- [Introduction](#introduction)
+- [Installation](#installation)
 - [Composer Installation](#composer-installation)
-- [Requirements](#requirements)
-- [Example](#example)
+- [Usage](#usage)
+- [Validation](#validation)
+- [Conclusion](#conclusion)
 - [Contribute](#contribute)
 - [Versioning](#versioning)
 - [Additional information](#additional-information)
@@ -35,11 +36,11 @@ To install the Laravel Buckaroo Wrapper, you can use Composer by running the fol
 
 By far the easiest way to install the Laravel Buckaroo client is to require it with [Composer](http://getcomposer.org/doc/00-intro.md).
 
-    $ composer require buckaroo/laravel-buckaroo:^1.0
+    $ composer require buckaroo/laravel:^1.0
 
     {
         "require": {
-            "buckaroo/laravel-laravel": "^1.0"
+            "buckaroo/laravel": "^1.0"
         }
     }
 

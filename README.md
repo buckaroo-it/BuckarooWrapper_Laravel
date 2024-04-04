@@ -58,6 +58,16 @@ BPE_MODE=
 
 You should replace the empty values with the appropriate keys provided by Buckaroo.
 
+### Laravel 11.0
+Add the service provider in your bootstrap/providers.php file:
+```php
+  return [
+      ...,
+      Buckaroo\Laravel\BuckarooServiceProvider::class,
+  ];
+```
+
+### Before Laravel < 11.0
 Add the service provider in your config/app.php file:
 ```php
 Buckaroo\Laravel\BuckarooServiceProvider::class,

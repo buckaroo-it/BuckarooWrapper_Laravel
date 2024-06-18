@@ -2,10 +2,13 @@
 
 namespace Buckaroo\Laravel\Handlers;
 
+use Arr;
+use Buckaroo\Laravel\Contracts\ResponseParserInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Str;
 
-class ResponseParser extends Collection
+abstract class ResponseParser extends Collection implements ResponseParserInterface
 {
     protected Request $request;
 
@@ -15,16 +18,41 @@ class ResponseParser extends Collection
         $this->request = app(Request::class);
     }
 
-    public function getData(): array
+    public static function make($items = [])
     {
-        return $this->items;
+        return collect($items)->filter(fn($item, $key) => Str::startsWith(strtolower($key), 'brq_'))->isEmpty() ?
+            new JsonParser($items) :
+            new FormDataParser($items);
     }
 
-    public function handle(): self
+    public function existingPaymentMethod(?string $defaultMethod = null): ?string
     {
-        return $this->request->header('content-type') === 'application/json' ?
-            JsonParser::make($this->items) :
-            FormDataParser::make($this->items);
+        $method = $this->getPaymentMethod();
+        $paymentMethods = config('buckaroo.payment_methods');
+
+        $findValidPaymentMethod = function (?string $method = null) use ($paymentMethods): ?string {
+            $method = strtolower($method);
+
+            foreach ($paymentMethods as $key => $config) {
+                if ($method === ($value = is_string($config) ? $config : $key)) {
+                    return $value;
+                }
+
+                if (is_array($config)) {
+                    if (in_array($method, Arr::get($config, 'aliases', []))) {
+                        return $key;
+                    }
+
+                    if (in_array($method, Arr::get($config, 'children', []))) {
+                        return $method;
+                    }
+                }
+            }
+
+            return null;
+        };
+
+        return $findValidPaymentMethod($method) ?? $findValidPaymentMethod($defaultMethod);
     }
 
     protected function formatAmount($amount): ?float

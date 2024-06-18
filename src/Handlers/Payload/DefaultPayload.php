@@ -16,7 +16,7 @@ abstract class DefaultPayload implements Arrayable
         $this->payable = $payable;
     }
 
-    public static function make(PayableInterface $payable): DefaultPayload
+    public static function make(PayableInterface $payable): static
     {
         return new static($payable);
     }

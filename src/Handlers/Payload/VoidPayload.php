@@ -15,7 +15,7 @@ class VoidPayload extends DefaultPayload
 
         return array_merge(
             [
-                // 'description' => $this->getTransactionDescription(),
+                'description' => $this->payable->getPaymentSession()->getTransactionDescription(),
                 'invoice' => $this->paidBuckarooTransaction->invoice,
                 'amountCredit' => $this->paidBuckarooTransaction->amount,
                 'currency' => $this->paidBuckarooTransaction->currency,

@@ -2,12 +2,11 @@
 
 namespace Buckaroo\Laravel\Handlers;
 
-use Buckaroo\Laravel\Contracts\ResponseParserInterface;
-use Buckaroo\Laravel\Enums\BuckarooTransactionStatus;
+use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Resources\Constants\ResponseStatus;
 use LogicException;
 
-class JsonParser extends ResponseParser implements ResponseParserInterface
+class JsonParser extends ResponseParser
 {
     public function getAmountDebit(): ?float
     {
@@ -54,19 +53,15 @@ class JsonParser extends ResponseParser implements ResponseParserInterface
         return $this->get('MutationType');
     }
 
-    public function getStatusCode(): ?int
-    {
-        return $this->getDeep('Status.Code.Code');
-    }
-
-    public function getSubStatusCode(): ?string
-    {
-        return $this->getDeep('Status.SubCode.Code');
-    }
-
     public function getSubCodeMessage(): ?string
     {
         return $this->getDeep('Status.SubCode.Description');
+    }
+
+    public function hasRedirect(): bool
+    {
+        return $this->getDeep('RequiredAction.RedirectURL')
+            && $this->getDeep('RequiredAction.Name') == 'Redirect';
     }
 
     public function getTransactionMethod()
@@ -89,9 +84,20 @@ class JsonParser extends ResponseParser implements ResponseParserInterface
         return $this->getService('PaymentMethod');
     }
 
+    public function getService($name)
+    {
+        return collect($this->get('Services'))->firstWhere('Name', $name);
+    }
+
     public function getRelatedTransactionPartialPayment(): ?string
     {
         return $this->getRelatedTransactions('partialpayment');
+    }
+
+    protected function getRelatedTransactions($type = 'refund')
+    {
+        return collect($this->getDeep('RelatedTransactions'))
+            ->firstWhere('RelationType', $type)['RelatedTransactionKey'] ?? null;
     }
 
     public function isRefund(): bool
@@ -104,10 +110,20 @@ class JsonParser extends ResponseParser implements ResponseParserInterface
         return $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_SUCCESS;
     }
 
+    public function getStatusCode(): ?int
+    {
+        return $this->getDeep('Status.Code.Code');
+    }
+
     public function isPendingProcessing(): bool
     {
         return BuckarooTransactionStatus::fromTransactionStatus($this->getStatusCode()) == BuckarooTransactionStatus::STATUS_PENDING ||
             in_array($this->getSubStatusCode(), ['P190', 'P191']);
+    }
+
+    public function getSubStatusCode(): ?string
+    {
+        return $this->getDeep('Status.SubCode.Code');
     }
 
     public function getPayerHash(): ?string
@@ -122,7 +138,7 @@ class JsonParser extends ResponseParser implements ResponseParserInterface
 
     public function getData(): array
     {
-        $key = $this->getDataKey(['Transaction', 'DataRequest']);
+        $key = $this->items['Transaction'] ?? $this->items['DataRequest'] ?? null;
 
         if (!$key) {
             throw new LogicException('Neither `Transaction` nor `DataRequest` provided', 1);
@@ -133,11 +149,6 @@ class JsonParser extends ResponseParser implements ResponseParserInterface
         }
 
         return data_get($this->items, $key);
-    }
-
-    private function getDataKey(array $possibleKeys = [])
-    {
-        return collect($possibleKeys)->first(fn($key) => data_get($this->items, $key));
     }
 
     public function getAdditionalInformation($propertyName)
@@ -152,12 +163,6 @@ class JsonParser extends ResponseParser implements ResponseParserInterface
         return $this->getRelatedTransactions();
     }
 
-    protected function getRelatedTransactions($type = 'refund')
-    {
-        return collect($this->getDeep('RelatedTransactions'))
-            ->firstWhere('RelationType', $type)['RelatedTransactionKey'] ?? null;
-    }
-
     public function getServiceParameter($name, $parameter)
     {
         return data_get(collect($this->getServiceParameters($name))->firstWhere('Name', $parameter), 'Value');
@@ -168,8 +173,8 @@ class JsonParser extends ResponseParser implements ResponseParserInterface
         return collect($this->getService($name))->get('Parameters');
     }
 
-    public function getService($name)
+    public function isTest(): bool
     {
-        return collect($this->get('Services'))->firstWhere('Name', $name);
+        return $this->get('IsTest');
     }
 }

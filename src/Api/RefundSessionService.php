@@ -19,12 +19,11 @@ class RefundSessionService extends BaseService
 
     public function refund(): void
     {
-        $this->refundSessionDto = $this->refundSession->toDto();
-
         if (!isset($this->refundSession)) {
             throw BuckarooClientException::refundSessionNotSet();
         }
 
+        $this->refundSessionDto = $this->refundSession->toDto();
         $refundTransactions = $this->calculateRefundTransactions();
 
         foreach ($refundTransactions as $refundData) {
@@ -37,13 +36,13 @@ class RefundSessionService extends BaseService
         $refundableTransactions = [];
         $paidTransactions = $this->paymentSession
             ->buckarooTransactions()
-            ->with(['refunds' => fn($query) => $query->refunded()])
+            ->with(['refunds' => fn ($query) => $query->refunded()])
             ->paid()
             ->get();
 
         $capturedTransactions = $this->paymentSession
             ->captures()
-            ->with(['buckarooTransactions.refunds' => fn($query) => $query->refunded()])
+            ->with(['buckarooTransactions.refunds' => fn ($query) => $query->refunded()])
             ->get()
             ->pluck('buckarooTransactions')
             ->flatten();
@@ -51,7 +50,7 @@ class RefundSessionService extends BaseService
         $totalRefundAmount = $this->refundSessionDto->amount;
         $transactions = $paidTransactions
             ->merge($capturedTransactions)
-            ->sortBy(fn(BuckarooTransaction $buckarooTransaction) => $buckarooTransaction->getPaymentMethodDTO()?->parent?->serviceCode === 'giftcard')
+            ->sortBy(fn (BuckarooTransaction $buckarooTransaction) => $buckarooTransaction->getPaymentMethodDTO()?->parent?->serviceCode === 'giftcard')
             ->values();
 
         foreach ($transactions as $transaction) {
@@ -106,9 +105,9 @@ class RefundSessionService extends BaseService
         $paymentMethodDTO = $transaction->getPaymentMethodDTO();
 
         return (
-        $paymentMethodDTO->parent ?
-            $paymentMethodDTO->parent->getInstance() :
-            $paymentMethodDTO->getInstance()
+            $paymentMethodDTO->parent ?
+                $paymentMethodDTO->parent->getInstance() :
+                $paymentMethodDTO->getInstance()
         )
             ->setPaymentSession($this->paymentSession)
             ->setRefundSession($this->refundSession);

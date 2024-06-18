@@ -8,6 +8,7 @@ return [
     'mode' => env('BPE_MODE', 'live'),
     'use_noservice' => env('BPE_USE_NOSERVICE', false),
     'transaction_model' => Buckaroo\Laravel\Models\BuckarooTransaction::class,
+    'route_path' => env('BPE_ROUTE_PATH', 'buckaroo'),
     'payment-methods' => [
         'ideal' => [
             'class' => PaymentMethods\Ideal\Ideal::class,

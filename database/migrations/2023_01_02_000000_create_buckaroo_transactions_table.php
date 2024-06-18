@@ -5,7 +5,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class() extends Migration {
+return new class() extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -30,7 +31,7 @@ return new class() extends Migration {
             $table->boolean('test');
             $table->string('currency');
             $table->decimal('amount');
-            $table->enum('status', Arr::pluck(BuckarooTransactionStatus::cases(), 'value'));
+            $table->enum('status', BuckarooTransactionStatus::cases());
             $table->string('service_action');
 
             $table->timestamps();

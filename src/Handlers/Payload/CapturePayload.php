@@ -19,7 +19,7 @@ class CapturePayload extends DefaultPayload
                 'amountDebit' => $this->paidBuckarooTransaction->amount,
                 'currency' => $this->paidBuckarooTransaction->currency,
                 'originalTransactionKey' => $this->paidBuckarooTransaction->transaction_key,
-                // 'description' => $this->getTransactionDescription(),
+                'description' => $this->payable->getPaymentSession()->getTransactionDescription(),
             ],
             $this->payable->getCapturePayload() ?? [],
         );

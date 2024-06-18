@@ -51,4 +51,8 @@ interface ResponseParserInterface
     public function getPayerHash(): ?string;
 
     public function getPaymentKey(): ?string;
+
+    public function isTest(): bool;
+
+    public function hasRedirect(): bool;
 }

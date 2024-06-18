@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\Laravel\Enums;
+namespace Buckaroo\Laravel\Constants;
 
 use Buckaroo\Resources\Constants\ResponseStatus;
 
@@ -15,17 +15,6 @@ class BuckarooTransactionStatus
     const STATUS_FAILED = 'failed';
 
     const STATUS_CANCELLED = 'cancelled';
-
-    public function cases(): array
-    {
-        return [
-            self::STATUS_OPEN,
-            self::STATUS_PENDING,
-            self::STATUS_PAID,
-            self::STATUS_FAILED,
-            self::STATUS_CANCELLED,
-        ];
-    }
 
     public static function fromTransactionStatus(string $status): string
     {
@@ -43,5 +32,16 @@ class BuckarooTransactionStatus
             ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_MERCHANT => self::STATUS_CANCELLED,
             default => self::STATUS_FAILED,
         };
+    }
+
+    public function cases(): array
+    {
+        return [
+            self::STATUS_OPEN,
+            self::STATUS_PENDING,
+            self::STATUS_PAID,
+            self::STATUS_FAILED,
+            self::STATUS_CANCELLED,
+        ];
     }
 }

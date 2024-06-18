@@ -2,10 +2,9 @@
 
 namespace Buckaroo\Laravel\Handlers;
 
-use Buckaroo\Laravel\Contracts\ResponseParserInterface;
-use Buckaroo\Laravel\Enums\BuckarooTransactionStatus;
+use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 
-class FormDataParser extends ResponseParser implements ResponseParserInterface
+class FormDataParser extends ResponseParser
 {
     public function getAmountDebit(): ?float
     {
@@ -20,6 +19,11 @@ class FormDataParser extends ResponseParser implements ResponseParserInterface
     public function getAmount(): ?float
     {
         return $this->formatAmount($this->get('brq_amount'));
+    }
+
+    public function hasRedirect(): bool
+    {
+        return $this->get('brq_redirect_url') === true;
     }
 
     public function getCurrency(): ?string
@@ -50,16 +54,6 @@ class FormDataParser extends ResponseParser implements ResponseParserInterface
     public function getMutationType()
     {
         return $this->get('brq_mutationtype');
-    }
-
-    public function getStatusCode(): ?int
-    {
-        return $this->get('brq_statuscode');
-    }
-
-    public function getSubStatusCode(): ?string
-    {
-        return $this->get('brq_statuscode_detail');
     }
 
     public function getSubCodeMessage(): ?string
@@ -112,10 +106,20 @@ class FormDataParser extends ResponseParser implements ResponseParserInterface
         return BuckarooTransactionStatus::fromTransactionStatus($this->getStatusCode()) == BuckarooTransactionStatus::STATUS_PAID;
     }
 
+    public function getStatusCode(): ?int
+    {
+        return $this->get('brq_statuscode');
+    }
+
     public function isPendingProcessing(): bool
     {
         return BuckarooTransactionStatus::fromTransactionStatus($this->getStatusCode()) == BuckarooTransactionStatus::STATUS_PENDING ||
             in_array($this->getSubStatusCode(), ['P190', 'P191']);
+    }
+
+    public function getSubStatusCode(): ?string
+    {
+        return $this->get('brq_statuscode_detail');
     }
 
     public function getPayerHash(): ?string
@@ -126,5 +130,10 @@ class FormDataParser extends ResponseParser implements ResponseParserInterface
     public function getPaymentKey(): ?string
     {
         return $this->get('brq_payment');
+    }
+
+    public function isTest(): bool
+    {
+        return $this->get('brq_test');
     }
 }

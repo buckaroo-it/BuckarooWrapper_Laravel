@@ -25,8 +25,8 @@ abstract class BaseService
         $paymentSessionDTO = $this->paymentSession->toDto();
 
         return Buckaroo::api()->validCredentials() &&
-            Buckaroo::api()->inTestMode() == $paymentSessionDTO->test &&
-            $this->paymentMethod->getConfig('mode') == ($paymentSessionDTO->test ? 'test' : 'live');
+            Buckaroo::api()->inTestMode() == $paymentSessionDTO->isTest &&
+            $this->paymentMethod->getConfig('mode') == ($paymentSessionDTO->isTest ? 'test' : 'live');
     }
 
     public function setPaymentMethod(PaymentMethodDTO $paymentMethod): self

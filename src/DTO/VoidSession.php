@@ -5,14 +5,13 @@ namespace Buckaroo\Laravel\DTO;
 class VoidSession
 {
     public string $paymentMethod;
-    public bool $test;
+    public bool $isTest;
 
     public function __construct(
         string $paymentMethod,
-        bool   $test,
-    )
-    {
+        bool $isTest,
+    ) {
         $this->paymentMethod = $paymentMethod;
-        $this->test = $test;
+        $this->isTest = $isTest;
     }
 }

@@ -8,7 +8,7 @@ class PaymentSession
     public string $amount;
     public ?string $order;
     public ?string $invoice;
-    public bool $test;
+    public bool $isTest;
     public string $paymentMethod;
     public bool $isAuthorized;
     public string $kind;
@@ -23,7 +23,7 @@ class PaymentSession
         bool     $isAuthorized,
         ?string  $order,
         ?string  $invoice,
-        bool     $test,
+        bool     $isTest,
         Customer $customer,
         ?array   $products,
     )
@@ -35,7 +35,7 @@ class PaymentSession
         $this->invoice = $invoice;
         $this->kind = $kind;
         $this->isAuthorized = $isAuthorized;
-        $this->test = $test;
+        $this->isTest = $isTest;
         $this->customer = $customer;
         $this->products = $products;
     }

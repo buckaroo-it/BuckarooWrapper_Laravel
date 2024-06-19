@@ -28,7 +28,7 @@ return new class() extends Migration
             $table->string('status_subcode_description')->nullable();
             $table->string('order');
             $table->string('invoice');
-            $table->boolean('test');
+            $table->boolean('is_test');
             $table->string('currency');
             $table->decimal('amount');
             $table->enum('status', BuckarooTransactionStatus::cases());

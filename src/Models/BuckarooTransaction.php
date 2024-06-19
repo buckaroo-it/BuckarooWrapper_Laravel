@@ -23,14 +23,14 @@ class BuckarooTransaction extends Model
         'status_subcode_description',
         'order',
         'invoice',
-        'test',
+        'is_test',
         'currency',
         'amount',
         'status',
         'service_action',
     ];
     protected $casts = [
-        'test' => 'boolean',
+        'is_test' => 'boolean',
         'amount' => 'decimal:2',
     ];
 
@@ -47,7 +47,7 @@ class BuckarooTransaction extends Model
             'status_subcode_description' => $transactionResponse->getSubCodeMessage(),
             'order' => $additionalData['order'] ?? $transactionResponse->get('Order'),
             'invoice' => $transactionResponse->getInvoice(),
-            'test' => $transactionResponse->isTest(),
+            'is_test' => $transactionResponse->isTest(),
             'currency' => $transactionResponse->getCurrency(),
             'amount' => $additionalData['amount'] ?? $transactionResponse->getAmount() ?? $transactionResponse->getAmountDebit(),
             'status' => BuckarooTransactionStatus::fromTransactionStatus($transactionResponse->getStatusCode()),

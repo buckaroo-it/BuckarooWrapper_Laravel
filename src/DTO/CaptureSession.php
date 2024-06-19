@@ -7,18 +7,18 @@ class CaptureSession
     public string $currency;
     public string $paymentMethod;
     public string $amount;
-    public bool $test;
+    public bool $isTest;
 
     public function __construct(
         string $paymentMethod,
         string $currency,
         string $amount,
-        bool   $test,
+        bool   $isTest,
     )
     {
         $this->paymentMethod = $paymentMethod;
         $this->currency = $currency;
         $this->amount = $amount;
-        $this->test = $test;
+        $this->isTest = $isTest;
     }
 }

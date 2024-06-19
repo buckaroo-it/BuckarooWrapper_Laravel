@@ -122,11 +122,8 @@ class RefundSessionService extends BaseService
 
     protected function storeBuckarooTransaction(Contracts\ResponseParserInterface $transactionResponse, BuckarooTransaction $paidBuckarooTransaction, array $additionalData = []): BuckarooTransaction
     {
-        $transactionClass = Buckaroo::getTransactionModelClass();
-
-        return $transactionClass::storeFromTransactionResponse(
+        return $this->refundSession->createTxnFromResponse(
             $transactionResponse,
-            $this->refundSession,
             array_merge(
                 [
                     'payment_method_id' => $transactionResponse->getPaymentMethod() ?? $paidBuckarooTransaction->payment_method_id,

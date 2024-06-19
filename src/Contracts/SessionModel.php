@@ -12,4 +12,6 @@ interface SessionModel
     public function buckarooTransactions(): ?MorphMany;
 
     public function getTransactionDescription(): string;
+
+    public function createTxnFromResponse(ResponseParserInterface $transactionResponse, array $additionalData = []);
 }

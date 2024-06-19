@@ -57,11 +57,9 @@ class CaptureSessionService extends BaseService
     public function storeBuckarooTransaction(Contracts\ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
         $authorizedTransaction = $this->captureSession->getAuthorizedBuckarooTransaction();
-        $transactionClass = Buckaroo::getTransactionModelClass();
 
-        return $transactionClass::storeFromTransactionResponse(
+        return $this->captureSession->createTxnFromResponse(
             $transactionResponse,
-            $this->captureSession,
             array_merge(
                 [
                     'order' => $authorizedTransaction->order,

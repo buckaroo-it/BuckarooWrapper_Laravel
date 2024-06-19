@@ -21,7 +21,7 @@ class ReplyHandlerRequest extends FormRequest
         /* @var ResponseParserInterface $data */
         $this->data = ResponseParser::make($this->all());
         $this->transactionClass = Buckaroo::getTransactionModelClass();
-        $transaction = $this->transactionClass::findFromResponse($this->data);
+        $transaction = $this->transactionClass::fromResponse($this->data)->first();
 
         if (!$transaction) {
             $this->message = 'Transaction [' . $this->data->getTransactionKey() . '] not found';

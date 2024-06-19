@@ -4,7 +4,6 @@ namespace Buckaroo\Laravel\Models;
 
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Contracts\ResponseParserInterface;
-use Buckaroo\Laravel\Contracts\SessionModel;
 use Buckaroo\Laravel\DTO\PaymentMethod as PaymentMethodDTO;
 use Buckaroo\Resources\Constants\ResponseStatus;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,44 +33,19 @@ class BuckarooTransaction extends Model
         'amount' => 'decimal:2',
     ];
 
-    public static function storeFromTransactionResponse(ResponseParserInterface $transactionResponse, SessionModel $payable, array $additionalData = [])
+    public function scopeFromResponse($query, ResponseParserInterface $responseParser): void
     {
-        $paymentSessionDto = $payable->toDto();
+        $transactionKey = $responseParser->getTransactionKey();
+        $relatedTransactionKey = $responseParser->getRelatedTransactionPartialPayment();
 
-        return $payable->buckarooTransactions()->create([
-            'payment_method_id' => $additionalData['payment_method_id'] ?? $transactionResponse->existingPaymentMethod($paymentSessionDto->paymentMethod),
-            'related_transaction_key' => $additionalData['related_transaction_key'] ?? $transactionResponse->getRelatedTransactionPartialPayment(),
-            'transaction_key' => $transactionResponse->getTransactionKey(),
-            'status_code' => $transactionResponse->getStatusCode(),
-            'status_subcode' => $transactionResponse->getSubStatusCode(),
-            'status_subcode_description' => $transactionResponse->getSubCodeMessage(),
-            'order' => $additionalData['order'] ?? $transactionResponse->get('Order'),
-            'invoice' => $transactionResponse->getInvoice(),
-            'is_test' => $transactionResponse->isTest(),
-            'currency' => $transactionResponse->getCurrency(),
-            'amount' => $additionalData['amount'] ?? $transactionResponse->getAmount() ?? $transactionResponse->getAmountDebit(),
-            'status' => BuckarooTransactionStatus::fromTransactionStatus($transactionResponse->getStatusCode()),
-            'service_action' => $additionalData['action'],
-        ]);
-    }
-
-    public static function findFromResponse(ResponseParserInterface $responseParser): ?static
-    {
-        $transaction = static::query()
-            ->where('transaction_key', $responseParser->getTransactionKey())
-            ->latest()
-            ->first();
-
-        // orWhere in this case doesn't worked in above query.
-        // because it's bypassing transaction_key condition
-        if (!$transaction && ($relatedTransactionKey = $responseParser->getRelatedTransactionPartialPayment())) {
-            $transaction = static::query()
-                ->where('related_transaction_key', $relatedTransactionKey)
-                ->latest()
-                ->first();
+        if ($transactionKey) {
+            $query->orWhere('transaction_key', $transactionKey);
+            $query->orderByRaw('transaction_key = ? DESC', [$transactionKey]);
         }
 
-        return $transaction;
+        if ($relatedTransactionKey) {
+            $query->orWhere('related_transaction_key', $relatedTransactionKey);
+        }
     }
 
     public function payable()
@@ -129,7 +103,7 @@ class BuckarooTransaction extends Model
     protected function serviceAction(): Attribute
     {
         return Attribute::make(
-            set: fn(mixed $value, array $attributes) => Str::of($value)
+            set: fn (mixed $value, array $attributes) => Str::of($value)
                 ->explode('/')
                 ->unique()
                 ->join('/'),

@@ -73,11 +73,8 @@ class PaymentSessionService extends BaseService
 
     public function storeBuckarooTransaction(Contracts\ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
-        $transactionClass = Buckaroo::getTransactionModelClass();
-
-        return $transactionClass::storeFromTransactionResponse(
+        return $this->paymentSession->createTxnFromResponse(
             $transactionResponse,
-            $this->paymentSession,
             array_merge(
                 [
                     'order' => $additionalData['order'] ?? $transactionResponse->get('Order'),

@@ -56,11 +56,8 @@ class VoidSessionService extends BaseService
 
     public function storeBuckarooTransaction(Contracts\ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
-        $transactionClass = Buckaroo::getTransactionModelClass();
-
-        return $transactionClass::storeFromTransactionResponse(
+        return $this->voidSession->createTxnFromResponse(
             $transactionResponse,
-            $this->voidSession,
             array_merge(
                 [
                     'order' => $this->voidSession->getAuthorizedBuckarooTransaction()->order,

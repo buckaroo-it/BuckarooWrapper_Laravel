@@ -6,10 +6,17 @@ return [
     'website_key' => env('BPE_WEBSITE_KEY', 'XXX'),
     'secret_key' => env('BPE_SECRET_KEY', 'XXX'),
     'mode' => env('BPE_MODE', 'live'),
+
     'use_noservice' => env('BPE_USE_NOSERVICE', false),
+
     'transaction_model' => Buckaroo\Laravel\Models\BuckarooTransaction::class,
-    'route_path' => env('BPE_ROUTE_PATH', 'buckaroo'),
-    'payment-methods' => [
+
+    'routes' => [
+        'load' => env('BPE_LOAD_ROUTES', true),
+        'prefix' => env('BPE_ROUTE_PATH', 'buckaroo'),
+    ],
+
+    'payment_methods' => [
         'ideal' => [
             'class' => PaymentMethods\Ideal\Ideal::class,
         ],
@@ -76,6 +83,8 @@ return [
         ],
         'in3' => [
             'class' => PaymentMethods\In3\In3::class,
+            'old_class' => PaymentMethods\In3\In3Old::class,
+            'new_class' => PaymentMethods\In3\In3New::class,
         ],
         'knaken',
         'blik' => [

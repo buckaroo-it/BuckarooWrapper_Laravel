@@ -2,7 +2,7 @@
 
 namespace Buckaroo\Laravel\DTO;
 
-class VoidSession
+class VoidSession extends BaseData
 {
     public string $paymentMethod;
     public bool $isTest;

@@ -2,17 +2,17 @@
 
 namespace Buckaroo\Laravel\DTO;
 
-class RefundSession
+class RefundSession extends BaseData
 {
     public string $currency;
     public string $paymentMethod;
-    public string $amount;
+    public float $amount;
     public bool $isTest;
 
     public function __construct(
         string $paymentMethod,
         string $currency,
-        string $amount,
+        float $amount,
         bool $isTest,
     ) {
         $this->paymentMethod = $paymentMethod;

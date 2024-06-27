@@ -19,7 +19,7 @@ return new class() extends Migration
             $table->string('payable_id');
             $table->string('payable_type');
 
-            $table->string('payment_method_id');
+            $table->string('payment_method_id')->nullable();
 
             $table->string('transaction_key');
             $table->string('related_transaction_key')->nullable();

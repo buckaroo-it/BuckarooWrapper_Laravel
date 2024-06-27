@@ -4,20 +4,19 @@ namespace Buckaroo\Laravel\DTO;
 
 use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
 
-class PaymentMethod
+class PaymentMethod extends BaseData
 {
-    public string $serviceCode;
+    public ?string $serviceCode;
     public ?PaymentMethod $parent;
     public ?bool $customizable;
     public ?array $configs = [];
 
     public function __construct(
-        string         $serviceCode,
+        ?string $serviceCode = 'noservice',
         ?PaymentMethod $parent = null,
-        ?bool          $customizable = false,
-        ?array         $configs = [],
-    )
-    {
+        ?bool $customizable = false,
+        ?array $configs = [],
+    ) {
         $this->serviceCode = $serviceCode;
         $this->parent = $parent;
         $this->customizable = $customizable;

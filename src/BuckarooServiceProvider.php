@@ -19,7 +19,10 @@ class BuckarooServiceProvider extends ServiceProvider
     {
         $this->configurePublishing();
 
-        $this->loadRoutesFrom(__DIR__ . '/../routes/buckaroo.php');
+        if (config('buckaroo.routes.load')) {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/buckaroo.php');
+        }
+
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->mergeConfigFrom(__DIR__ . '/../config/buckaroo.php', 'buckaroo');
     }
@@ -63,14 +66,14 @@ class BuckarooServiceProvider extends ServiceProvider
 
     protected function registerApi()
     {
-        $this->app->singleton('buckaroo.api', fn(Container $app) => new BuckarooClient($app['config']));
+        $this->app->singleton('buckaroo.api', fn (Container $app) => new BuckarooClient($app['config']));
 
         $this->app->alias('buckaroo.api', BuckarooClient::class);
     }
 
     protected function registerManager()
     {
-        $this->app->singleton('buckaroo', fn(Container $app) => new BuckarooManager($app));
+        $this->app->singleton('buckaroo', fn (Container $app) => new BuckarooManager($app));
 
         $this->app->alias('buckaroo', BuckarooManager::class);
     }

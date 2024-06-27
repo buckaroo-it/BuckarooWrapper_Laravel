@@ -2,7 +2,7 @@
 
 namespace Buckaroo\Laravel\DTO;
 
-class Customer
+class Customer extends BaseData
 {
     public ?string $birthDate = null;
     public ?string $email;
@@ -15,17 +15,16 @@ class Customer
     public ?BillingAddress $shippingAddress;
 
     public function __construct(
-        BillingAddress  $billingAddress,
-        ?BillingAddress $shippingAddress,
-        ?string         $email,
-        ?string         $birthDate,
-        ?string         $locale,
-        ?string         $phoneNumber = null,
-        ?string         $category = null,
-        ?string         $chamberOfCommerce = null,
-        ?string         $customerNumber = null,
-    )
-    {
+        BillingAddress $billingAddress,
+        ?BillingAddress $shippingAddress = null,
+        ?string $email = '',
+        ?string $birthDate = '',
+        ?string $locale = '',
+        ?string $phoneNumber = '',
+        ?string $category = '',
+        ?string $chamberOfCommerce = '',
+        ?string $customerNumber = '',
+    ) {
         $this->birthDate = $birthDate;
         $this->email = $email;
         $this->locale = $locale;

@@ -2,20 +2,19 @@
 
 namespace Buckaroo\Laravel\DTO;
 
-class CaptureSession
+class CaptureSession extends BaseData
 {
     public string $currency;
     public string $paymentMethod;
-    public string $amount;
+    public float $amount;
     public bool $isTest;
 
     public function __construct(
         string $paymentMethod,
         string $currency,
-        string $amount,
-        bool   $isTest,
-    )
-    {
+        float $amount,
+        bool $isTest,
+    ) {
         $this->paymentMethod = $paymentMethod;
         $this->currency = $currency;
         $this->amount = $amount;

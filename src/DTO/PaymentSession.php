@@ -2,32 +2,31 @@
 
 namespace Buckaroo\Laravel\DTO;
 
-class PaymentSession
+class PaymentSession extends BaseData
 {
     public string $currency;
-    public string $amount;
+    public float $amount;
     public ?string $order;
     public ?string $invoice;
     public bool $isTest;
     public string $paymentMethod;
     public bool $isAuthorized;
     public string $kind;
-    public Customer $customer;
-    public ?array $products = [];
+    public ?Customer $customer = null;
+    public array $products = [];
 
     public function __construct(
-        string   $paymentMethod,
+        string $paymentMethod,
         string $currency,
-        string $amount,
-        string   $kind,
-        bool     $isAuthorized,
-        ?string  $order,
-        ?string  $invoice,
-        bool     $isTest,
-        Customer $customer,
-        ?array   $products,
-    )
-    {
+        float $amount,
+        bool $isTest,
+        string $kind,
+        ?bool $isAuthorized = null,
+        ?string $order = '',
+        ?string $invoice = '',
+        ?Customer $customer = null,
+        array $products = [],
+    ) {
         $this->paymentMethod = $paymentMethod;
         $this->currency = $currency;
         $this->amount = $amount;

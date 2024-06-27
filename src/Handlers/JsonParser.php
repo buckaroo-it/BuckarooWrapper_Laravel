@@ -4,7 +4,6 @@ namespace Buckaroo\Laravel\Handlers;
 
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Resources\Constants\ResponseStatus;
-use LogicException;
 
 class JsonParser extends ResponseParser
 {
@@ -20,7 +19,7 @@ class JsonParser extends ResponseParser
 
     public function getAmount(): ?float
     {
-        return $this->formatAmount($this->get('Amount'));
+        return $this->formatAmount($this->get('Amount')) ?? $this->getAmountDebit();
     }
 
     public function getCurrency(): ?string
@@ -136,19 +135,9 @@ class JsonParser extends ResponseParser
         return $this->get('PaymentKey');
     }
 
-    public function getData(): array
+    public function getArrayableItems($items): array
     {
-        $key = $this->items['Transaction'] ?? $this->items['DataRequest'] ?? null;
-
-        if (!$key) {
-            throw new LogicException('Neither `Transaction` nor `DataRequest` provided', 1);
-        }
-
-        if (!is_array(data_get($this->items, $key))) {
-            throw new LogicException("Invalid value for `{$key}`", 1);
-        }
-
-        return data_get($this->items, $key);
+        return parent::getArrayableItems($items['Transaction'] ?? $items['DataRequest'] ?? $items);
     }
 
     public function getAdditionalInformation($propertyName)

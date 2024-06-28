@@ -9,8 +9,6 @@ use Exception;
 
 class CreditCard extends PaymentGatewayHandler implements Capturable
 {
-    protected string $configFormRequest = ConfigFormRequest::class;
-
     public function getServiceCode(): ?string
     {
         return isset($this->refundSession) ? 'creditcard' : 'noservice';

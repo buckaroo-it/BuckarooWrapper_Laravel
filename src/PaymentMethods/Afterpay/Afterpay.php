@@ -11,8 +11,6 @@ class Afterpay extends PaymentGatewayHandler implements Capturable
     use Traits\HasArticles;
     use Traits\HasCustomerDetails;
 
-    protected string $configFormRequest = ConfigFormRequest::class;
-
     public function getPayAction(): ?string
     {
         $paymentSessionDto = $this->paymentSession->toDto();

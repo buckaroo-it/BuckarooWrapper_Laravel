@@ -9,8 +9,6 @@ use Exception;
 
 class GiftCard extends PaymentGatewayHandler
 {
-    protected string $configFormRequest = ConfigFormRequest::class;
-
     public function getRefundPayload(BuckarooTransaction $buckarooTransaction): array
     {
         $customerDTO = $buckarooTransaction->payable->toDto()->customer;

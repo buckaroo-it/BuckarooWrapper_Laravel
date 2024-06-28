@@ -12,8 +12,6 @@ class Billink extends PaymentGatewayHandler implements Capturable
     use HasArticles;
     use HasCustomerDetails;
 
-    protected string $configFormRequest = ConfigFormRequest::class;
-
     public function getPayAction(): ?string
     {
         $paymentSessionDto = $this->paymentSession->toDto();

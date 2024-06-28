@@ -13,8 +13,6 @@ class In3 extends PaymentGatewayHandler
     use HasArticles;
     use HasCustomerDetails;
 
-    protected string $configFormRequest = ConfigFormRequest::class;
-
     public static function make(?PaymentMethodDTO $paymentMethod = null): PaymentMethod
     {
         $class = $paymentMethod?->getConfig('version') == 'v2' ?

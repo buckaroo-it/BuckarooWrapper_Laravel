@@ -80,7 +80,7 @@ class JsonParser extends ResponseParser
 
     public function getPaymentMethod(): ?string
     {
-        return $this->getService('PaymentMethod');
+        return $this->getService('PaymentMethod') ?? $this->get('ServiceCode');
     }
 
     public function getService($name)

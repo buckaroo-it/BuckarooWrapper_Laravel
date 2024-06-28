@@ -63,11 +63,6 @@ class PaymentMethod
         ];
     }
 
-    public function getConfigFormRequest(): DefaultConfigFormRequest
-    {
-        return App::make($this->configFormRequest ?? DefaultConfigFormRequest::class);
-    }
-
     public function getLogo()
     {
         if (isset($this->options['customizable']) && $this->options['customizable']) {

@@ -12,6 +12,7 @@ class ReturnService
 {
     protected BuckarooTransaction $buckarooTransaction;
     protected ResponseParserInterface $responseParser;
+    protected bool $forceProcess = false;
 
     public function handleReturnRequest(ReplyHandlerRequest $request): string
     {
@@ -25,9 +26,16 @@ class ReturnService
         return $this->buckarooTransaction->payable->cancel_url;
     }
 
+    public function forceProcess(bool $force = true): self
+    {
+        $this->forceProcess = $force;
+
+        return $this;
+    }
+
     protected function shouldProcessTransaction(): bool
     {
-        return $this->responseParser->isPendingProcessing() && !$this->buckarooTransaction->isPushAction();
+        return $this->forceProcess || ($this->responseParser->isPendingProcessing() && !$this->buckarooTransaction->isPushAction());
     }
 
     protected function processTransaction(): void

@@ -6,13 +6,13 @@ class BillingAddress extends BaseData
 {
     public string $city;
     public string $line1;
-    public string $line2 = '';
-    public string $company = '';
+    public ?string $line2 = '';
+    public ?string $company = '';
     public string $lastName;
     public string $firstName;
     public string $postalCode;
     public string $countryCode;
-    public string $locale = '';
+    public ?string $locale = '';
 
     public function __construct(
         string $city,
@@ -21,9 +21,9 @@ class BillingAddress extends BaseData
         string $lastName,
         string $postalCode,
         string $countryCode,
-        string $line2 = '',
-        string $company = '',
-        string $locale = '',
+        ?string $line2 = '',
+        ?string $company = '',
+        ?string $locale = '',
     ) {
         $this->city = $city;
         $this->line1 = $line1;

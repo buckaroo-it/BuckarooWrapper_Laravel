@@ -7,8 +7,6 @@ return [
     'secret_key' => env('BPE_SECRET_KEY', 'XXX'),
     'mode' => env('BPE_MODE', 'live'),
 
-    'use_noservice' => env('BPE_USE_NOSERVICE', false),
-
     'transaction_model' => Buckaroo\Laravel\Models\BuckarooTransaction::class,
 
     'routes' => [
@@ -89,6 +87,9 @@ return [
         'knaken',
         'blik' => [
             'class' => PaymentMethods\Blik\Blik::class,
+        ],
+        'noservice' => [
+            'class' => PaymentMethods\NoService\NoService::class,
         ],
     ],
 ];

@@ -29,8 +29,7 @@ class PaymentMethod
         $class = config("buckaroo.payment_methods.{$paymentMethod->serviceCode}.class");
 
         if (!$class || !class_exists($class)) {
-            $defaultClass = config('buckaroo.use_noservice') ? NoService::class : PaymentGatewayHandler::class;
-            $class = new $defaultClass($paymentMethod);
+            $class = PaymentGatewayHandler::class;
         }
 
         return $class::make($paymentMethod);

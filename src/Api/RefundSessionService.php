@@ -3,6 +3,7 @@
 namespace Buckaroo\Laravel\Api;
 
 use Buckaroo\Laravel\Contracts;
+use Buckaroo\Laravel\DTO\PaymentMethod as PaymentMethodDTO;
 use Buckaroo\Laravel\DTO\RefundSession as RefundSessionDTO;
 use Buckaroo\Laravel\Exceptions\BuckarooClientException;
 use Buckaroo\Laravel\Facades\Buckaroo;
@@ -10,6 +11,7 @@ use Buckaroo\Laravel\Handlers\JsonParser;
 use Buckaroo\Laravel\Handlers\Payload\RefundPayload;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
+use Buckaroo\Transaction\Response\TransactionResponse;
 use Exception;
 
 class RefundSessionService extends BaseService
@@ -17,7 +19,7 @@ class RefundSessionService extends BaseService
     protected Contracts\RefundSessionModel $refundSession;
     protected RefundSessionDTO $refundSessionDto;
 
-    public function refund(): void
+    public function refund(): array
     {
         if (!isset($this->refundSession)) {
             throw BuckarooClientException::refundSessionNotSet();
@@ -25,10 +27,13 @@ class RefundSessionService extends BaseService
 
         $this->refundSessionDto = $this->refundSession->toDto();
         $refundTransactions = $this->calculateRefundTransactions();
+        $transactionResponses = [];
 
         foreach ($refundTransactions as $refundData) {
-            $this->processSingleRefund($refundData);
+            $transactionResponses[] = $this->processSingleRefund($refundData);
         }
+
+        return $transactionResponses;
     }
 
     protected function calculateRefundTransactions(): array
@@ -40,17 +45,27 @@ class RefundSessionService extends BaseService
             ->paid()
             ->get();
 
-        $capturedTransactions = $this->paymentSession
-            ->captures()
-            ->with(['buckarooTransactions.refunds' => fn ($query) => $query->refunded()])
-            ->get()
-            ->pluck('buckarooTransactions')
-            ->flatten();
+        $capturedTransactions = $this->paymentSession->captures() == null ?
+            [] :
+            $this->paymentSession
+                ->captures()
+                ->with(['buckarooTransactions.refunds' => fn ($query) => $query->refunded()])
+                ->get()
+                ->pluck('buckarooTransactions')
+                ->flatten();
 
         $totalRefundAmount = $this->refundSessionDto->amount;
         $transactions = $paidTransactions
             ->merge($capturedTransactions)
-            ->sortBy(fn (BuckarooTransaction $buckarooTransaction) => $buckarooTransaction->getPaymentMethodDTO()?->parent?->serviceCode === 'giftcard')
+            ->sortBy(function (BuckarooTransaction $buckarooTransaction) {
+                // place the giftcards at the end of the list,
+                // since the refund needs to be processed through the attached methods first
+                return collect(Buckaroo::getActivePaymentMethods())
+                    ->first(
+                        fn (PaymentMethodDTO $paymentMethod) => $paymentMethod->serviceCode == 'giftcard' &&
+                            in_array($buckarooTransaction->payment_method_id, $paymentMethod->getConfig('enabled_cards', []))
+                    );
+            })
             ->values();
 
         foreach ($transactions as $transaction) {
@@ -76,7 +91,7 @@ class RefundSessionService extends BaseService
         return $refundableTransactions;
     }
 
-    protected function processSingleRefund(array $refundData): void
+    protected function processSingleRefund(array $refundData): TransactionResponse
     {
         $transaction = $refundData['transaction'];
         $amountToRefund = $refundData['amount'];
@@ -98,6 +113,8 @@ class RefundSessionService extends BaseService
         if ($transactionResponse->isFailed()) {
             throw new Exception($transactionResponse->getSubCodeMessage());
         }
+
+        return $transactionResponse;
     }
 
     protected function resolvePaymentGatewayHandler($transaction): PaymentGatewayHandler

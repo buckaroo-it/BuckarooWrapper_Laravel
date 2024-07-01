@@ -5,7 +5,6 @@ namespace Buckaroo\Laravel\Tests;
 use Buckaroo\BuckarooClient;
 use Dotenv\Dotenv;
 use GrahamCampbell\TestBench\AbstractPackageTestCase;
-use Buckaroo\Laravel\BuckarooServiceProvider;
 
 abstract class TestCase extends AbstractPackageTestCase
 {

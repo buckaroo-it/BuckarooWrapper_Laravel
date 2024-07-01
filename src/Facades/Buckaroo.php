@@ -8,9 +8,8 @@ class Buckaroo extends Facade
 {
     /**
      * (Facade) Class Buckaroo.
-     *
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'buckaroo';
     }

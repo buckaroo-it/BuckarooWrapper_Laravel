@@ -26,6 +26,7 @@ class ConfirmingCredentialsTest extends TestCase
 {
     /**
      * @return void
+     *
      * @test
      */
     public function it_tests_given_credentials()

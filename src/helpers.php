@@ -1,8 +1,10 @@
 <?php
 
-if (! function_exists('buckaroo')) {
+use Buckaroo\Laravel\Wrappers\BuckarooClient;
+
+if (!function_exists('buckaroo')) {
     /**
-     * @return \Buckaroo\Laravel\Wrappers\BuckarooWrapper
+     * @return BuckarooClient
      */
     function buckaroo()
     {

@@ -16,10 +16,12 @@ class NoService extends PaymentGatewayHandler
     {
         return [
             'servicesSelectableByClient' => ($methods = collect(Buckaroo::getActivePaymentMethods()))
-                ->map(fn($instance) => $instance->serviceCode)
+                ->map(fn ($instance) => $instance->serviceCode)
                 ->push(
-                    ...$methods->firstWhere('serviceCode', 'cards')?->getConfig('enabled_cards', []),
-                    ...$methods->firstWhere('serviceCode', 'giftcard')?->getConfig('enabled_cards', [])
+                    ...$methods->pluck('configs.enabled_cards')
+                        ->flatten()
+                        ->filter()
+                        ->values()
                 )
                 ->join(','),
             'continueOnIncomplete' => '1',

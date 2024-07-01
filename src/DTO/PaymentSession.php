@@ -10,7 +10,7 @@ class PaymentSession extends BaseData
     public ?string $invoice;
     public bool $isTest;
     public string $paymentMethod;
-    public bool $isAuthorized;
+    public bool $isAuthorized = false;
     public string $kind;
     public ?Customer $customer = null;
     public array $products = [];
@@ -21,7 +21,7 @@ class PaymentSession extends BaseData
         float $amount,
         bool $isTest,
         string $kind,
-        ?bool $isAuthorized = null,
+        ?bool $isAuthorized = false,
         ?string $order = '',
         ?string $invoice = '',
         ?Customer $customer = null,

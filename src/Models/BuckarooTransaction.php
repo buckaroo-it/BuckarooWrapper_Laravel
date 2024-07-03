@@ -53,25 +53,24 @@ class BuckarooTransaction extends Model
         return $this->morphTo();
     }
 
-    public function scopePaid(Builder $query): void
+    public function scopeSuccessfulTransactions(Builder $query): void
     {
         $query->where('status_code', ResponseStatus::BUCKAROO_STATUSCODE_SUCCESS)
-            ->where('status', BuckarooTransactionStatus::STATUS_PAID)
-            ->where('service_action', 'LIKE', '%pay');
+            ->where('status', BuckarooTransactionStatus::STATUS_PAID);
     }
 
-    public function scopeAuthorized(Builder $query): void
+    public function scopeFromAction(Builder $query, string $action): void
     {
-        $query->where('status_code', ResponseStatus::BUCKAROO_STATUSCODE_SUCCESS)
-            ->where('status', BuckarooTransactionStatus::STATUS_PAID)
-            ->where('service_action', 'LIKE', '%authorize');
+        $query->successfulTransactions()->where('service_action', 'LIKE', "%{$action}");
     }
 
-    public function scopeRefunded(Builder $query): void
+    public function scopeCompleted(Builder $query, ?string $action = null): void
     {
-        $query->where('status_code', ResponseStatus::BUCKAROO_STATUSCODE_SUCCESS)
-            ->where('status', BuckarooTransactionStatus::STATUS_PAID)
-            ->where('service_action', 'LIKE', '%refund');
+        if ($action) {
+            $query->fromAction($action);
+        }
+
+        $query->successfulTransactions();
     }
 
     public function getPaymentMethodDTO()
@@ -81,8 +80,12 @@ class BuckarooTransaction extends Model
 
     public function refunds()
     {
-        return $this->hasMany(static::class, 'related_transaction_key', 'transaction_key')
-            ->where('service_action', 'LIKE', '%refund');
+        return $this->hasMany(static::class, 'related_transaction_key', 'transaction_key')->fromAction('refund');
+    }
+
+    public function relatedTransaction()
+    {
+        return $this->hasOne(static::class, 'transaction_key', 'related_transaction_key')->fromAction('paid');
     }
 
     public function isPushAction(): bool

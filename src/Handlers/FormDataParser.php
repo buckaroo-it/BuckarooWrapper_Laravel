@@ -3,6 +3,7 @@
 namespace Buckaroo\Laravel\Handlers;
 
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
+use Buckaroo\Resources\Constants\ResponseStatus;
 
 class FormDataParser extends ResponseParser
 {
@@ -135,5 +136,16 @@ class FormDataParser extends ResponseParser
     public function isTest(): bool
     {
         return $this->get('brq_test');
+    }
+
+    public function isPendingApproval(): bool
+    {
+        return $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_PENDING_APPROVAL;
+    }
+
+    public function isCanceled(): bool
+    {
+        return $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_USER
+            || $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_MERCHANT;
     }
 }

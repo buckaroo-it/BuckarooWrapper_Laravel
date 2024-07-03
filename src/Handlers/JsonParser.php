@@ -166,4 +166,15 @@ class JsonParser extends ResponseParser
     {
         return $this->get('IsTest');
     }
+
+    public function isPendingApproval(): bool
+    {
+        return $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_PENDING_APPROVAL;
+    }
+
+    public function isCanceled(): bool
+    {
+        return $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_USER
+            || $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_MERCHANT;
+    }
 }

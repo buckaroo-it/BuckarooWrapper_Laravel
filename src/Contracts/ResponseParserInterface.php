@@ -48,6 +48,8 @@ interface ResponseParserInterface
 
     public function isPendingProcessing(): bool;
 
+    public function isPendingApproval(): bool;
+
     public function getPayerHash(): ?string;
 
     public function getPaymentKey(): ?string;
@@ -55,4 +57,6 @@ interface ResponseParserInterface
     public function isTest(): bool;
 
     public function hasRedirect(): bool;
+
+    public function isCanceled(): bool;
 }

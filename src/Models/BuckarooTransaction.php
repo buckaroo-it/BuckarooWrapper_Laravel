@@ -5,6 +5,7 @@ namespace Buckaroo\Laravel\Models;
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Contracts\ResponseParserInterface;
 use Buckaroo\Laravel\DTO\PaymentMethod as PaymentMethodDTO;
+use Buckaroo\Laravel\Facades\Buckaroo;
 use Buckaroo\Resources\Constants\ResponseStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -75,7 +76,11 @@ class BuckarooTransaction extends Model
 
     public function getPaymentMethodDTO()
     {
-        return new PaymentMethodDTO(serviceCode: $this->payment_method_id);
+        return collect(Buckaroo::getActivePaymentMethods())
+            ->filter(fn(PaymentMethodDTO $paymentMethod) => $paymentMethod->serviceCode == $this->payment_method_id ||
+                in_array($this->payment_method_id, $paymentMethod->getConfig('enabled_cards', []))
+            )
+            ->first() ?? new PaymentMethodDTO(serviceCode: $this->payment_method_id);
     }
 
     public function refunds()

@@ -41,7 +41,7 @@ class RefundSessionService extends BaseService
         $refundableTransactions = [];
         $paidTransactions = $this->paymentSession
             ->buckarooTransactions()
-            ->with(['refunds' => fn($query) => $query->completed('refunded')])
+            ->with(['refunds' => fn($query) => $query->completed('refund')])
             ->completed('pay')
             ->get();
 
@@ -49,7 +49,7 @@ class RefundSessionService extends BaseService
             [] :
             $this->paymentSession
                 ->captures()
-                ->with(['buckarooTransactions.refunds' => fn($query) => $query->completed('refunded')])
+                ->with(['buckarooTransactions.refunds' => fn($query) => $query->completed('refund')])
                 ->get()
                 ->pluck('buckarooTransactions')
                 ->flatten();
@@ -117,7 +117,7 @@ class RefundSessionService extends BaseService
         return $transactionResponse;
     }
 
-    protected function resolvePaymentGatewayHandler($transaction): PaymentGatewayHandler
+    protected function resolvePaymentGatewayHandler(BuckarooTransaction $transaction): PaymentGatewayHandler
     {
         $paymentMethodDTO = $transaction->getPaymentMethodDTO();
 

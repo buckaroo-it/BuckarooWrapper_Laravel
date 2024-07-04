@@ -61,16 +61,16 @@ class BuckarooTransaction extends Model
 
     public function scopeFromAction(Builder $query, string $action): void
     {
-        $query->successfulTransactions()->where('service_action', 'LIKE', "%{$action}");
+        $query->where('service_action', 'LIKE', "%{$action}");
     }
 
     public function scopeCompleted(Builder $query, ?string $action = null): void
     {
+        $query->successfulTransactions();
+
         if ($action) {
             $query->fromAction($action);
         }
-
-        $query->successfulTransactions();
     }
 
     public function getPaymentMethodDTO()
@@ -85,7 +85,7 @@ class BuckarooTransaction extends Model
 
     public function relatedTransaction()
     {
-        return $this->hasOne(static::class, 'transaction_key', 'related_transaction_key')->fromAction('paid');
+        return $this->hasOne(static::class, 'transaction_key', 'related_transaction_key');
     }
 
     public function isPushAction(): bool

@@ -42,7 +42,7 @@ class RefundSessionService extends BaseService
         $paidTransactions = $this->paymentSession
             ->buckarooTransactions()
             ->with(['refunds' => fn($query) => $query->completed('refunded')])
-            ->completed('paid')
+            ->completed('pay')
             ->get();
 
         $capturedTransactions = $this->paymentSession->captures() == null ?

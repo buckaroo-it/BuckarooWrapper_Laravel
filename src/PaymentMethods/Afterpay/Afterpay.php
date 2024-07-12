@@ -2,51 +2,26 @@
 
 namespace Buckaroo\Laravel\PaymentMethods\Afterpay;
 
-use Buckaroo\Laravel\Contracts\Capturable;
-use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
-use Buckaroo\Laravel\Traits;
+use App\Services\Buckaroo\PaymentMethods\PaymentGatewayHandler;
 
-class Afterpay extends PaymentGatewayHandler implements Capturable
+/**
+ * @method static static setBilling(array $billing)
+ * @method static static setShipping(array $shipping)
+ * @method static static setArticles(array $articles)
+ * @method static array getBilling()
+ * @method static array getShipping()
+ * @method static array getArticles()
+ */
+class Afterpay extends PaymentGatewayHandler
 {
-    use Traits\HasArticles;
-    use Traits\HasCustomerDetails;
+    protected ?string $serviceCode = 'afterpay';
 
     public function getPayAction(): ?string
     {
-        $paymentSessionDto = $this->paymentSession->toDto();
-        if (
-            $paymentSessionDto->kind == 'authorization' &&
-            !$paymentSessionDto->isAuthorized
-        ) {
+        if ($this->shouldAuthorize) {
             return 'authorize';
         }
 
         return parent::getPayAction();
-    }
-
-    public function getServiceCode(): ?string
-    {
-        return 'afterpay';
-    }
-
-    public function getPayload(): array
-    {
-        return [
-            'order' => $this->paymentSessionDTO->order,
-            'invoice' => $this->paymentSessionDTO->invoice,
-            'billing' => $this->getCustomerDetails('billing'),
-            'shipping' => $this->getCustomerDetails('shipping'),
-            'articles' => $this->getArticlesPayload(),
-        ];
-    }
-
-    public function getDefaultConfigs(): array
-    {
-        return [...parent::getDefaultConfigs(), 'show_financial_warning' => true];
-    }
-
-    public function getCapturePayload(): array
-    {
-        return [];
     }
 }

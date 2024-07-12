@@ -2,49 +2,57 @@
 
 namespace Buckaroo\Laravel\Api;
 
-use Buckaroo\Laravel\Contracts;
-use Buckaroo\Laravel\DTO\PaymentMethod as PaymentMethodDTO;
+use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Facades\Buckaroo;
+use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
-use Buckaroo\Transaction\Response\TransactionResponse;
+use Closure;
 
 abstract class BaseService
 {
-    protected array $payload = [];
-    protected PaymentGatewayHandler $paymentGatewayHandler;
-    protected PaymentMethodDTO $paymentMethod;
-    protected Contracts\PaymentSessionModel $paymentSession;
+    protected PaymentGatewayHandler $paymentGateway;
+    protected array $events = [
+        'buckaroo-txn:created' => null,
+    ];
 
-    public static function make(): static
+    public function __construct(PaymentGatewayHandler $paymentGateway)
     {
-        return new static();
+        $this->paymentGateway = $paymentGateway;
     }
 
-    public function isRequestValid(): bool
+    public static function make(PaymentGatewayHandler $paymentGateway): static
     {
-        $paymentSessionDTO = $this->paymentSession->toDto();
-
-        return Buckaroo::api()->validCredentials() &&
-            Buckaroo::api()->inTestMode() == $paymentSessionDTO->isTest &&
-            $this->paymentMethod->getConfig('mode') == ($paymentSessionDTO->isTest ? 'test' : 'live');
+        return new static($paymentGateway);
     }
 
-    public function setPaymentMethod(PaymentMethodDTO $paymentMethod): self
+    public function eventListen(string $event, Closure $closure): static
     {
-        $this->paymentMethod = $paymentMethod;
+        $this->events[$event] = $closure;
 
         return $this;
     }
 
-    public function setPaymentSession(Contracts\PaymentSessionModel $paymentSession): self
+    public function eventDispatch(string $event, ...$args): static
     {
-        $this->paymentSession = $paymentSession;
+        value($this->events[$event], ...$args);
 
         return $this;
     }
 
-    protected function createRedirectTransactionResponse(string $redirectUrl): TransactionResponse
+    public function storeBuckarooTransaction(\Buckaroo\Laravel\Handlers\ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
-        return new TransactionResponse([], ['RequiredAction' => ['RedirectURL' => $redirectUrl, 'Name' => 'Redirect']]);
+        return Buckaroo::getTransactionModelClass()::create([
+            'payment_method_id' => $transactionResponse->getPaymentMethod(),
+            'transaction_key' => $transactionResponse->getTransactionKey(),
+            'status_code' => $transactionResponse->getStatusCode(),
+            'status_subcode' => $transactionResponse->getSubStatusCode(),
+            'status_subcode_description' => $transactionResponse->getSubCodeMessage(),
+            'order' => $transactionResponse->get('Order'),
+            'invoice' => $transactionResponse->getInvoice(),
+            'is_test' => $transactionResponse->isTest(),
+            'currency' => $transactionResponse->getCurrency(),
+            'status' => BuckarooTransactionStatus::fromTransactionStatus($transactionResponse->getStatusCode()),
+            ...$additionalData,
+        ]);
     }
 }

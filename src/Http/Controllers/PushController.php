@@ -7,8 +7,8 @@ use Buckaroo\Laravel\PaymentProcessing\PushService;
 
 class PushController
 {
-    public function __invoke(ReplyHandlerRequest $request, PushService $pushService)
+    public function __invoke(ReplyHandlerRequest $request)
     {
-        return $pushService->handlePushRequest($request);
+        return PushService::make()->handlePushRequest($request);
     }
 }

@@ -16,8 +16,6 @@ return new class() extends Migration
     {
         Schema::create('buckaroo_transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('payable_id');
-            $table->string('payable_type');
 
             $table->string('payment_method_id')->nullable();
 
@@ -26,8 +24,8 @@ return new class() extends Migration
             $table->string('status_code');
             $table->string('status_subcode')->nullable();
             $table->string('status_subcode_description')->nullable();
-            $table->string('order');
-            $table->string('invoice');
+            $table->string('order')->nullable();
+            $table->string('invoice')->nullable();
             $table->boolean('is_test');
             $table->string('currency');
             $table->decimal('amount');

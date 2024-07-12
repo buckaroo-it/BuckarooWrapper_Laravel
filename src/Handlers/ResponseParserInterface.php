@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\Laravel\Contracts;
+namespace Buckaroo\Laravel\Handlers;
 
 interface ResponseParserInterface
 {

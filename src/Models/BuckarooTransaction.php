@@ -3,9 +3,8 @@
 namespace Buckaroo\Laravel\Models;
 
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
-use Buckaroo\Laravel\Contracts\ResponseParserInterface;
-use Buckaroo\Laravel\DTO\PaymentMethod as PaymentMethodDTO;
-use Buckaroo\Laravel\Facades\Buckaroo;
+use Buckaroo\Laravel\Handlers\BuckarooPayloadFactory;
+use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Resources\Constants\ResponseStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -49,11 +48,6 @@ class BuckarooTransaction extends Model
         }
     }
 
-    public function payable()
-    {
-        return $this->morphTo();
-    }
-
     public function scopeSuccessfulTransactions(Builder $query): void
     {
         $query->where('status_code', ResponseStatus::BUCKAROO_STATUSCODE_SUCCESS)
@@ -72,15 +66,6 @@ class BuckarooTransaction extends Model
         if ($action) {
             $query->fromAction($action);
         }
-    }
-
-    public function getPaymentMethodDTO()
-    {
-        return collect(Buckaroo::getActivePaymentMethods())
-            ->filter(fn(PaymentMethodDTO $paymentMethod) => $paymentMethod->serviceCode == $this->payment_method_id ||
-                in_array($this->payment_method_id, $paymentMethod->getConfig('enabled_cards', []))
-            )
-            ->first() ?? new PaymentMethodDTO(serviceCode: $this->payment_method_id);
     }
 
     public function refunds()
@@ -116,5 +101,10 @@ class BuckarooTransaction extends Model
                 ->unique()
                 ->join('/'),
         );
+    }
+
+    public function getPaymentGateway()
+    {
+        return BuckarooPayloadFactory::getPayload($this->payment_method_id);
     }
 }

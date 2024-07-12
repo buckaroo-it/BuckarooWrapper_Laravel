@@ -2,24 +2,24 @@
 
 namespace Buckaroo\Laravel\PaymentProcessing;
 
-use Buckaroo\Laravel\Api\PaymentSessionService;
+use Buckaroo\Laravel\Api\PayService;
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
-use Buckaroo\Laravel\Contracts\ResponseParserInterface;
-use Buckaroo\Laravel\DTO\PaymentMethod as PaymentMethodDTO;
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
 use Buckaroo\Laravel\Events\RefundTransactionCompleted;
+use Buckaroo\Laravel\Facades\Buckaroo;
 use Buckaroo\Laravel\Handlers\ResponseParser;
+use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Http\Requests\ReplyHandlerRequest;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Resources\Constants\ResponseStatus;
 
 class PushService
 {
-    protected PaymentSessionService $paymentSessionService;
+    protected PayService $paymentSessionService;
     protected BuckarooTransaction $buckarooTransaction;
     protected ResponseParserInterface $responseParser;
 
-    public function __construct(PaymentSessionService $paymentSessionService)
+    public function __construct(PayService $paymentSessionService)
     {
         $this->paymentSessionService = $paymentSessionService;
     }
@@ -38,28 +38,31 @@ class PushService
         return ['status' => true];
     }
 
+    public static function make(): static
+    {
+        return new static(app(PayService::class));
+    }
+
     private function handlePayAction()
     {
-        $paymentMethodDTO = $this->buckarooTransaction->getPaymentMethodDTO();
-
         if ($this->buckarooTransaction->transaction_key == $this->responseParser->getTransactionKey()) {
             $this->updateTransaction();
-            $this->processPaymentSession($paymentMethodDTO);
-        } elseif ($relatedTransactionKey = $this->responseParser->getRelatedTransactionPartialPayment()) {
-            $this->handleRelatedTransaction($paymentMethodDTO, $relatedTransactionKey);
+        } elseif ($this->responseParser->getRelatedTransactionPartialPayment() && $this->relatedTransactionDoesntExists()) {
+            $this->handleRelatedTransaction();
         }
 
         if ($this->responseParser->getStatusCode() != ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_USER) {
-            event(new PayTransactionCompleted($this->buckarooTransaction->payable, $this->buckarooTransaction, $this->responseParser));
+            event(new PayTransactionCompleted(
+                $this->buckarooTransaction,
+                $this->responseParser
+            ));
         }
     }
 
-    private function updateTransaction(array $additionalData = [])
+    protected function updateTransaction(array $additionalData = [])
     {
-        $paymentMethodId = $this->responseParser->existingPaymentMethod($this->buckarooTransaction->payment_method_id);
-
         return $this->buckarooTransaction->update([
-            'payment_method_id' => $paymentMethodId,
+            'payment_method_id' => $this->responseParser->getPaymentMethod(),
             'amount' => $this->responseParser->getAmount(),
             'status_code' => $this->responseParser->getStatusCode(),
             'status_subcode' => $this->responseParser->getSubStatusCode(),
@@ -71,35 +74,23 @@ class PushService
         ]);
     }
 
-    private function processPaymentSession(PaymentMethodDTO $paymentMethodDTO)
+    protected function relatedTransactionDoesntExists()
     {
-        $this->paymentSessionService
-            ->setPaymentMethod($paymentMethodDTO)
-            ->setPaymentSession($this->buckarooTransaction->payable)
-            ->beginPay()
-            ->checkForAuthorization($this->responseParser);
+        return Buckaroo::getTransactionModelClass()::query()
+            ->whereRelatedTransactionKey($this->responseParser->getRelatedTransactionPartialPayment())
+            ->whereTransactionKey($this->responseParser->getTransactionKey())
+            ->doesntExist();
     }
 
-    private function handleRelatedTransaction(PaymentMethodDTO $paymentMethodDTO, string $relatedTransactionKey)
+    protected function handleRelatedTransaction()
     {
-        if ($paymentMethodDTO) {
-            $this->paymentSessionService->setPaymentMethod($paymentMethodDTO);
-        }
+        $transaction = $this->paymentSessionService->storeBuckarooTransaction($this->responseParser);
+        $transaction->update([
+            'action' => "push/{$this->buckarooTransaction->service_action}",
+            'order' => $this->buckarooTransaction->order,
+        ]);
 
-        if (
-            $this->buckarooTransaction->payable
-                ->buckarooTransactions()
-                ->whereRelatedTransactionKey($relatedTransactionKey)
-                ->whereTransactionKey($this->responseParser->getTransactionKey())
-                ->doesntExist()
-        ) {
-            $this->paymentSessionService
-                ->setPaymentSession($this->buckarooTransaction->payable)
-                ->storeBuckarooTransaction($this->responseParser, [
-                    'action' => "push/{$this->buckarooTransaction->service_action}",
-                    'order' => $this->buckarooTransaction->order,
-                ]);
-        }
+        return $transaction;
     }
 
     private function handleRefundAction()
@@ -113,6 +104,6 @@ class PushService
             return ['status' => true];
         }
 
-        event(new RefundTransactionCompleted($this->buckarooTransaction->payable, $this->buckarooTransaction, $this->responseParser));
+        event(new RefundTransactionCompleted($this->buckarooTransaction, $this->responseParser));
     }
 }

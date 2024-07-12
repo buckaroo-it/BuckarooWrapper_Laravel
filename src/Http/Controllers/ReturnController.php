@@ -7,8 +7,8 @@ use Buckaroo\Laravel\PaymentProcessing\ReturnService;
 
 class ReturnController
 {
-    public function __invoke(ReplyHandlerRequest $request, ReturnService $returnService)
+    public function __invoke(ReplyHandlerRequest $request)
     {
-        return redirect($returnService->handleReturnRequest($request));
+        return ReturnService::make()->handleReturnRequest($request);
     }
 }

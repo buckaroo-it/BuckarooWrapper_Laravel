@@ -2,8 +2,7 @@
 
 namespace Buckaroo\Laravel\Events;
 
-use Buckaroo\Laravel\Contracts\RefundSessionModel;
-use Buckaroo\Laravel\Contracts\ResponseParserInterface;
+use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Transaction\Response\TransactionResponse;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -14,7 +13,6 @@ class RefundTransactionCompleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public RefundSessionModel $refundSession;
     public ResponseParserInterface|TransactionResponse $transaction;
     public BuckarooTransaction $buckarooTransaction;
 
@@ -23,9 +21,8 @@ class RefundTransactionCompleted
      *
      * @return void
      */
-    public function __construct(RefundSessionModel $refundSession, BuckarooTransaction $buckarooTransaction, ResponseParserInterface|TransactionResponse $transaction)
+    public function __construct(BuckarooTransaction $buckarooTransaction, ResponseParserInterface|TransactionResponse $transaction)
     {
-        $this->refundSession = $refundSession;
         $this->buckarooTransaction = $buckarooTransaction;
         $this->transaction = $transaction;
     }

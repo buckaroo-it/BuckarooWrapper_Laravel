@@ -2,8 +2,7 @@
 
 namespace Buckaroo\Laravel\Events;
 
-use Buckaroo\Laravel\Contracts\CaptureSessionModel;
-use Buckaroo\Laravel\Contracts\ResponseParserInterface;
+use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Transaction\Response\TransactionResponse;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -14,7 +13,6 @@ class CaptureTransactionCompleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public CaptureSessionModel $captureSession;
     public ResponseParserInterface|TransactionResponse $transaction;
     public BuckarooTransaction $buckarooTransaction;
 
@@ -23,9 +21,8 @@ class CaptureTransactionCompleted
      *
      * @return void
      */
-    public function __construct(CaptureSessionModel $captureSession, BuckarooTransaction $buckarooTransaction, ResponseParserInterface|TransactionResponse $transaction)
+    public function __construct(BuckarooTransaction $buckarooTransaction, ResponseParserInterface|TransactionResponse $transaction)
     {
-        $this->captureSession = $captureSession;
         $this->buckarooTransaction = $buckarooTransaction;
         $this->transaction = $transaction;
     }

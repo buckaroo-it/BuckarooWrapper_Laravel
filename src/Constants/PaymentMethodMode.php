@@ -10,7 +10,7 @@ class PaymentMethodMode
 
     const DISABLED = 'disabled';
 
-    public static function getAllModes(): array
+    public static function cases(): array
     {
         return [
             self::TEST,

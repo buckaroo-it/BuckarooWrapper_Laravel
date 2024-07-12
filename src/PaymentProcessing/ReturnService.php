@@ -2,9 +2,9 @@
 
 namespace Buckaroo\Laravel\PaymentProcessing;
 
-use Buckaroo\Laravel\Contracts\ResponseParserInterface;
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
 use Buckaroo\Laravel\Handlers\ResponseParser;
+use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Http\Requests\ReplyHandlerRequest;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 
@@ -14,7 +14,7 @@ class ReturnService
     protected ResponseParserInterface $responseParser;
     protected bool $forceProcess = false;
 
-    public function handleReturnRequest(ReplyHandlerRequest $request): string
+    public function handleReturnRequest(ReplyHandlerRequest $request): BuckarooTransaction
     {
         $this->responseParser = ResponseParser::make($request->all());
         $this->buckarooTransaction = $request->getBuckarooTransaction();
@@ -23,14 +23,12 @@ class ReturnService
             $this->processTransaction();
         }
 
-        return $this->buckarooTransaction->payable->cancel_url;
+        return $this->buckarooTransaction;
     }
 
-    public function forceProcess(bool $force = true): self
+    public static function make(): static
     {
-        $this->forceProcess = $force;
-
-        return $this;
+        return new static();
     }
 
     protected function shouldProcessTransaction(): bool
@@ -41,7 +39,6 @@ class ReturnService
     protected function processTransaction(): void
     {
         event(new PayTransactionCompleted(
-            $this->buckarooTransaction->payable,
             $this->buckarooTransaction,
             $this->responseParser
         ));
@@ -55,5 +52,12 @@ class ReturnService
             'service_action' => "return/{$this->buckarooTransaction->service_action}",
             ...$additionalData,
         ]);
+    }
+
+    public function forceProcess(bool $force = true): self
+    {
+        $this->forceProcess = $force;
+
+        return $this;
     }
 }

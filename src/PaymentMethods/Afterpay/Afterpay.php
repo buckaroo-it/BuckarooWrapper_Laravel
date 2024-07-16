@@ -2,7 +2,7 @@
 
 namespace Buckaroo\Laravel\PaymentMethods\Afterpay;
 
-use App\Services\Buckaroo\PaymentMethods\PaymentGatewayHandler;
+use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
 
 class Afterpay extends PaymentGatewayHandler
 {

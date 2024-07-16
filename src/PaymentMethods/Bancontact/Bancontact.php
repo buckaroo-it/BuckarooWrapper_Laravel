@@ -2,7 +2,7 @@
 
 namespace Buckaroo\Laravel\PaymentMethods\Bancontact;
 
-use App\Services\Buckaroo\PaymentMethods\PaymentGatewayHandler;
+use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
 
 class Bancontact extends PaymentGatewayHandler
 {

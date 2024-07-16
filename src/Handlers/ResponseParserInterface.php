@@ -59,4 +59,6 @@ interface ResponseParserInterface
     public function hasRedirect(): bool;
 
     public function isCanceled(): bool;
+
+    public function isAwaitingConsumer(): bool;
 }

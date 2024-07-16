@@ -148,4 +148,9 @@ class FormDataParser extends ResponseParser
         return $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_USER
             || $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_MERCHANT;
     }
+
+    public function isAwaitingConsumer(): bool
+    {
+        return $this->getStatusCode() == ResponseStatus::BUCKAROO_STATUSCODE_WAITING_ON_CONSUMER;
+    }
 }

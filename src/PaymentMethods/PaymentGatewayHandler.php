@@ -9,6 +9,7 @@ use Str;
 /**
  * @method static string getCurrency()
  * @method static float getAmountDebit()
+ * @method static float getAmountCredit()
  * @method static string getDescription()
  * @method static string getOrder()
  * @method static string getInvoice()
@@ -17,6 +18,7 @@ use Str;
  * @method static string getClientIP()
  * @method static static setCurrency(string $currency)
  * @method static static setAmountDebit(float $amountDebit)
+ * @method static static setAmountCredit(float $amountDebit)
  * @method static static setDescription(string $description)
  * @method static static setOrder(string $order)
  * @method static static setInvoice(string $invoice)
@@ -26,7 +28,7 @@ use Str;
  */
 class PaymentGatewayHandler implements Arrayable
 {
-    protected ?string $serviceCode;
+    protected ?string $serviceCode = null;
     protected array $payload = [];
     protected bool $shouldAuthorize = false;
 

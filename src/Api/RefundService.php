@@ -35,7 +35,7 @@ class RefundService extends BaseService
 
     protected function calculateRefundTransactions(): array
     {
-        $totalRefundAmount = round($this->paymentGateway->getAmountDebit(), 2);
+        $totalRefundAmount = round($this->paymentGateway->getAmountCredit(), 2);
         $refundableTransactions = [];
 
         foreach ($this->paidTransactions as $transaction) {
@@ -60,14 +60,7 @@ class RefundService extends BaseService
         return $refundableTransactions;
     }
 
-    public function buckarooRefund($transaction): TransactionResponse
-    {
-        return Buckaroo::api()
-            ->method($this->paymentGateway->getServiceCode())
-            ->{$this->paymentGateway->getRefundAction()}($this->paymentGateway->toArray());
-    }
-
-    protected function processSingleRefund(array $refundData): TransactionResponse
+    protected function processSingleRefund(array $refundData): array
     {
         $transaction = $refundData['transaction'];
         $amountToRefund = $refundData['amount'];
@@ -80,13 +73,19 @@ class RefundService extends BaseService
         $transactionResponse = $this->buckarooRefund($transaction);
 
         $buckarooTransaction = $this->storeBuckarooTransaction(JsonParser::make($transactionResponse->toArray()));
-        $this->eventDispatch('buckaroo-txn:created', $buckarooTransaction, $transactionResponse);
 
         if ($transactionResponse->isFailed()) {
             throw new Exception($transactionResponse->getSubCodeMessage());
         }
 
-        return $transactionResponse;
+        return [$buckarooTransaction, $transactionResponse];
+    }
+
+    public function buckarooRefund($transaction): TransactionResponse
+    {
+        return Buckaroo::api()
+            ->method($this->paymentGateway->getServiceCode())
+            ->{$this->paymentGateway->getRefundAction()}($this->paymentGateway->toArray());
     }
 
     public function storeBuckarooTransaction(ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction

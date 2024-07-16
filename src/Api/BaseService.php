@@ -6,14 +6,10 @@ use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Facades\Buckaroo;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
-use Closure;
 
 abstract class BaseService
 {
     protected PaymentGatewayHandler $paymentGateway;
-    protected array $events = [
-        'buckaroo-txn:created' => null,
-    ];
 
     public function __construct(PaymentGatewayHandler $paymentGateway)
     {
@@ -23,20 +19,6 @@ abstract class BaseService
     public static function make(PaymentGatewayHandler $paymentGateway): static
     {
         return new static($paymentGateway);
-    }
-
-    public function eventListen(string $event, Closure $closure): static
-    {
-        $this->events[$event] = $closure;
-
-        return $this;
-    }
-
-    public function eventDispatch(string $event, ...$args): static
-    {
-        value($this->events[$event], ...$args);
-
-        return $this;
     }
 
     public function storeBuckarooTransaction(\Buckaroo\Laravel\Handlers\ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction

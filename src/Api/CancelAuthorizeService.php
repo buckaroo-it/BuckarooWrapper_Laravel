@@ -27,7 +27,6 @@ class CancelAuthorizeService extends BaseService
             ->cancelAuthorize($this->paymentGateway->toArray());
 
         $buckarooTransaction = $this->storeBuckarooTransaction(JsonParser::make($transactionResponse->toArray()));
-        $this->eventDispatch('buckaroo-txn:created', $buckarooTransaction, $transactionResponse);
 
         return [$transactionResponse, $buckarooTransaction];
     }

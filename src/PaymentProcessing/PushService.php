@@ -29,7 +29,7 @@ class PushService
         $this->responseParser = ResponseParser::make($request->all());
         $this->buckarooTransaction = $request->getBuckarooTransaction();
 
-        if ($this->buckarooTransaction->hasServiceAction('pay')) {
+        if ($this->buckarooTransaction->hasServiceAction('pay') || $this->buckarooTransaction->hasServiceAction('authorize')) {
             $this->handlePayAction();
         } elseif ($this->buckarooTransaction->hasServiceAction('refund')) {
             $this->handleRefundAction();

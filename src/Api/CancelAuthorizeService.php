@@ -5,6 +5,7 @@ namespace Buckaroo\Laravel\Api;
 use Buckaroo\Laravel\Events\VoidTransactionCompleted;
 use Buckaroo\Laravel\Facades\Buckaroo;
 use Buckaroo\Laravel\Handlers\JsonParser;
+use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Transaction\Response\TransactionResponse;
 
@@ -31,7 +32,7 @@ class CancelAuthorizeService extends BaseService
         return [$transactionResponse, $buckarooTransaction];
     }
 
-    public function storeBuckarooTransaction(\Buckaroo\Laravel\Handlers\ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
+    public function storeBuckarooTransaction(ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
         return parent::storeBuckarooTransaction($transactionResponse, [
             'related_transaction_key' => $transactionResponse->getRelatedTransactionPartialPayment(),

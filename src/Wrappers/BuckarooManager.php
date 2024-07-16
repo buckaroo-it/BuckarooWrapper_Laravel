@@ -11,8 +11,6 @@ class BuckarooManager
      */
     protected $app;
 
-    protected array $paymentMethods;
-
     public function __construct(Container $app)
     {
         $this->app = $app;

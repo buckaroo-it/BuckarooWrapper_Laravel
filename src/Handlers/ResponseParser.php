@@ -18,14 +18,14 @@ abstract class ResponseParser extends Collection implements ResponseParserInterf
 
     public static function make($items = [])
     {
-        return collect($items)->filter(fn($item, $key) => Str::startsWith(strtolower($key), 'brq_'))->isEmpty() ?
+        return collect($items)->filter(fn ($item, $key) => Str::startsWith(strtolower($key), 'brq_'))->isEmpty() ?
             new JsonParser($items) :
             new FormDataParser($items);
     }
 
     protected function formatAmount($amount): ?float
     {
-        return is_numeric($amount) ? (float)$amount : null;
+        return is_numeric($amount) ? (float) $amount : null;
     }
 
     protected function getDeep($key = null, $default = null)

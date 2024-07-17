@@ -12,15 +12,15 @@
 
 ### Index
 
-- [Introduction](#introduction)
-- [Installation](#installation)
-- [Composer Installation](#composer-installation)
-- [Usage](#usage)
-- [Validation](#validation)
-- [Conclusion](#conclusion)
-- [Contribute](#contribute)
-- [Versioning](#versioning)
-- [Additional information](#additional-information)
+-   [Introduction](#introduction)
+-   [Installation](#installation)
+-   [Composer Installation](#composer-installation)
+-   [Usage](#usage)
+-   [Validation](#validation)
+-   [Conclusion](#conclusion)
+-   [Contribute](#contribute)
+-   [Versioning](#versioning)
+-   [Additional information](#additional-information)
 
 ---
 
@@ -35,10 +35,10 @@ SDK also supports webhooks.
 
 To install the Laravel Buckaroo Wrapper, you can use Composer by running the following command:
 
-+ A Buckaroo account ([Dutch](https://www.buckaroo.nl/start)
-  or [English](https://www.buckaroo.eu/solutions/request-form))
-+ PHP >= 7.4
-+ Up-to-date OpenSSL (or other SSL/TLS toolkit)
+-   A Buckaroo account ([Dutch](https://www.buckaroo.nl/start)
+    or [English](https://www.buckaroo.eu/solutions/request-form))
+-   PHP >= 7.4
+-   Up-to-date OpenSSL (or other SSL/TLS toolkit)
 
 ### Composer Installation
 
@@ -56,7 +56,7 @@ with [Composer](http://getcomposer.org/doc/00-intro.md).
 ### Usage
 
 Create and config the Buckaroo object.
-You can find your credentials in plaza  [WEBSITE_KEY](https://plaza.buckaroo.nl/Configuration/Website/Index/)
+You can find your credentials in plaza [WEBSITE_KEY](https://plaza.buckaroo.nl/Configuration/Website/Index/)
 and [SECRET_KEY](https://admin.buckaroo.nl/Configuration/Merchant/SecretKey)
 
 In order to use the Laravel Buckaroo Wrapper in your application, you need to add the following parameters to your .env
@@ -113,6 +113,7 @@ The method method is called with the argument "creditcard", which indicates that
 card.
 
 The pay method is called with an associative array as its argument, which contains the details of the payment.
+
 <ul>
 <li><b>name:</b> the name of the credit card payment method (e.g. "visa").</li>
 <li><b>amountDebit:</b> the amount of the payment.</li>
@@ -185,14 +186,14 @@ If you want to contribute as well, then please follow our [Contribution Guidelin
   <img src="https://user-images.githubusercontent.com/7081446/178474134-f4c3976d-653c-4ca1-bcd1-48bf6d489196.png" width="500px" position="center">
 </p>
 
-- **MAJOR:** Breaking changes that require additional testing/caution
-- **MINOR:** Changes that should not have a big impact
-- **PATCHES:** Bug and hotfixes only
+-   **MAJOR:** Breaking changes that require additional testing/caution
+-   **MINOR:** Changes that should not have a big impact
+-   **PATCHES:** Bug and hotfixes only
 
 ### Additional information
 
-- **Support:** https://support.buckaroo.eu/contact
-- **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
+-   **Support:** https://support.buckaroo.eu/contact
+-   **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
 
 ## License
 

@@ -4,6 +4,7 @@ namespace Buckaroo\Laravel\Api;
 
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Facades\Buckaroo;
+use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
 
@@ -21,7 +22,7 @@ abstract class BaseService
         return new static($paymentGateway);
     }
 
-    public function storeBuckarooTransaction(\Buckaroo\Laravel\Handlers\ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
+    public function storeBuckarooTransaction(ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
         return Buckaroo::getTransactionModelClass()::create([
             'payment_method_id' => $transactionResponse->getPaymentMethod(),

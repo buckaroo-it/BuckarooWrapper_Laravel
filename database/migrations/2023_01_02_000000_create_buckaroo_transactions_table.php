@@ -33,8 +33,6 @@ return new class() extends Migration
             $table->string('service_action');
 
             $table->timestamps();
-
-            $table->index(['payable_id', 'payable_type']);
         });
     }
 

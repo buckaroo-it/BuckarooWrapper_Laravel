@@ -84,13 +84,10 @@ class PushService
 
     protected function handleRelatedTransaction()
     {
-        $transaction = $this->paymentSessionService->storeBuckarooTransaction($this->responseParser);
-        $transaction->update([
+        return $this->paymentSessionService->storeBuckarooTransaction($this->responseParser, [
             'action' => "push/{$this->buckarooTransaction->service_action}",
             'order' => $this->buckarooTransaction->order,
         ]);
-
-        return $transaction;
     }
 
     private function handleRefundAction()

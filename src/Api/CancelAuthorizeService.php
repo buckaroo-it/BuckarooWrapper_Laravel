@@ -13,14 +13,14 @@ class CancelAuthorizeService extends BaseService
 {
     public function void(): array
     {
-        [$transactionResponse, $buckarooTransaction] = $this->buckarooVoid();
+        [$transactionResponse, $buckarooTransaction] = $this->buckarooCancelAuthorize();
 
         event(new VoidTransactionCompleted($buckarooTransaction, $transactionResponse));
 
         return [$transactionResponse, $buckarooTransaction];
     }
 
-    public function buckarooVoid(): array
+    public function buckarooCancelAuthorize(): array
     {
         /* @var TransactionResponse $transactionResponse */
         $transactionResponse = Buckaroo::api()

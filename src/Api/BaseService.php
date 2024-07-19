@@ -4,9 +4,9 @@ namespace Buckaroo\Laravel\Api;
 
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Facades\Buckaroo;
+use Buckaroo\Laravel\Handlers\PaymentGatewayHandler;
 use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
-use Buckaroo\Laravel\PaymentMethods\PaymentGatewayHandler;
 
 abstract class BaseService
 {

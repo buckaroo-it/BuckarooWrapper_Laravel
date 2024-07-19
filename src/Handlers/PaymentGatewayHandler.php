@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\Laravel\PaymentMethods;
+namespace Buckaroo\Laravel\Handlers;
 
 use BadMethodCallException;
 use Illuminate\Contracts\Support\Arrayable;
@@ -92,6 +92,10 @@ class PaymentGatewayHandler implements Arrayable
 
     public function getPayAction(): ?string
     {
+        if ($this->shouldAuthorize) {
+            return 'authorize';
+        }
+
         return 'pay';
     }
 

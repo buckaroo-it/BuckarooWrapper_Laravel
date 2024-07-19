@@ -44,11 +44,6 @@ class BuckarooServiceProvider extends ServiceProvider
                 [__DIR__ . '/../database' => $this->app->basePath('database')],
                 ['buckaroo', 'buckaroo-database']
             );
-
-            $this->publishes(
-                [__DIR__ . '/../public' => $this->app->publicPath('vendor/buckaroo')],
-                ['buckaroo', 'buckaroo-public']
-            );
         }
     }
 

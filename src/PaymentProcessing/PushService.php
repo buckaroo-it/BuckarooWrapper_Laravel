@@ -62,7 +62,7 @@ class PushService
     protected function updateTransaction(array $additionalData = [])
     {
         return $this->buckarooTransaction->update([
-            'payment_method_id' => $this->responseParser->getPaymentMethod(),
+            'payment_method' => $this->responseParser->getPaymentMethod(),
             'amount' => $this->responseParser->getAmount(),
             'status_code' => $this->responseParser->getStatusCode(),
             'status_subcode' => $this->responseParser->getSubStatusCode(),

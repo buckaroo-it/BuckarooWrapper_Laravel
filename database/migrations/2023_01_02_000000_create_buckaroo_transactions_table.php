@@ -17,7 +17,7 @@ return new class() extends Migration
         Schema::create('buckaroo_transactions', function (Blueprint $table) {
             $table->id();
 
-            $table->string('payment_method_id')->nullable();
+            $table->string('payment_method')->nullable();
 
             $table->string('transaction_key');
             $table->string('related_transaction_key')->nullable();

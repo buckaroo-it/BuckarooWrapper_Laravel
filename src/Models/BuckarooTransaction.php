@@ -14,7 +14,7 @@ use Str;
 class BuckarooTransaction extends Model
 {
     protected $fillable = [
-        'payment_method_id',
+        'payment_method',
         'related_transaction_key',
         'transaction_key',
         'status_code',
@@ -105,6 +105,6 @@ class BuckarooTransaction extends Model
 
     public function getPaymentGateway()
     {
-        return BuckarooPayloadFactory::getPayload($this->payment_method_id);
+        return BuckarooPayloadFactory::getPayload($this->payment_method);
     }
 }

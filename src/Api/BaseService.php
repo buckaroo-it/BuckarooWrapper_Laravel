@@ -25,7 +25,7 @@ abstract class BaseService
     public function storeBuckarooTransaction(ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
         return Buckaroo::getTransactionModelClass()::create([
-            'payment_method_id' => $transactionResponse->getPaymentMethod(),
+            'payment_method' => $transactionResponse->getPaymentMethod(),
             'transaction_key' => $transactionResponse->getTransactionKey(),
             'status_code' => $transactionResponse->getStatusCode(),
             'status_subcode' => $transactionResponse->getSubStatusCode(),

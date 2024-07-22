@@ -2,9 +2,9 @@
 
 namespace Buckaroo\Laravel\Handlers;
 
-class BuckarooPayloadFactory
+class PaymentMethodFactory
 {
-    public static function getPayload(string $serviceCode)
+    public static function make(string $serviceCode)
     {
         return PaymentGatewayHandler::make($serviceCode);
     }

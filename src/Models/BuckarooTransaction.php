@@ -3,7 +3,7 @@
 namespace Buckaroo\Laravel\Models;
 
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
-use Buckaroo\Laravel\Handlers\BuckarooPayloadFactory;
+use Buckaroo\Laravel\Handlers\PaymentMethodFactory;
 use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Resources\Constants\ResponseStatus;
 use Illuminate\Database\Eloquent\Builder;
@@ -105,6 +105,6 @@ class BuckarooTransaction extends Model
 
     public function getPaymentGateway()
     {
-        return BuckarooPayloadFactory::getPayload($this->payment_method);
+        return PaymentMethodFactory::make($this->payment_method);
     }
 }

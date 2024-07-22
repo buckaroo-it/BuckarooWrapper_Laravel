@@ -18,10 +18,7 @@ class PayService extends BaseService
         $buckarooTransaction = $this->storeBuckarooTransaction(JsonParser::make($transactionResponse->toArray()));
 
         if (!$transactionResponse->hasRedirect()) {
-            event(new PayTransactionCompleted(
-                $buckarooTransaction,
-                $transactionResponse
-            ));
+            event(new PayTransactionCompleted($buckarooTransaction, $transactionResponse));
         }
 
         return [$transactionResponse, $buckarooTransaction];

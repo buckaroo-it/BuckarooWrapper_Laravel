@@ -17,10 +17,7 @@ class RefundService extends BaseService
 
         $buckarooTransaction = $this->storeBuckarooTransaction(JsonParser::make($transactionResponse->toArray()));
 
-        event(new RefundTransactionCompleted(
-            $buckarooTransaction,
-            $transactionResponse
-        ));
+        event(new RefundTransactionCompleted($buckarooTransaction, $transactionResponse));
 
         return [$transactionResponse, $buckarooTransaction];
     }

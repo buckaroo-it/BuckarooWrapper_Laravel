@@ -13,23 +13,20 @@ class CaptureService extends BaseService
 {
     public function capture(): array
     {
-        [$transactionResponse, $buckarooTransaction] = $this->buckarooCapture();
+        $transactionResponse = $this->buckarooCapture();
+
+        $buckarooTransaction = $this->storeBuckarooTransaction(JsonParser::make($transactionResponse->toArray()));
 
         event(new CaptureTransactionCompleted($buckarooTransaction, $transactionResponse));
 
         return [$transactionResponse, $buckarooTransaction];
     }
 
-    public function buckarooCapture(): array
+    public function buckarooCapture(): TransactionResponse
     {
-        /* @var TransactionResponse $transactionResponse */
-        $transactionResponse = Buckaroo::api()
+        return Buckaroo::api()
             ->method($this->paymentGateway->getServiceCode())
             ->capture($this->paymentGateway->toArray());
-
-        $buckarooTransaction = $this->storeBuckarooTransaction(JsonParser::make($transactionResponse->toArray()));
-
-        return [$transactionResponse, $buckarooTransaction];
     }
 
     public function storeBuckarooTransaction(ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction

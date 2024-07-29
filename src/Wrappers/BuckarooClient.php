@@ -57,6 +57,11 @@ class BuckarooClient
         return $this->buckarooClient->method($method);
     }
 
+    public function transaction(string $transactionKey)
+    {
+        return $this->buckarooClient->transaction($transactionKey);
+    }
+
     public function confirmCredential(): bool
     {
         return $this->buckarooClient->confirmCredential();

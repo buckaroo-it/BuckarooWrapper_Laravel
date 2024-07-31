@@ -13,7 +13,8 @@ class ReplyHandlerRequest extends FormRequest
 {
     public BuckarooTransaction $buckarooTransaction;
     protected ?string $message;
-    protected ResponseParserInterface $data;
+
+    public ResponseParserInterface $data;
 
     public function authorize()
     {

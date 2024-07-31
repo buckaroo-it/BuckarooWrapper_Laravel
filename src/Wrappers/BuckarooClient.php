@@ -10,6 +10,7 @@ use Illuminate\Contracts\Config\Repository;
 class BuckarooClient
 {
     protected Repository $config;
+
     protected BaseBuckarooClient $buckarooClient;
 
     public function __construct(Repository $config)
@@ -30,7 +31,7 @@ class BuckarooClient
         return $this;
     }
 
-    public function validCredentials(): bool
+    public function credentialsFilled(): bool
     {
         $config = $this->getClientConfig();
 

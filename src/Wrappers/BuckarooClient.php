@@ -10,7 +10,6 @@ use Illuminate\Contracts\Config\Repository;
 class BuckarooClient
 {
     protected Repository $config;
-
     protected BaseBuckarooClient $buckarooClient;
 
     public function __construct(Repository $config)
@@ -29,18 +28,6 @@ class BuckarooClient
         $this->buckarooClient = new BaseBuckarooClient($websiteKey, $secretKey, $mode);
 
         return $this;
-    }
-
-    public function credentialsFilled(): bool
-    {
-        $config = $this->getClientConfig();
-
-        return filled($config->websiteKey()) && filled($config->secretKey());
-    }
-
-    public function inTestMode(): bool
-    {
-        return $this->getClientConfig()->isLiveMode() === false;
     }
 
     public function getClientConfig(): ?Config
@@ -66,11 +53,6 @@ class BuckarooClient
     public function confirmCredential(): bool
     {
         return $this->buckarooClient->confirmCredential();
-    }
-
-    public function updateCredential($websiteKey, ?string $secretKey = null, ?string $mode = null): static
-    {
-        return $this->setBuckarooClient($websiteKey, $secretKey, $mode);
     }
 
     public function validateBody(array|string $payload, $authHeader = '', $url = ''): bool

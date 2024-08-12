@@ -2,6 +2,7 @@
 
 namespace Buckaroo\Laravel\Wrappers;
 
+use BadMethodCallException;
 use Buckaroo\BuckarooClient as BaseBuckarooClient;
 use Buckaroo\Config\Config;
 use Buckaroo\Handlers\Reply\ReplyHandler;
@@ -40,21 +41,6 @@ class BuckarooClient
         return $this->buckarooClient;
     }
 
-    public function method(string $method)
-    {
-        return $this->buckarooClient->method($method);
-    }
-
-    public function transaction(string $transactionKey)
-    {
-        return $this->buckarooClient->transaction($transactionKey);
-    }
-
-    public function confirmCredential(): bool
-    {
-        return $this->buckarooClient->confirmCredential();
-    }
-
     public function validateBody(array|string $payload, $authHeader = '', $url = ''): bool
     {
         $replyHandler = new ReplyHandler(
@@ -65,5 +51,14 @@ class BuckarooClient
         );
 
         return $replyHandler->validate()->isValid();
+    }
+
+    public function __call($name, $arguments)
+    {
+        if (!method_exists($this->buckarooClient, $name)) {
+            throw new BadMethodCallException("Method {$name} does not exist.");
+        }
+
+        return $this->buckarooClient->{$name}(...$arguments);
     }
 }

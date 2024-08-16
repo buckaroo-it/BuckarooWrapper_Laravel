@@ -34,6 +34,8 @@ interface ResponseParserInterface
 
     public function getTransactionKey(): ?string;
 
+    public function getDataRequest(): ?string;
+
     public function getPaymentMethod(): ?string;
 
     public function getRelatedTransactionPartialPayment(): ?string;
@@ -61,4 +63,6 @@ interface ResponseParserInterface
     public function isCanceled(): bool;
 
     public function isAwaitingConsumer(): bool;
+
+    public function getService($name);
 }

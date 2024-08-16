@@ -78,6 +78,11 @@ class JsonParser extends ResponseParser
         return $this->get('Key');
     }
 
+    public function getDataRequest(): ?string
+    {
+        return $this->get('Key');
+    }
+
     public function getPaymentMethod(): ?string
     {
         return $this->getService('PaymentMethod') ?? $this->get('ServiceCode');

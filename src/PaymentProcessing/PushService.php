@@ -7,28 +7,12 @@ use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
 use Buckaroo\Laravel\Events\RefundTransactionCompleted;
 use Buckaroo\Laravel\Facades\Buckaroo;
-use Buckaroo\Laravel\Handlers\ResponseParser;
-use Buckaroo\Laravel\Handlers\ResponseParserInterface;
-use Buckaroo\Laravel\Http\Requests\ReplyHandlerRequest;
-use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Buckaroo\Resources\Constants\ResponseStatus;
 
-class PushService
+class PushService extends BaseService
 {
-    protected PayService $paymentSessionService;
-    protected BuckarooTransaction $buckarooTransaction;
-    protected ResponseParserInterface $responseParser;
-
-    public function __construct(PayService $paymentSessionService)
+    public function handlePushRequest(): array
     {
-        $this->paymentSessionService = $paymentSessionService;
-    }
-
-    public function handlePushRequest(ReplyHandlerRequest $request): array
-    {
-        $this->responseParser = ResponseParser::make($request->all());
-        $this->buckarooTransaction = $request->getBuckarooTransaction();
-
         if ($this->buckarooTransaction->hasServiceAction('pay') || $this->buckarooTransaction->hasServiceAction('authorize')) {
             $this->handlePayAction();
         } elseif ($this->buckarooTransaction->hasServiceAction('refund')) {
@@ -36,11 +20,6 @@ class PushService
         }
 
         return ['status' => true];
-    }
-
-    public static function make(): static
-    {
-        return new static(app(PayService::class));
     }
 
     private function handlePayAction()
@@ -52,10 +31,7 @@ class PushService
         }
 
         if ($this->responseParser->getStatusCode() != ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_USER) {
-            event(new PayTransactionCompleted(
-                $this->buckarooTransaction,
-                $this->responseParser
-            ));
+            $this->dispatchPayTransactionCompletedEvent();
         }
     }
 
@@ -84,13 +60,13 @@ class PushService
 
     protected function handleRelatedTransaction()
     {
-        return $this->paymentSessionService->storeBuckarooTransaction($this->responseParser, [
+        return app(PayService::class)->storeBuckarooTransaction($this->responseParser, [
             'action' => "push/{$this->buckarooTransaction->service_action}",
             'order' => $this->buckarooTransaction->order,
         ]);
     }
 
-    private function handleRefundAction()
+    protected function handleRefundAction()
     {
         $this->updateTransaction([
             'amount' => $this->responseParser->getAmountCredit() * -1,
@@ -101,6 +77,20 @@ class PushService
             return ['status' => true];
         }
 
+        $this->dispatchRefundTransactionCompletedEvent();
+    }
+
+    protected function dispatchRefundTransactionCompletedEvent(): self
+    {
         event(new RefundTransactionCompleted($this->buckarooTransaction, $this->responseParser));
+
+        return $this;
+    }
+
+    protected function dispatchPayTransactionCompletedEvent(): self
+    {
+        event(new PayTransactionCompleted($this->buckarooTransaction, $this->responseParser));
+
+        return $this;
     }
 }

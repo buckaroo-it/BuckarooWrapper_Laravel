@@ -37,6 +37,7 @@ class BuckarooTransaction extends Model
     {
         $transactionKey = $responseParser->getTransactionKey();
         $relatedTransactionKey = $responseParser->getRelatedTransactionPartialPayment();
+        $refundParentKey = $responseParser->getRefundParentKey();
 
         if ($transactionKey) {
             $query->orWhere('transaction_key', $transactionKey);
@@ -45,6 +46,10 @@ class BuckarooTransaction extends Model
 
         if ($relatedTransactionKey) {
             $query->orWhere('related_transaction_key', $relatedTransactionKey);
+        }
+
+        if ($refundParentKey) {
+            $query->orWhere('transaction_key', $refundParentKey);
         }
     }
 

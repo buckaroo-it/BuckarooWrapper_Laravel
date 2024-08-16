@@ -3,32 +3,19 @@
 namespace Buckaroo\Laravel\PaymentProcessing;
 
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
-use Buckaroo\Laravel\Handlers\ResponseParser;
-use Buckaroo\Laravel\Handlers\ResponseParserInterface;
-use Buckaroo\Laravel\Http\Requests\ReplyHandlerRequest;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 
-class ReturnService
+class ReturnService extends BaseService
 {
-    protected BuckarooTransaction $buckarooTransaction;
-    protected ResponseParserInterface $responseParser;
     protected bool $forceProcess = false;
 
-    public function handleReturnRequest(ReplyHandlerRequest $request): BuckarooTransaction
+    public function handleReturnRequest(): BuckarooTransaction
     {
-        $this->responseParser = ResponseParser::make($request->all());
-        $this->buckarooTransaction = $request->getBuckarooTransaction();
-
         if ($this->shouldProcessTransaction()) {
             $this->processTransaction();
         }
 
         return $this->buckarooTransaction;
-    }
-
-    public static function make(): static
-    {
-        return new static();
     }
 
     protected function shouldProcessTransaction(): bool

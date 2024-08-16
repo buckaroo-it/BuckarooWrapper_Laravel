@@ -2,9 +2,9 @@
 
 namespace Buckaroo\Laravel\Api;
 
-use Buckaroo\CCVShopModule\Services\Buckaroo\PaymentMethods\PaymentGatewayHandler;
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Facades\Buckaroo;
+use Buckaroo\Laravel\Handlers\PaymentGatewayHandler;
 use Buckaroo\Laravel\Handlers\ResponseParserInterface;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
 

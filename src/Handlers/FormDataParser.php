@@ -77,19 +77,9 @@ class FormDataParser extends ResponseParser
         return $this->get('brq_transactions');
     }
 
-    public function getDataRequest(): ?string
-    {
-        return $this->get('brq_datarequest');
-    }
-
     public function getPaymentMethod(): ?string
     {
         return $this->get('brq_transaction_method');
-    }
-
-    public function getPrimaryService(): ?string
-    {
-        return $this->get('brq_primary_service');
     }
 
     public function getRelatedTransactionPartialPayment(): ?string
@@ -109,7 +99,7 @@ class FormDataParser extends ResponseParser
 
     public function isRefund(): bool
     {
-        return $this->getParentKey() !== null;
+        return $this->getRefundParentKey() !== null;
     }
 
     public function isSuccess(): bool
@@ -120,11 +110,6 @@ class FormDataParser extends ResponseParser
     public function getStatusCode(): ?int
     {
         return $this->get('brq_statuscode');
-    }
-
-    public function getService($name)
-    {
-        return $this->get('brq_SERVICE_' . strtolower($this->getPaymentMethod() ?? $this->getPrimaryService()) . '_' . $name);
     }
 
     public function isPendingProcessing(): bool

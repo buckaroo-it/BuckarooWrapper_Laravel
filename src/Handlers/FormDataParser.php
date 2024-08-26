@@ -27,6 +27,11 @@ class FormDataParser extends ResponseParser
         return $this->get('brq_redirect_url') === true;
     }
 
+    public function getRedirect(): bool
+    {
+        return $this->get('brq_redirect_url');
+    }
+
     public function getCurrency(): ?string
     {
         return $this->get('brq_currency');

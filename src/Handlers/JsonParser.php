@@ -63,6 +63,11 @@ class JsonParser extends ResponseParser
             && $this->getDeep('RequiredAction.Name') == 'Redirect';
     }
 
+    public function getRedirectUrl(): string
+    {
+        return $this->getDeep('RequiredAction.RedirectURL');
+    }
+
     public function getTransactionMethod()
     {
         return $this->get('ServiceCode');

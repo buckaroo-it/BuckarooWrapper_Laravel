@@ -60,6 +60,8 @@ interface ResponseParserInterface
 
     public function hasRedirect(): bool;
 
+    public function getRedirectUrl(): string;
+
     public function isCanceled(): bool;
 
     public function isAwaitingConsumer(): bool;

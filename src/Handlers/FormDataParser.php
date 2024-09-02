@@ -27,7 +27,7 @@ class FormDataParser extends ResponseParser
         return $this->get('brq_redirect_url') === true;
     }
 
-    public function getRedirect(): bool
+    public function getRedirectUrl(): string
     {
         return $this->get('brq_redirect_url');
     }

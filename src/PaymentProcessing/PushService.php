@@ -22,7 +22,7 @@ class PushService extends BaseService
         return ['status' => true];
     }
 
-    private function handlePayAction()
+    protected function handlePayAction()
     {
         if ($this->buckarooTransaction->transaction_key == $this->responseParser->getTransactionKey()) {
             $this->updateTransaction();

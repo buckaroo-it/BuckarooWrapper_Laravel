@@ -1,200 +1,295 @@
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3877/laravel-logo-github.png" width="250px" position="center">
+  <img src="https://www.buckaroo.nl/media/3877/laravel-logo-github.png" width="250px" alt="Laravel Logo">
 </p>
 
 # Laravel Buckaroo Payment Integration
 
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3878/laravel-example3.png" width="800px" position="center">
+  <img src="https://www.buckaroo.nl/media/3878/laravel-example3.png" width="800px" alt="Laravel Buckaroo Integration Example">
 </p>
 
 ---
 
-### Index
+## Table of Contents
 
--   [Introduction](#introduction)
--   [Installation](#installation)
--   [Composer Installation](#composer-installation)
--   [Usage](#usage)
--   [Validation](#validation)
--   [Conclusion](#conclusion)
--   [Contribute](#contribute)
--   [Versioning](#versioning)
--   [Additional information](#additional-information)
+- [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - [Step 1: Install the Package](#step-1-install-the-package)
+  - [Step 2: Publish Configuration and Assets](#step-2-publish-configuration-and-assets)
+  - [Step 3: Run Migrations](#step-3-run-migrations)
+  - [Step 4: Obtain Your Website and Secret Keys](#step-4-obtain-your-website-and-secret-keys)
+  - [Step 5: Configure Environment Variables](#step-5-configure-environment-variables)
+- [Configuration](#configuration)
+  - [Transaction Model Override](#transaction-model-override)
+  - [Customizing Routes](#customizing-routes)
+- [Usage](#usage)
+  - [Initializing the Buckaroo Client](#initializing-the-buckaroo-client)
+  - [Starting a Payment Transaction](#starting-a-payment-transaction)
+    - [Using Payload Array](#using-payload-array)
+    - [Using Setter Methods](#using-setter-methods)
+  - [Direct Usage with Buckaroo Wrapper](#direct-usage-with-buckaroo-wrapper)
+  - [Other Services](#other-services)
+- [Additional Information](#additional-information)
+- [Contributing](#contributing)
+- [Versioning](#versioning)
+- [Support](#support)
+- [License](#license)
 
 ---
 
-### Introduction
+## Introduction
 
-The documentation explains how to integrate Laravel validation with the Buckaroo PHP SDK in your application. Buckaroo
-is a Payment Service Provider used by many companies to securely handle payments, subscriptions, and invoices. The
-Buckaroo SDK is a modern, open-source library that makes it easier to integrate Buckaroo's services into PHP apps. The
-SDK also supports webhooks.
+Welcome to the **Laravel Buckaroo Payment Integration** package! This package offers a seamless integration of Buckaroo payment services into your Laravel application, enabling you to handle payments, refunds, captures, and authorization cancellations effortlessly.
 
-### Installation
+The package is designed to be highly customizable, allowing developers to override and extend functionalities based on their requirements, making it flexible and adaptable for various use cases.
 
-To install the Laravel Buckaroo Wrapper, you can use Composer by running the following command:
+---
 
--   A Buckaroo account ([Dutch](https://www.buckaroo.nl/start)
-    or [English](https://www.buckaroo.eu/solutions/request-form))
--   PHP >= 7.4
--   Up-to-date OpenSSL (or other SSL/TLS toolkit)
+## Prerequisites
 
-### Composer Installation
+Ensure you have the following requirements before proceeding:
 
-By far the easiest way to install the Laravel Buckaroo client is to require it
-with [Composer](http://getcomposer.org/doc/00-intro.md).
+- **PHP**: Version 8.0 or higher
+- **Laravel Framework**: Compatible with your Laravel version
+- **Buckaroo Account**:
+  - [Dutch](https://www.buckaroo.nl/start)
+  - [English](https://www.buckaroo.eu/solutions/request-form)
+- **SSL/TLS Toolkit**: An updated OpenSSL or any other SSL/TLS toolkit
 
-    $ composer require buckaroo/laravel:^1.0
+---
 
-    {
-        "require": {
-            "buckaroo/laravel": "^1.0"
-        }
-    }
+## Installation
 
-### Usage
+Follow these steps to install and set up the Laravel Buckaroo Payment Integration package.
 
-Create and config the Buckaroo object.
-You can find your credentials in plaza [WEBSITE_KEY](https://plaza.buckaroo.nl/Configuration/Website/Index/)
-and [SECRET_KEY](https://admin.buckaroo.nl/Configuration/Merchant/SecretKey)
+### Step 1: Install the Package
 
-In order to use the Laravel Buckaroo Wrapper in your application, you need to add the following parameters to your .env
-file:
+Use Composer to install the package:
 
-```php
-BPE_WEBSITE_KEY=
-BPE_SECRET_KEY=
-BPE_MODE=
-```
+~~~bash
+composer require buckaroo/laravel
+~~~
 
-You should replace the empty values with the appropriate keys provided by Buckaroo.
+### Step 2: Publish Configuration and Assets
 
-### Laravel 11.0
+Publish the package's configuration and assets using Artisan:
 
-Add the service provider in your bootstrap/providers.php file:
-
-```php
-  return [
-      ...,
-      Buckaroo\Laravel\BuckarooServiceProvider::class,
-  ];
-```
-
-### Before Laravel < 11.0
-
-Add the service provider in your config/app.php file:
-
-```php
-Buckaroo\Laravel\BuckarooServiceProvider::class,
-```
-
-Add the class Aliases in your config/app.php file:
-
-```php
-  'Buckaroo' => Buckaroo\Laravel\Facades\Buckaroo::class
-```
-
-Then run the following command to publish the Buckaroo config file:
-
-```php
+~~~bash
 php artisan vendor:publish --provider="Buckaroo\Laravel\BuckarooServiceProvider"
-```
+~~~
 
-Buckaroo service provider loads its own database migrations, so remember to run the necessary migrations to update your
-database after installing the package.
+This command will create configuration, migration, and route files in your Laravel project.
 
-```php
+### Step 3: Run Migrations
+
+Execute the migrations to set up the required database tables:
+
+~~~bash
 php artisan migrate
-```
+~~~
 
-The $buckaroo object is the instance of the Buckaroo PHP SDK.
-The method method is called with the argument "creditcard", which indicates that the payment method used is a credit
-card.
+### Step 4: Obtain Your Website and Secret Keys
 
-The pay method is called with an associative array as its argument, which contains the details of the payment.
+To integrate Buckaroo, you’ll need your **Website Key** and **Secret Key**. Obtain these from your Buckaroo account:
 
-<ul>
-<li><b>name:</b> the name of the credit card payment method (e.g. "visa").</li>
-<li><b>amountDebit:</b> the amount of the payment.</li>
-<li><b>invoice:</b> the invoice number associated with the payment.</li>
-<li><b>pushURL:</b> the URL to which Buckaroo will send a push notification when the payment is processed.</li>
-</ul>
-This is set to the result of the route method with the argument "buckaroo.push".
-</br>This code initiates a payment using the credit card payment method with the specified details.
-</ul>
+- **Website Key**: [Retrieve Here](https://plaza.buckaroo.nl/Configuration/Website/Index/)
+- **Secret Key**: [Retrieve Here](https://admin.buckaroo.nl/Configuration/Merchant/SecretKey)
 
-```php
-Buckaroo::api()->method('creditcard')->pay([
-    'name'          => 'visa',
-    'amountDebit'   => 10.25,
-    'invoice'       => 'inv-123',
-    'pushURL'      => route('buckaroo.push')
+### Step 5: Configure Environment Variables
+
+Add the following environment variables to your `.env` file:
+
+~~~env
+BPE_WEBSITE_KEY=your_website_key
+BPE_SECRET_KEY=your_secret_key
+BPE_MODE=test or live
+~~~
+
+- **BPE_WEBSITE_KEY**: Replace `your_website_key` with your Website Key.
+- **BPE_SECRET_KEY**: Replace `your_secret_key` with your Secret Key.
+- **BPE_MODE**: Set to `test` for testing or `live` for production.
+
+These settings allow the Buckaroo Client to initialize automatically during your application’s boot process.
+
+---
+
+## Configuration
+
+The package offers a variety of configuration options to suit different use cases.
+
+### Transaction Model Override
+
+By default, the package uses the `BuckarooTransaction` model to handle transactions. However, if you want to override this with your custom model, you can configure it in `config/buckaroo.php`:
+
+~~~php
+'transaction_model' => YourCustomTransactionModel::class,
+~~~
+
+The default value is:
+
+~~~php
+'transaction_model' => Buckaroo\Laravel\Models\BuckarooTransaction::class,
+~~~
+
+This allows you to maintain control over transaction handling and extend the functionality as needed.
+
+### Customizing Routes
+
+The package provides predefined routes for handling payment operations. If you prefer to customize these routes, you can configure the following options in `config/buckaroo.php`:
+
+~~~php
+'routes' => [
+    'load' => env('BPE_LOAD_ROUTES', true),
+    'prefix' => env('BPE_ROUTE_PATH', 'buckaroo'),
+],
+~~~
+
+- **`load`**: Set this to `false` to prevent the package from automatically loading routes if you intend to define them yourself.
+- **`prefix`**: Change the prefix to customize the route paths (default is `buckaroo`).
+
+By adjusting these settings, you have full control over the routing structure in your application.
+
+---
+
+## Usage
+
+### Initializing the Buckaroo Client
+
+The Buckaroo client can be initialized automatically using the `.env` variables or manually if needed:
+
+~~~php
+use Buckaroo\Laravel\Facades\Buckaroo;
+use Buckaroo\Transaction\Config\DefaultConfig;
+
+Buckaroo::api()->setBuckarooClient(
+    new DefaultConfig(
+        websiteKey: config('buckaroo.website_key'),
+        secretKey: config('buckaroo.secret_key'),
+        mode: config('buckaroo.mode'),
+        returnURL: route('buckaroo.return'),
+        pushURL: route('buckaroo.push'),
+    )
+);
+~~~
+
+### Starting a Payment Transaction
+
+You can initiate a payment transaction using the `PayService` and `PaymentMethodFactory`.
+
+#### Using Payload Array
+
+~~~php
+use Buckaroo\Laravel\Api\PayService;
+use Buckaroo\Laravel\Handlers\PaymentMethodFactory;
+
+$paymentSessionService = PayService::make(
+    PaymentMethodFactory::make('noservice')->setPayload([
+        'currency' => 'EUR',
+        'amountDebit' => 100,
+        'order' => '000-ORD',
+        'invoice' => '000-INV',
+        'description' => 'This is a description',
+        'continueOnIncomplete' => '1',
+        'servicesSelectableByClient' => 'ideal,bancontactmrcash',
+    ])
+);
+~~~
+
+#### Using Setter Methods
+
+~~~php
+$paymentSessionService = PayService::make(
+    PaymentMethodFactory::make('noservice')
+        ->setCurrency('EUR')
+        ->setAmountDebit(100)
+        ->setOrder('000-ORD')
+        ->setInvoice('000-INV')
+        ->setDescription('This is a description')
+        ->setContinueOnIncomplete('1')
+        ->setServicesSelectableByClient('ideal,bancontactmrcash')
+);
+~~~
+
+### Direct Usage with Buckaroo Wrapper
+
+You can interact directly with the Buckaroo API using the built-in wrapper for greater control and flexibility:
+
+~~~php
+use Buckaroo\Laravel\Facades\Buckaroo;
+
+$response = Buckaroo::api()->method('{SERVICE_CODE}')->{ACTION}([
+    'currency' => 'EUR',
+    'amountDebit' => 100,
+    'order' => '000-ORD',
+    'invoice' => '000-INV',
+    'description' => 'This is a description',
 ]);
-```
+~~~
 
-Find our full documentation online on [dev.buckaroo.nl](https://dev.buckaroo.nl/).
+- Replace `{SERVICE_CODE}` with the payment method/service code (e.g., 'ideal').
+- Replace `{ACTION}` with the desired action (`pay`, `refund`, etc.).
 
-### Validation
+Example for an iDEAL payment:
 
-Laravel validation is used to ensure the data passed to the payment method is valid and secure. This validation checks
-the parameters passed to the payment method and confirms that they are correct and complete. This helps to prevent
-errors and guarantees that payments are processed accurately.
+~~~php
+$response = Buckaroo::api()->method('ideal')->pay([
+    'currency' => 'EUR',
+    'amountDebit' => 100,
+    'order' => '000-ORD',
+    'invoice' => '000-INV',
+    'description' => 'Payment for Order 000-ORD',
+]);
+~~~
 
-```php
-use App\BuckarooLaravelWrapper\src\Http\Requests\Payments\CreditCard\CreditCardPayRequest;
+### Other Services
 
-    public function preparePayment(CreditCardPayRequest $request)
-    {
-        $response = \Buckaroo::api()->method('creditcard')->pay($request->all());
+The package provides additional services with similar logic:
 
-        return response($response->toArray());
-    }
-```
+- **RefundService**
+- **CaptureService**
+- **CancelAuthorizeService**
 
-Behind the scenes, this will register a POST route to a controller provided by this package. Because the app that sends
-webhooks to you has no way of getting a csrf-token, you must add that route to the except array of the VerifyCsrfToken
-middleware:
+These services follow the same structure as `PayService` and can be used similarly to manage various payment actions.
 
-```php
-    protected $except = [
-        'buckaroo/*',
-    ];
-```
+---
 
-### Conclusion
+## Additional Information
 
-By following the steps outlined in this documentation, you can easily integrate Laravel validation with the Buckaroo PHP
-SDK in your application. This will allow you to securely process payments, subscriptions, and unpaid invoices with the
-Buckaroo platform. Remember to add the BPE_WEBSITE_KEY, BPE_SECRET_KEY, and BPE_MODE to your .env file and run
+- **Full Documentation:** Explore our documentation on [dev.buckaroo.nl](https://dev.buckaroo.nl/).
 
-```php
-php artisan vendor:publish --provider="Buckaroo\Laravel\BuckarooServiceProvider"
-php artisan migrate
-```
+---
 
-to make sure everything runs smoothly.
+## Contributing
 
-### Contribute
+We welcome contributions! Please follow our [Contribution Guidelines](CONTRIBUTING.md) when contributing to the project.
 
-We really appreciate it when developers contribute to improve the Buckaroo plugins.
-If you want to contribute as well, then please follow our [Contribution Guidelines](CONTRIBUTING.md).
+---
 
-### Versioning
+## Versioning
 
 <p align="left">
-  <img src="https://user-images.githubusercontent.com/7081446/178474134-f4c3976d-653c-4ca1-bcd1-48bf6d489196.png" width="500px" position="center">
+  <img src="https://user-images.githubusercontent.com/7081446/178474134-f4c3976d-653c-4ca1-bcd1-48bf6d489196.png" width="500px" alt="Versioning">
 </p>
 
--   **MAJOR:** Breaking changes that require additional testing/caution
--   **MINOR:** Changes that should not have a big impact
--   **PATCHES:** Bug and hotfixes only
+We use [Semantic Versioning](https://semver.org/):
 
-### Additional information
+- **MAJOR**: Breaking changes requiring caution
+- **MINOR**: New features that do not affect backward compatibility
+- **PATCHES**: Bug fixes and minor improvements
 
--   **Support:** https://support.buckaroo.eu/contact
--   **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
+---
+
+## Support
+
+For support, reach out via:
+
+- **Support Portal:** [Contact Support](https://support.buckaroo.eu/contact)
+- **Email:** [support@buckaroo.nl](mailto:support@buckaroo.nl)
+- **Phone:** [+31 (0)30 711 50 50](tel:+310307115050)
+
+---
 
 ## License
 
-Laravel Buckaroo Wrapper is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Laravel Buckaroo Wrapper is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).

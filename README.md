@@ -4,10 +4,6 @@
 
 # Laravel Buckaroo Payment Integration
 
-<p align="center">
-  <img src="https://www.buckaroo.nl/media/3878/laravel-example3.png" width="800px" alt="Laravel Buckaroo Integration Example">
-</p>
-
 ---
 
 ## Table of Contents
@@ -15,21 +11,21 @@
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-  - [Step 1: Install the Package](#step-1-install-the-package)
-  - [Step 2: Publish Configuration and Assets](#step-2-publish-configuration-and-assets)
-  - [Step 3: Run Migrations](#step-3-run-migrations)
-  - [Step 4: Obtain Your Website and Secret Keys](#step-4-obtain-your-website-and-secret-keys)
-  - [Step 5: Configure Environment Variables](#step-5-configure-environment-variables)
+    - [Step 1: Install the Package](#step-1-install-the-package)
+    - [Step 2: Publish Configuration and Assets](#step-2-publish-configuration-and-assets)
+    - [Step 3: Run Migrations](#step-3-run-migrations)
+    - [Step 4: Obtain Your Website and Secret Keys](#step-4-obtain-your-website-and-secret-keys)
+    - [Step 5: Configure Environment Variables](#step-5-configure-environment-variables)
 - [Configuration](#configuration)
-  - [Transaction Model Override](#transaction-model-override)
-  - [Customizing Routes](#customizing-routes)
+    - [Transaction Model Override](#transaction-model-override)
+    - [Customizing Routes](#customizing-routes)
 - [Usage](#usage)
-  - [Initializing the Buckaroo Client](#initializing-the-buckaroo-client)
-  - [Starting a Payment Transaction](#starting-a-payment-transaction)
-    - [Using Payload Array](#using-payload-array)
-    - [Using Setter Methods](#using-setter-methods)
-  - [Direct Usage with Buckaroo Wrapper](#direct-usage-with-buckaroo-wrapper)
-  - [Other Services](#other-services)
+    - [Initializing the Buckaroo Client](#initializing-the-buckaroo-client)
+    - [Starting a Payment Transaction](#starting-a-payment-transaction)
+        - [Using Payload Array](#using-payload-array)
+        - [Using Setter Methods](#using-setter-methods)
+    - [Direct Usage with Buckaroo Wrapper](#direct-usage-with-buckaroo-wrapper)
+    - [Other Services](#other-services)
 - [Additional Information](#additional-information)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
@@ -40,9 +36,12 @@
 
 ## Introduction
 
-Welcome to the **Laravel Buckaroo Payment Integration** package! This package offers a seamless integration of Buckaroo payment services into your Laravel application, enabling you to handle payments, refunds, captures, and authorization cancellations effortlessly.
+Welcome to the **Laravel Buckaroo Payment Integration** package! This package offers a seamless integration of Buckaroo
+payment services into your Laravel application, enabling you to handle payments, refunds, captures, and authorization
+cancellations effortlessly.
 
-The package is designed to be highly customizable, allowing developers to override and extend functionalities based on their requirements, making it flexible and adaptable for various use cases.
+The package is designed to be highly customizable, allowing developers to override and extend functionalities based on
+their requirements, making it flexible and adaptable for various use cases.
 
 ---
 
@@ -53,8 +52,8 @@ Ensure you have the following requirements before proceeding:
 - **PHP**: Version 8.0 or higher
 - **Laravel Framework**: Compatible with your Laravel version
 - **Buckaroo Account**:
-  - [Dutch](https://www.buckaroo.nl/start)
-  - [English](https://www.buckaroo.eu/solutions/request-form)
+    - [Dutch](https://www.buckaroo.nl/start)
+    - [English](https://www.buckaroo.eu/solutions/request-form)
 - **SSL/TLS Toolkit**: An updated OpenSSL or any other SSL/TLS toolkit
 
 ---
@@ -120,7 +119,8 @@ The package offers a variety of configuration options to suit different use case
 
 ### Transaction Model Override
 
-By default, the package uses the `BuckarooTransaction` model to handle transactions. However, if you want to override this with your custom model, you can configure it in `config/buckaroo.php`:
+By default, the package uses the `BuckarooTransaction` model to handle transactions. However, if you want to override
+this with your custom model, you can configure it in `config/buckaroo.php`:
 
 ~~~php
 'transaction_model' => YourCustomTransactionModel::class,
@@ -136,7 +136,8 @@ This allows you to maintain control over transaction handling and extend the fun
 
 ### Customizing Routes
 
-The package provides predefined routes for handling payment operations. If you prefer to customize these routes, you can configure the following options in `config/buckaroo.php`:
+The package provides predefined routes for handling payment operations. If you prefer to customize these routes, you can
+configure the following options in `config/buckaroo.php`:
 
 ~~~php
 'routes' => [
@@ -145,7 +146,8 @@ The package provides predefined routes for handling payment operations. If you p
 ],
 ~~~
 
-- **`load`**: Set this to `false` to prevent the package from automatically loading routes if you intend to define them yourself.
+- **`load`**: Set this to `false` to prevent the package from automatically loading routes if you intend to define them
+  yourself.
 - **`prefix`**: Change the prefix to customize the route paths (default is `buckaroo`).
 
 By adjusting these settings, you have full control over the routing structure in your application.

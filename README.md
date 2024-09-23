@@ -53,7 +53,7 @@ Ensure you have the following requirements before proceeding:
 - **Laravel Framework**: Compatible with your Laravel version
 - **Buckaroo Account**:
     - [Dutch](https://www.buckaroo.nl/start)
-    - [English](https://www.buckaroo.eu/solutions/request-form)
+    - [English](https://www.buckaroo.eu/create-account)
 - **SSL/TLS Toolkit**: An updated OpenSSL or any other SSL/TLS toolkit
 
 ---

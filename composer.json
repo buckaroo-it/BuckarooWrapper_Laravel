@@ -2,28 +2,32 @@
     "name": "buckaroo/laravel",
     "description": "Laravel Wrapper package for Buckaroo Payments Gateway",
     "license": "MIT",
-    "version": "1.1.0",
-    "authors": [{
-        "name": "Buckaroo",
-        "email": "support@buckaroo.nl",
-        "homepage": "https://www.buckaroo.nl",
-        "role": "Developer"
-    }],
+    "version": "2.0.0",
+    "authors": [
+        {
+            "name": "Buckaroo",
+            "email": "support@buckaroo.nl",
+            "homepage": "https://www.buckaroo.nl",
+            "role": "Developer"
+        }
+    ],
     "require": {
-        "php": ">=7.4|^8.0",
+        "php": ">=8.0",
         "buckaroo/sdk": "^1.10.0",
+        "laravel/framework": "^9.0|^10.0|^11.0",
         "illuminate/support": "^9.0|^10.0|^11.0"
     },
     "require-dev": {
         "graham-campbell/testbench": "^5.0",
         "phpunit/phpunit": "^9.5",
         "friendsofphp/php-cs-fixer": "^3.13",
-        "vlucas/phpdotenv": "^5.5"
+        "vlucas/phpdotenv": "^5.5",
+        "laravel/pint": "^1.16"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/",
-            "Buckaroo\\Laravel\\" : "src/"
+            "Buckaroo\\Laravel\\": "src/"
         },
         "files": [
             "src/helpers.php"

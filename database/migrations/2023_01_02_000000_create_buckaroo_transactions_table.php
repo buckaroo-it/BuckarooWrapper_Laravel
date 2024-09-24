@@ -1,10 +1,12 @@
 <?php
 
+use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class() extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -13,20 +15,23 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('buckaroo_transactions', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('brq_statuscode')->nullable();
-            $table->string('brq_statuscode_detail')->nullable();
-            $table->string('brq_statusmessage')->nullable();
-            $table->string('brq_transactions')->nullable();
-            $table->timestamps();
-        });
+            $table->id();
 
-        Schema::create('buckaroo_transaction_logs', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('brq_statuscode')->nullable();
-            $table->string('brq_statuscode_detail')->nullable();
-            $table->string('brq_statusmessage')->nullable();
-            $table->string('brq_transactions')->nullable();
+            $table->string('payment_method')->nullable();
+
+            $table->string('transaction_key');
+            $table->string('related_transaction_key')->nullable();
+            $table->string('status_code');
+            $table->string('status_subcode')->nullable();
+            $table->string('status_subcode_description')->nullable();
+            $table->string('order')->nullable();
+            $table->string('invoice')->nullable();
+            $table->boolean('is_test');
+            $table->string('currency');
+            $table->decimal('amount');
+            $table->enum('status', BuckarooTransactionStatus::cases());
+            $table->string('service_action');
+
             $table->timestamps();
         });
     }
@@ -41,4 +46,3 @@ return new class extends Migration {
         Schema::dropIfExists('buckaroo_transactions');
     }
 };
-

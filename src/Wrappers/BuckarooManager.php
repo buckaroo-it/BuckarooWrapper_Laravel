@@ -1,6 +1,6 @@
 <?php
 
-namespace Buckaroo\Laravel;
+namespace Buckaroo\Laravel\Wrappers;
 
 use Illuminate\Contracts\Container\Container;
 
@@ -16,11 +16,13 @@ class BuckarooManager
         $this->app = $app;
     }
 
-    /**
-     * @return mixed
-     */
     public function api()
     {
         return $this->app['buckaroo.api'];
+    }
+
+    public function getTransactionModelClass(): string
+    {
+        return $this->app['config']['buckaroo.transaction_model'];
     }
 }

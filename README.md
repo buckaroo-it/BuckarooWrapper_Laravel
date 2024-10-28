@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3877/laravel-logo-github.png" width="250px" alt="Laravel Logo">
+  <img src="https://github.com/user-attachments/assets/e2ebe5f2-1e47-4d0b-815e-d15709dd54aa" width="250px" alt="Laravel Logo">
 </p>
 
 # Laravel Buckaroo Payment Integration

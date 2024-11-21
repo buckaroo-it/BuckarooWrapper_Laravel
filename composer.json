@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=8.0",
-        "buckaroo/sdk": "^1.10.0",
+        "buckaroo/sdk": "dev-BA-628-fix-utf8-encoding-in-base64data",
         "laravel/framework": "^9.0|^10.0|^11.0",
         "illuminate/support": "^9.0|^10.0|^11.0"
     },

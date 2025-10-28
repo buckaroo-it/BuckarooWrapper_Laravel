@@ -9,107 +9,107 @@ class FormDataParser extends ResponseParser
 {
     public function getAmountDebit(): ?float
     {
-        return $this->formatAmount($this->get('brq_amount_debit'));
+        return $this->formatAmount($this->getCaseInsensitive('brq_amount_debit'));
     }
 
     public function getAmountCredit(): ?float
     {
-        return $this->formatAmount($this->get('brq_amount_credit'));
+        return $this->formatAmount($this->getCaseInsensitive('brq_amount_credit'));
     }
 
     public function getAmount(): ?float
     {
-        return $this->formatAmount($this->get('brq_amount'));
+        return $this->formatAmount($this->getCaseInsensitive('brq_amount'));
     }
 
     public function hasRedirect(): bool
     {
-        return $this->get('brq_redirect_url') === true;
+        return $this->getCaseInsensitive('brq_redirect_url') === true;
     }
 
     public function getRedirectUrl(): string
     {
-        return $this->get('brq_redirect_url');
+        return $this->getCaseInsensitive('brq_redirect_url');
     }
 
     public function getCurrency(): ?string
     {
-        return $this->get('brq_currency');
+        return $this->getCaseInsensitive('brq_currency');
     }
 
     public function getCustomerName(): ?string
     {
-        return $this->get('brq_customer_name');
+        return $this->getCaseInsensitive('brq_customer_name');
     }
 
     public function getDescription()
     {
-        return $this->get('brq_description');
+        return $this->getCaseInsensitive('brq_description');
     }
 
     public function getInvoice(): ?string
     {
-        return $this->get('brq_invoicenumber');
+        return $this->getCaseInsensitive('brq_invoicenumber');
     }
 
     public function getOrderNumber(): ?string
     {
-        return $this->get('brq_ordernumber');
+        return $this->getCaseInsensitive('brq_ordernumber');
     }
 
     public function getMutationType()
     {
-        return $this->get('brq_mutationtype');
+        return $this->getCaseInsensitive('brq_mutationtype');
     }
 
     public function getSubCodeMessage(): ?string
     {
-        return $this->get('brq_statusmessage');
+        return $this->getCaseInsensitive('brq_statusmessage');
     }
 
     public function getTransactionMethod()
     {
-        return $this->get('brq_transaction_method');
+        return $this->getCaseInsensitive('brq_transaction_method');
     }
 
     public function getTransactionType()
     {
-        return $this->get('brq_transaction_type');
+        return $this->getCaseInsensitive('brq_transaction_type');
     }
 
     public function getTransactionKey(): ?string
     {
-        return $this->get('brq_transactions');
+        return $this->getCaseInsensitive('brq_transactions');
     }
 
     public function getDataRequest(): ?string
     {
-        return $this->get('brq_datarequest');
+        return $this->getCaseInsensitive('brq_datarequest');
     }
 
     public function getPaymentMethod(): ?string
     {
-        return $this->get('brq_transaction_method');
+        return $this->getCaseInsensitive('brq_transaction_method');
     }
 
     public function getPrimaryService(): ?string
     {
-        return $this->get('brq_primary_service');
+        return $this->getCaseInsensitive('brq_primary_service');
     }
 
     public function getRelatedTransactionPartialPayment(): ?string
     {
-        return $this->get('brq_relatedtransaction_partialpayment');
+        return $this->getCaseInsensitive('brq_relatedtransaction_partialpayment');
     }
 
     public function getAdditionalInformation($propertyName)
     {
-        return $this->get('add_' . mb_strtolower($propertyName));
+        return $this->getCaseInsensitive('add_' . mb_strtolower($propertyName));
     }
 
     public function getRefundParentKey(): ?string
     {
-        return $this->get('brq_relatedtransaction_refund');
+        return $this->getCaseInsensitive('brq_relatedtransaction_refund');
     }
 
     public function isRefund(): bool
@@ -124,12 +124,12 @@ class FormDataParser extends ResponseParser
 
     public function getStatusCode(): ?int
     {
-        return $this->get('brq_statuscode');
+        return $this->getCaseInsensitive('brq_statuscode');
     }
 
     public function getService($name)
     {
-        return $this->get('brq_SERVICE_' . strtolower($this->getPaymentMethod() ?? $this->getPrimaryService()) . '_' . $name);
+        return $this->getCaseInsensitive('brq_SERVICE_' . strtolower($this->getPaymentMethod() ?? $this->getPrimaryService()) . '_' . $name);
     }
 
     public function isPendingProcessing(): bool
@@ -140,22 +140,22 @@ class FormDataParser extends ResponseParser
 
     public function getSubStatusCode(): ?string
     {
-        return $this->get('brq_statuscode_detail');
+        return $this->getCaseInsensitive('brq_statuscode_detail');
     }
 
     public function getPayerHash(): ?string
     {
-        return $this->get('brq_payer_hash');
+        return $this->getCaseInsensitive('brq_payer_hash');
     }
 
     public function getPaymentKey(): ?string
     {
-        return $this->get('brq_payment');
+        return $this->getCaseInsensitive('brq_payment');
     }
 
     public function isTest(): bool
     {
-        return $this->get('brq_test');
+        return $this->getCaseInsensitive('brq_test');
     }
 
     public function isPendingApproval(): bool

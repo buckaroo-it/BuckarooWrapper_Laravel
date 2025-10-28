@@ -9,47 +9,47 @@ class JsonParser extends ResponseParser
 {
     public function getAmountDebit(): ?float
     {
-        return $this->formatAmount($this->get('AmountDebit'));
+        return $this->formatAmount($this->getCaseInsensitive('AmountDebit'));
     }
 
     public function getAmountCredit(): ?float
     {
-        return $this->formatAmount($this->get('AmountCredit'));
+        return $this->formatAmount($this->getCaseInsensitive('AmountCredit'));
     }
 
     public function getAmount(): ?float
     {
-        return $this->formatAmount($this->get('Amount')) ?? $this->getAmountDebit();
+        return $this->formatAmount($this->getCaseInsensitive('Amount')) ?? $this->getAmountDebit();
     }
 
     public function getCurrency(): ?string
     {
-        return $this->get('Currency');
+        return $this->getCaseInsensitive('Currency');
     }
 
     public function getCustomerName(): ?string
     {
-        return $this->get('CustomerName');
+        return $this->getCaseInsensitive('CustomerName');
     }
 
     public function getDescription()
     {
-        return $this->get('Description');
+        return $this->getCaseInsensitive('Description');
     }
 
     public function getInvoice(): ?string
     {
-        return $this->get('Invoice');
+        return $this->getCaseInsensitive('Invoice');
     }
 
     public function getOrderNumber(): ?string
     {
-        return $this->get('Order');
+        return $this->getCaseInsensitive('Order');
     }
 
     public function getMutationType()
     {
-        return $this->get('MutationType');
+        return $this->getCaseInsensitive('MutationType');
     }
 
     public function getSubCodeMessage(): ?string
@@ -70,32 +70,32 @@ class JsonParser extends ResponseParser
 
     public function getTransactionMethod()
     {
-        return $this->get('ServiceCode');
+        return $this->getCaseInsensitive('ServiceCode');
     }
 
     public function getTransactionType()
     {
-        return $this->get('TransactionType');
+        return $this->getCaseInsensitive('TransactionType');
     }
 
     public function getTransactionKey(): ?string
     {
-        return $this->get('Key');
+        return $this->getCaseInsensitive('Key');
     }
 
     public function getDataRequest(): ?string
     {
-        return $this->get('Key');
+        return $this->getCaseInsensitive('Key');
     }
 
     public function getPaymentMethod(): ?string
     {
-        return $this->getService('PaymentMethod') ?? $this->get('ServiceCode');
+        return $this->getService('PaymentMethod') ?? $this->getCaseInsensitive('ServiceCode');
     }
 
     public function getService($name)
     {
-        return collect($this->get('Services'))->firstWhere('Name', $name);
+        return collect($this->getCaseInsensitive('Services'))->firstWhere('Name', $name);
     }
 
     public function getRelatedTransactionPartialPayment(): ?string
@@ -137,12 +137,12 @@ class JsonParser extends ResponseParser
 
     public function getPayerHash(): ?string
     {
-        return $this->get('PayerHash');
+        return $this->getCaseInsensitive('PayerHash');
     }
 
     public function getPaymentKey(): ?string
     {
-        return $this->get('PaymentKey');
+        return $this->getCaseInsensitive('PaymentKey');
     }
 
     public function getArrayableItems($items): array
@@ -169,12 +169,14 @@ class JsonParser extends ResponseParser
 
     public function getServiceParameters($name)
     {
-        return collect($this->getService($name))->get('Parameters');
+        $service = collect($this->getService($name));
+        $foundKey = $service->keys()->first(fn($k) => strtolower($k) === 'parameters');
+        return $foundKey ? $service->get($foundKey) : null;
     }
 
     public function isTest(): bool
     {
-        return $this->get('IsTest');
+        return $this->getCaseInsensitive('IsTest');
     }
 
     public function isPendingApproval(): bool

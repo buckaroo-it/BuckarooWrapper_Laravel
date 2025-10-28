@@ -23,6 +23,12 @@ abstract class ResponseParser extends Collection implements ResponseParserInterf
             new FormDataParser($items);
     }
 
+    protected function getCaseInsensitive($key, $default = null)
+    {
+        $foundKey = $this->keys()->first(fn($k) => strtolower($k) === strtolower($key));
+        return $foundKey ? $this->get($foundKey, $default) : $default;
+    }
+
     protected function formatAmount($amount): ?float
     {
         return is_numeric($amount) ? (float) $amount : null;

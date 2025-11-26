@@ -38,6 +38,8 @@ interface ResponseParserInterface
 
     public function getPaymentMethod(): ?string;
 
+    public function getPrimaryService(): ?string;
+
     public function getRelatedTransactionPartialPayment(): ?string;
 
     public function getAdditionalInformation($propertyName);

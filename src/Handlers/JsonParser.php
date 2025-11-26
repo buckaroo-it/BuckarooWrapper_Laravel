@@ -93,6 +93,13 @@ class JsonParser extends ResponseParser
         return $this->getService('PaymentMethod') ?? $this->getCaseInsensitive('ServiceCode');
     }
 
+    public function getPrimaryService(): ?string
+    {
+        $mainService = collect($this->getCaseInsensitive('Services'))->first();
+
+        return $mainService ? ($mainService['Name'] ?? null) : null;
+    }
+
     public function getService($name)
     {
         return collect($this->getCaseInsensitive('Services'))->firstWhere('Name', $name);

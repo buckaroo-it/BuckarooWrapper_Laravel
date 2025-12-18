@@ -30,7 +30,7 @@ class ReplyHandlerRequest extends FormRequest
     protected function validateBody()
     {
         return Buckaroo::api()->validateBody(
-            $this->all(),
+            $this->data->all(),
             $this->header('Authorization') ?? '',
             route('buckaroo.push')
         );

@@ -7,6 +7,20 @@ use Buckaroo\Resources\Constants\ResponseStatus;
 
 class FormDataParser extends ResponseParser
 {
+    private const KEY_MAP = [
+        '_Additional_Info' => '_Additional Info',
+    ];
+
+    public function __construct(array $items = [])
+    {
+        $normalized = [];
+        foreach ($items as $key => $value) {
+            $normalized[strtr($key, self::KEY_MAP)] = $value;
+        }
+
+        parent::__construct($normalized);
+    }
+
     public function getAmountDebit(): ?float
     {
         return $this->formatAmount($this->getCaseInsensitive('brq_amount_debit'));

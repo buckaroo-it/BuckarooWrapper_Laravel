@@ -9,11 +9,18 @@ use Str;
 abstract class ResponseParser extends Collection implements ResponseParserInterface
 {
     protected Request $request;
+    protected array $originalItems = [];
 
     public function __construct(array $items = [])
     {
+        $this->originalItems = $items;
         parent::__construct($items);
         $this->request = app(Request::class);
+    }
+
+    public function getOriginalItems(): array
+    {
+        return $this->originalItems;
     }
 
     public static function make($items = [])

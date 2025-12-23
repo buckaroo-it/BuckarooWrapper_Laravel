@@ -69,4 +69,6 @@ interface ResponseParserInterface
     public function isAwaitingConsumer(): bool;
 
     public function getService($name);
+
+    public function getOriginalItems(): array;
 }

@@ -13,7 +13,7 @@ class PushService extends BaseService
 {
     public function handlePushRequest(): array
     {
-        if ($this->buckarooTransaction->hasServiceAction('pay') || $this->buckarooTransaction->hasServiceAction('authorize')) {
+        if ($this->buckarooTransaction->hasServiceAction('pay') || $this->buckarooTransaction->hasServiceAction('authorize') || $this->buckarooTransaction->hasServiceAction('extraInfo')) {
             $this->handlePayAction();
         } elseif ($this->buckarooTransaction->hasServiceAction('refund')) {
             $this->handleRefundAction();

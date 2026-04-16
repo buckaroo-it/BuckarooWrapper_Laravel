@@ -16,7 +16,7 @@ class ReplyHandlerRequest extends FormRequest
     public function authorize(): bool
     {
         /* @var ResponseParserInterface $data */
-        $this->data = ResponseParser::make($this->all());
+        $this->data = ResponseParser::make($this->getRawData());
 
         if (!$this->validateBody()) {
             $this->message = 'Invalid signature';
@@ -25,6 +25,28 @@ class ReplyHandlerRequest extends FormRequest
         }
 
         return true;
+    }
+
+    /**
+     * Get raw POST data preserving trailing spaces for signature verification.
+     */
+    protected function getRawData(): array
+    {
+        $rawContent = $this->getContent();
+
+        if (!$rawContent) {
+            return $this->all();
+        }
+
+        if ($this->isJson()) {
+            $decoded = json_decode($rawContent, true);
+
+            return is_array($decoded) ? $decoded : $this->all();
+        }
+
+        parse_str($rawContent, $parsed);
+
+        return !empty($parsed) ? $parsed : $this->all();
     }
 
     protected function validateBody()

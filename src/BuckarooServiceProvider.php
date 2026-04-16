@@ -27,7 +27,8 @@ class BuckarooServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->mergeConfigFrom(__DIR__ . '/../config/buckaroo.php', 'buckaroo');
 
-        TrimStrings::skipWhen(fn ($request) => $request->is(config('buckaroo.routes.prefix', 'buckaroo') . '/push'));
+        $prefix = config('buckaroo.routes.prefix', 'buckaroo');
+        TrimStrings::skipWhen(fn ($request) => $request->is($prefix . '/push', $prefix . '/return'));
     }
 
     protected function configurePublishing()

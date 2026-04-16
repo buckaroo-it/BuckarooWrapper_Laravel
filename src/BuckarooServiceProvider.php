@@ -6,6 +6,7 @@ use Buckaroo\Laravel\Console\PublishCommand;
 use Buckaroo\Laravel\Wrappers\BuckarooClient;
 use Buckaroo\Laravel\Wrappers\BuckarooManager;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Support\ServiceProvider;
 
 class BuckarooServiceProvider extends ServiceProvider
@@ -25,6 +26,9 @@ class BuckarooServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->mergeConfigFrom(__DIR__ . '/../config/buckaroo.php', 'buckaroo');
+
+        $prefix = config('buckaroo.routes.prefix', 'buckaroo');
+        TrimStrings::skipWhen(fn ($request) => $request->is($prefix . '/push', $prefix . '/return'));
     }
 
     protected function configurePublishing()

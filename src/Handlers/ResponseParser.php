@@ -23,7 +23,7 @@ abstract class ResponseParser extends Collection implements ResponseParserInterf
         return $this->originalItems;
     }
 
-    public static function make($items = [])
+    public static function make($items = [], ...$args)
     {
         return collect($items)->filter(fn ($item, $key) => Str::startsWith(strtolower($key), 'brq_'))->isEmpty() ?
             new JsonParser($items) :

@@ -1,4 +1,5 @@
 <?php
+
 /*
  *
  *  * NOTICE OF LICENSE
@@ -22,17 +23,21 @@
 
 namespace Buckaroo\Laravel\Tests;
 
+use Buckaroo\BuckarooClient;
+
 class ConfirmingCredentialsTest extends TestCase
 {
-    /**
-     * @return void
-     *
-     * @test
-     */
-    public function it_tests_given_credentials()
+    public function test_it_confirms_given_credentials()
     {
-        $response = $this->buckaroo->confirmCredential();
+        $websiteKey = $_ENV['BPE_WEBSITE_KEY'] ?? null;
+        $secretKey = $_ENV['BPE_SECRET_KEY'] ?? null;
 
-        $this->assertTrue($response);
+        if (empty($websiteKey) || empty($secretKey)) {
+            $this->markTestSkipped('Buckaroo credentials are not configured.');
+        }
+
+        $buckaroo = new BuckarooClient($websiteKey, $secretKey);
+
+        $this->assertTrue($buckaroo->confirmCredential());
     }
 }

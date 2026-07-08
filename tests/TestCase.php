@@ -2,19 +2,21 @@
 
 namespace Buckaroo\Laravel\Tests;
 
-use Buckaroo\BuckarooClient;
+use Buckaroo\Laravel\BuckarooServiceProvider;
 use Dotenv\Dotenv;
 use GrahamCampbell\TestBench\AbstractPackageTestCase;
 
 abstract class TestCase extends AbstractPackageTestCase
 {
-    public function __construct()
+    protected function setUp(): void
     {
-        $dotenv = Dotenv::createImmutable(getcwd());
-        $dotenv->load();
+        parent::setUp();
 
-        $this->buckaroo = new BuckarooClient($_ENV['BPE_WEBSITE_KEY'], $_ENV['BPE_SECRET_KEY']);
+        Dotenv::createImmutable(getcwd())->safeLoad();
+    }
 
-        parent::__construct();
+    protected static function getServiceProviderClass(): string
+    {
+        return BuckarooServiceProvider::class;
     }
 }

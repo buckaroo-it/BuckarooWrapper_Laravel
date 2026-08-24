@@ -214,7 +214,7 @@ $response = Buckaroo::api()->method('ideal')->pay([
 ]);
 ```
 
-Replace `ideal` with any service code, and `pay` with the action you need, such as `refund`. Service codes for every payment method are listed in the [API reference](https://docs.buckaroo.io/reference).
+Replace `ideal` with another service code supported by the installed Buckaroo SDK, and `pay` with the action you need, such as `refund`. See the [API reference](https://docs.buckaroo.io/reference) for that service's parameters.
 
 ### Other services
 

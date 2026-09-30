@@ -44,7 +44,7 @@ If you run a shop on a supported e-commerce platform, use the ready-made plugin 
 |---|---|
 | PHP | 8.0 or higher |
 | Laravel | 9, 10, 11, 12 and 13 |
-| Buckaroo PHP SDK | 1.10 or higher (installed automatically) |
+| Buckaroo PHP SDK | 1.24.5 or higher (installed automatically) |
 
 You also need a Buckaroo account and an up-to-date SSL/TLS toolkit such as OpenSSL. Don't have an account yet? [Request an account](https://www.buckaroo.nl/start).
 

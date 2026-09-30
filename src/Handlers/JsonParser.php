@@ -116,6 +116,16 @@ class JsonParser extends ResponseParser
             ->firstWhere('RelationType', $type)['RelatedTransactionKey'] ?? null;
     }
 
+    public function getActionCode(): ?string
+    {
+        return $this->getCaseInsensitive('ActionCode');
+    }
+
+    public function getOriginalReservationDataRequestKey(): ?string
+    {
+        return $this->getCaseInsensitive('OriginalReservationDataRequestKey');
+    }
+
     public function isRefund(): bool
     {
         return $this->getRelatedTransactions() !== null;

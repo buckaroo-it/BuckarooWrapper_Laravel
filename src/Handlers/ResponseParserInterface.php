@@ -46,6 +46,8 @@ interface ResponseParserInterface
 
     public function getRefundParentKey(): ?string;
 
+    public function getActionCode(): ?string;
+
     public function isRefund();
 
     public function isSuccess(): bool;
@@ -71,4 +73,6 @@ interface ResponseParserInterface
     public function getService($name);
 
     public function getOriginalItems(): array;
+
+    public function getOriginalReservationDataRequestKey(): ?string;
 }

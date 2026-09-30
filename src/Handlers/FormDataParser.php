@@ -126,6 +126,16 @@ class FormDataParser extends ResponseParser
         return $this->getCaseInsensitive('brq_relatedtransaction_refund');
     }
 
+    public function getActionCode(): ?string
+    {
+        return $this->getCaseInsensitive('brq_actioncode');
+    }
+
+    public function getOriginalReservationDataRequestKey(): ?string
+    {
+        return $this->getCaseInsensitive('brq_originalreservation_datarequest_key');
+    }
+
     public function isRefund(): bool
     {
         return $this->getRefundParentKey() !== null;

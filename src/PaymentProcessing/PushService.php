@@ -3,6 +3,7 @@
 namespace Buckaroo\Laravel\PaymentProcessing;
 
 use Buckaroo\Laravel\Api\PayService;
+use Buckaroo\Laravel\Api\RefundService;
 use Buckaroo\Laravel\Constants\BuckarooTransactionStatus;
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
 use Buckaroo\Laravel\Events\RefundTransactionCompleted;
@@ -13,7 +14,20 @@ class PushService extends BaseService
 {
     public function handlePushRequest(): array
     {
-        if ($this->buckarooTransaction->hasServiceAction('pay') || $this->buckarooTransaction->hasServiceAction('authorize') || $this->buckarooTransaction->hasServiceAction('extraInfo')) {
+        if ($this->responseParser->isRefund()) {
+            if ($this->buckarooTransaction->transaction_key == $this->responseParser->getTransactionKey()) {
+                $this->handleRefundAction();
+            } else {
+                $this->buckarooTransaction = app(RefundService::class)->storeBuckarooTransaction($this->responseParser, [
+                    'service_action' => 'push/refund',
+                    'order' => $this->buckarooTransaction->order,
+                ]);
+
+                if (!$this->responseParser->isPendingProcessing()) {
+                    $this->dispatchRefundTransactionCompletedEvent();
+                }
+            }
+        } elseif ($this->buckarooTransaction->hasServiceAction('pay') || $this->buckarooTransaction->hasServiceAction('authorize') || $this->buckarooTransaction->hasServiceAction('extraInfo')) {
             $this->handlePayAction();
         } elseif ($this->buckarooTransaction->hasServiceAction('refund')) {
             $this->handleRefundAction();
@@ -24,13 +38,18 @@ class PushService extends BaseService
 
     protected function handlePayAction()
     {
+        $shouldDispatch = false;
+
         if ($this->buckarooTransaction->transaction_key == $this->responseParser->getTransactionKey()) {
+            $shouldDispatch = $this->buckarooTransaction->status_code != $this->responseParser->getStatusCode()
+                || $this->buckarooTransaction->status_subcode != $this->responseParser->getSubStatusCode();
             $this->updateTransaction();
         } elseif ($this->responseParser->getRelatedTransactionPartialPayment() && $this->relatedTransactionDoesntExists()) {
             $this->handleRelatedTransaction();
+            $shouldDispatch = true;
         }
 
-        if ($this->responseParser->getStatusCode() != ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_USER) {
+        if ($shouldDispatch && $this->responseParser->getStatusCode() != ResponseStatus::BUCKAROO_STATUSCODE_CANCELLED_BY_USER) {
             $this->dispatchPayTransactionCompletedEvent();
         }
     }

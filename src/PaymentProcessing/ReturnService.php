@@ -20,7 +20,9 @@ class ReturnService extends BaseService
 
     protected function shouldProcessTransaction(): bool
     {
-        return $this->forceProcess || ($this->responseParser->isPendingProcessing() && !$this->buckarooTransaction->isPushAction());
+        return $this->forceProcess || ($this->responseParser->isPendingProcessing()
+            && !$this->buckarooTransaction->isPushAction()
+            && !$this->buckarooTransaction->isReturnAction());
     }
 
     protected function processTransaction(): void

@@ -1,10 +1,11 @@
 <?php
 
-namespace Buckaroo\Laravel\Tests;
+namespace Buckaroo\Laravel\Tests\Handlers;
 
 use Buckaroo\Laravel\Handlers\FormDataParser;
 use Buckaroo\Laravel\Handlers\JsonParser;
 use Buckaroo\Laravel\Handlers\ResponseParser;
+use Buckaroo\Laravel\Tests\TestCase;
 
 class ResponseParserCompatTest extends TestCase
 {

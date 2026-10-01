@@ -7,21 +7,23 @@ use Buckaroo\BuckarooClient as BaseBuckarooClient;
 use Buckaroo\Config\Config;
 use Buckaroo\Handlers\Reply\ReplyHandler;
 use Illuminate\Contracts\Config\Repository;
+use RuntimeException;
 
 class BuckarooClient
 {
     protected Repository $config;
-    protected BaseBuckarooClient $buckarooClient;
+    protected ?BaseBuckarooClient $buckarooClient = null;
 
     public function __construct(Repository $config)
     {
         $this->config = $config;
 
-        $this->setBuckarooClient(
-            $this->config->get('buckaroo.website_key'),
-            $this->config->get('buckaroo.secret_key'),
-            $this->config->get('buckaroo.mode')
-        );
+        $websiteKey = $this->config->get('buckaroo.website_key');
+        $secretKey = $this->config->get('buckaroo.secret_key');
+
+        if (!empty($websiteKey) && !empty($secretKey)) {
+            $this->setBuckarooClient($websiteKey, $secretKey, $this->config->get('buckaroo.mode'));
+        }
     }
 
     public function setBuckarooClient(string|Config $websiteKey, ?string $secretKey = null, ?string $mode = null): static
@@ -33,16 +35,24 @@ class BuckarooClient
 
     public function getClientConfig(): ?Config
     {
-        return $this->buckarooClient->client()->config();
+        return $this->client()->client()->config();
     }
 
     public function client()
     {
+        if (!$this->buckarooClient) {
+            throw new RuntimeException('Buckaroo keys are not configured.');
+        }
+
         return $this->buckarooClient;
     }
 
     public function validateBody(array|string $payload, $authHeader = '', $url = ''): bool
     {
+        if (!$this->buckarooClient) {
+            return false;
+        }
+
         $replyHandler = new ReplyHandler(
             $this->getClientConfig(),
             $payload,
@@ -55,10 +65,12 @@ class BuckarooClient
 
     public function __call($name, $arguments)
     {
-        if (!method_exists($this->buckarooClient, $name)) {
+        $client = $this->client();
+
+        if (!method_exists($client, $name)) {
             throw new BadMethodCallException("Method {$name} does not exist.");
         }
 
-        return $this->buckarooClient->{$name}(...$arguments);
+        return $client->{$name}(...$arguments);
     }
 }

@@ -18,7 +18,7 @@
     },
     "require-dev": {
         "graham-campbell/testbench": "^5.0|^6.0",
-        "phpunit/phpunit": "^9.5|^10.0|^11.0|^12.0",
+        "pestphp/pest": "^4.0",
         "friendsofphp/php-cs-fixer": "^3.13",
         "vlucas/phpdotenv": "^5.5",
         "laravel/pint": "^1.16"
@@ -42,6 +42,16 @@
             "providers": [
                 "Buckaroo\\Laravel\\BuckarooServiceProvider"
             ]
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "cs": "pint --test",
+        "cs:fix": "pint"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     }
 }

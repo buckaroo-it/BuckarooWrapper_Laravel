@@ -187,7 +187,8 @@ class JsonParser extends ResponseParser
     public function getServiceParameters($name)
     {
         $service = collect($this->getService($name));
-        $foundKey = $service->keys()->first(fn($k) => strtolower($k) === 'parameters');
+        $foundKey = $service->keys()->first(fn ($k) => strtolower($k) === 'parameters');
+
         return $foundKey ? $service->get($foundKey) : null;
     }
 

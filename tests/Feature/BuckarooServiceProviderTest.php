@@ -61,7 +61,7 @@ it('registers the publish command', function () {
 });
 
 it('publishes the config, routes and migrations', function () {
-    $root = dirname(__DIR__);
+    $root = dirname(__DIR__, 2);
 
     expect(ServiceProvider::pathsToPublish(BuckarooServiceProvider::class, 'buckaroo-config'))
         ->toBe([$root . '/src/../config' => base_path('config')]);

@@ -3,6 +3,8 @@
 use Buckaroo\Laravel\Api\RefundService;
 use Buckaroo\Laravel\Events\RefundTransactionCompleted;
 use Buckaroo\Laravel\Handlers\PaymentMethodFactory;
+use Buckaroo\Laravel\Tests\Support\BuckarooMockRequest;
+use Buckaroo\Resources\Constants\Endpoints;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(fn () => Event::fake([RefundTransactionCompleted::class]));
@@ -31,20 +33,28 @@ function idealRefund(): RefundService
 }
 
 it('sends the refund to Buckaroo for the original transaction', function () {
-    $api = fakeBuckarooApi(refundResponse());
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', refundResponse())
+            ->expectJsonSubset([
+                'AmountCredit' => 4.25,
+                'Invoice' => 'INV-1',
+                'OriginalTransactionKey' => 'TX1',
+                'ReturnURL' => 'http://localhost/buckaroo/return',
+                'PushURL' => 'http://localhost/buckaroo/push',
+                'Services' => ['ServiceList' => [['name' => 'ideal', 'action' => 'Refund']]],
+            ]),
+    ]);
 
     idealRefund()->refund();
 
-    expect($api->calls[0]['method'])->toBe('ideal');
-    expect($api->calls[0]['action'])->toBe('refund');
-    expect($api->calls[0]['payload']['originalTransactionKey'])->toBe('TX1');
-    expect($api->calls[0]['payload']['returnURL'])->toBe('http://localhost/buckaroo/return');
-    expect($api->calls[0]['payload']['pushURL'])->toBe('http://localhost/buckaroo/push');
+    $this->helpers->mockBuckaroo()->assertAllConsumed();
 });
 
 it('stores the refund as a negative amount linked to the payment', function () {
-    $payment = createTransaction(['status' => 'paid', 'status_code' => '190']);
-    fakeBuckarooApi(refundResponse());
+    $payment = $this->helpers->createTransaction(['status' => 'paid', 'status_code' => '190']);
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', refundResponse()),
+    ]);
 
     [, $refund] = idealRefund()->refund();
 
@@ -58,7 +68,9 @@ it('stores the refund as a negative amount linked to the payment', function () {
 });
 
 it('reports every refund it stores', function (int $statusCode) {
-    fakeBuckarooApi(refundResponse($statusCode));
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', refundResponse($statusCode)),
+    ]);
 
     [$response, $refund] = idealRefund()->refund();
 

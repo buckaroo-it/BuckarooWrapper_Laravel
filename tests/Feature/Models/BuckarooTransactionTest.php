@@ -10,8 +10,8 @@ function keysOf($transactions): array
 }
 
 it('finds the transaction of a push by its key first', function () {
-    createTransaction(['transaction_key' => 'OTHER', 'related_transaction_key' => 'GRP1']);
-    createTransaction(['transaction_key' => 'TX1', 'related_transaction_key' => 'GRP1']);
+    $this->helpers->createTransaction(['transaction_key' => 'OTHER', 'related_transaction_key' => 'GRP1']);
+    $this->helpers->createTransaction(['transaction_key' => 'TX1', 'related_transaction_key' => 'GRP1']);
 
     $found = BuckarooTransaction::fromResponse(new FormDataParser([
         'brq_transactions' => 'TX1',
@@ -22,8 +22,8 @@ it('finds the transaction of a push by its key first', function () {
 });
 
 it('finds the earlier partial payments of a group', function () {
-    createTransaction(['transaction_key' => 'TX1', 'related_transaction_key' => 'GRP1']);
-    createTransaction(['transaction_key' => 'UNRELATED']);
+    $this->helpers->createTransaction(['transaction_key' => 'TX1', 'related_transaction_key' => 'GRP1']);
+    $this->helpers->createTransaction(['transaction_key' => 'UNRELATED']);
 
     $found = BuckarooTransaction::fromResponse(new FormDataParser([
         'brq_transactions' => 'TX2',
@@ -34,7 +34,7 @@ it('finds the earlier partial payments of a group', function () {
 });
 
 it('finds the parent of a refund', function () {
-    createTransaction(['transaction_key' => 'TX1']);
+    $this->helpers->createTransaction(['transaction_key' => 'TX1']);
 
     $found = BuckarooTransaction::fromResponse(new FormDataParser([
         'brq_transactions' => 'RF1',
@@ -45,16 +45,16 @@ it('finds the parent of a refund', function () {
 });
 
 it('finds nothing for an unknown transaction', function () {
-    createTransaction();
+    $this->helpers->createTransaction();
 
     expect(BuckarooTransaction::fromResponse(new FormDataParser(['brq_transactions' => 'UNKNOWN']))->exists())->toBeFalse();
 });
 
 it('lists only paid transactions as completed, optionally per action', function () {
-    createTransaction(['transaction_key' => 'PAID', 'status' => 'paid', 'status_code' => '190', 'service_action' => 'push/pay']);
-    createTransaction(['transaction_key' => 'REFUNDED', 'status' => 'paid', 'status_code' => '190', 'service_action' => 'refund']);
-    createTransaction(['transaction_key' => 'PENDING', 'status' => 'pending', 'status_code' => '791']);
-    createTransaction(['transaction_key' => 'FAILED', 'status' => 'failed', 'status_code' => '490']);
+    $this->helpers->createTransaction(['transaction_key' => 'PAID', 'status' => 'paid', 'status_code' => '190', 'service_action' => 'push/pay']);
+    $this->helpers->createTransaction(['transaction_key' => 'REFUNDED', 'status' => 'paid', 'status_code' => '190', 'service_action' => 'refund']);
+    $this->helpers->createTransaction(['transaction_key' => 'PENDING', 'status' => 'pending', 'status_code' => '791']);
+    $this->helpers->createTransaction(['transaction_key' => 'FAILED', 'status' => 'failed', 'status_code' => '490']);
 
     expect(keysOf(BuckarooTransaction::completed()->orderBy('id')->get()))->toBe(['PAID', 'REFUNDED']);
     expect(keysOf(BuckarooTransaction::completed('pay')->get()))->toBe(['PAID']);
@@ -62,16 +62,16 @@ it('lists only paid transactions as completed, optionally per action', function 
 });
 
 it('links refunds to the payment they refund', function () {
-    $payment = createTransaction(['transaction_key' => 'TX1']);
-    $refund = createTransaction(['transaction_key' => 'RF1', 'related_transaction_key' => 'TX1', 'service_action' => 'refund']);
-    createTransaction(['transaction_key' => 'TX2', 'related_transaction_key' => 'TX1', 'service_action' => 'pay']);
+    $payment = $this->helpers->createTransaction(['transaction_key' => 'TX1']);
+    $refund = $this->helpers->createTransaction(['transaction_key' => 'RF1', 'related_transaction_key' => 'TX1', 'service_action' => 'refund']);
+    $this->helpers->createTransaction(['transaction_key' => 'TX2', 'related_transaction_key' => 'TX1', 'service_action' => 'pay']);
 
     expect(keysOf($payment->refunds))->toBe(['RF1']);
     expect($refund->relatedTransaction->is($payment))->toBeTrue();
 });
 
 it('keeps each step of the service action once', function (string $action, string $stored) {
-    expect(createTransaction(['service_action' => $action])->service_action)->toBe($stored);
+    expect($this->helpers->createTransaction(['service_action' => $action])->service_action)->toBe($stored);
 })->with([
     'plain' => ['pay', 'pay'],
     'push after pay' => ['push/pay', 'push/pay'],
@@ -80,8 +80,8 @@ it('keeps each step of the service action once', function (string $action, strin
 ]);
 
 it('tells push and return updates apart', function () {
-    $pushed = createTransaction(['service_action' => 'push/pay']);
-    $returned = createTransaction(['service_action' => 'return/pay']);
+    $pushed = $this->helpers->createTransaction(['service_action' => 'push/pay']);
+    $returned = $this->helpers->createTransaction(['service_action' => 'return/pay']);
 
     expect($pushed->isPushAction())->toBeTrue();
     expect($pushed->isReturnAction())->toBeFalse();
@@ -90,7 +90,7 @@ it('tells push and return updates apart', function () {
 });
 
 it('gives the gateway handler of its payment method', function () {
-    $gateway = createTransaction(['payment_method' => 'ideal'])->getPaymentGateway();
+    $gateway = $this->helpers->createTransaction(['payment_method' => 'ideal'])->getPaymentGateway();
 
     expect($gateway)->toBeInstanceOf(PaymentGatewayHandler::class);
     expect($gateway->getServiceCode())->toBe('ideal');

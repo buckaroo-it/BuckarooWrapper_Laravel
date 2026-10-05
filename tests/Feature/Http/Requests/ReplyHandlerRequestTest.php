@@ -1,16 +1,17 @@
 <?php
 
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     Event::fake([PayTransactionCompleted::class]);
-    createTransaction();
+    $this->helpers->createTransaction();
 });
 
 it('refuses a callback with a wrong signature', function (string $uri) {
-    $payload = array_merge(signForm(pushFields()), ['brq_statuscode' => '490']);
+    $payload = array_merge($this->helpers->pushPayloadFormData(), ['brq_statuscode' => '490']);
 
     $this->post($uri, $payload)->assertStatus(400);
 })->with('callback routes');
@@ -18,21 +19,21 @@ it('refuses a callback with a wrong signature', function (string $uri) {
 it('reports a refused callback as an invalid signature', function () {
     $this->withoutExceptionHandling();
 
-    $this->post('/buckaroo/push', pushFields());
+    $this->post('/buckaroo/push', Arr::except($this->helpers->pushPayloadFormData(), 'brq_signature'));
 })->throws(HttpException::class, 'Invalid signature');
 
 it('refuses callbacks while the credentials are not set', function (string $uri) {
-    useDefaultPackageConfig();
+    $this->helpers->useDefaultPackageConfig();
 
-    $this->post($uri, signForm(pushFields(), ''))->assertStatus(400);
+    $this->post($uri, $this->helpers->pushPayloadFormData([], ''))->assertStatus(400);
 })->with('callback routes');
 
 it('refuses a callback without a signature', function (string $uri) {
-    $this->post($uri, pushFields())->assertStatus(400);
+    $this->post($uri, Arr::except($this->helpers->pushPayloadFormData(), 'brq_signature'))->assertStatus(400);
 })->with('callback routes');
 
 it('refuses a re-split callback before it changes the transaction', function () {
-    $original = signForm([
+    $original = $this->helpers->signFormData([
         'brq_amount' => '10.00',
         'brq_currency' => 'EUR',
         'brq_customer_name' => 'Abrq_statuscode=190brq_t=',
@@ -54,15 +55,15 @@ it('refuses a re-split callback before it changes the transaction', function () 
 });
 
 it('keeps surrounding spaces in signed values', function (string $uri) {
-    $this->post($uri, signForm(pushFields(['brq_customer_name' => ' J. de Vries '])))->assertOk();
+    $this->post($uri, $this->helpers->pushPayloadFormData(['brq_customer_name' => ' J. de Vries ']))->assertOk();
 })->with('callback routes');
 
 it('accepts a callback with an empty signed value', function () {
-    $this->post('/buckaroo/push', signForm(pushFields(['brq_customer_name' => ''])))->assertOk();
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_customer_name' => '']))->assertOk();
 });
 
 it('accepts a callback with mixed-case field names', function () {
-    $payload = signForm([
+    $payload = $this->helpers->signFormData([
         'BRQ_TRANSACTIONS' => 'TX1',
         'BRQ_STATUSCODE' => '190',
         'Brq_Amount' => '10.00',

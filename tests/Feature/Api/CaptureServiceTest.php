@@ -3,6 +3,8 @@
 use Buckaroo\Laravel\Api\CaptureService;
 use Buckaroo\Laravel\Events\CaptureTransactionCompleted;
 use Buckaroo\Laravel\Handlers\PaymentMethodFactory;
+use Buckaroo\Laravel\Tests\Support\BuckarooMockRequest;
+use Buckaroo\Resources\Constants\Endpoints;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(fn () => Event::fake([CaptureTransactionCompleted::class]));
@@ -12,7 +14,7 @@ function captureResponse(): array
     return [
         'Key' => 'CP1',
         'Status' => ['Code' => ['Code' => 190], 'SubCode' => null],
-        'ServiceCode' => 'creditcard',
+        'ServiceCode' => 'visa',
         'Invoice' => 'INV-1',
         'IsTest' => true,
         'Currency' => 'EUR',
@@ -21,25 +23,39 @@ function captureResponse(): array
     ];
 }
 
-it('captures an authorized payment at Buckaroo', function () {
-    $api = fakeBuckarooApi(captureResponse());
-
-    CaptureService::make(PaymentMethodFactory::make('creditcard')->setPayload([
+function visaCapture(): CaptureService
+{
+    return CaptureService::make(PaymentMethodFactory::make('creditcard')->setPayload([
         'amountDebit' => 25,
+        'invoice' => 'INV-1',
         'originalTransactionKey' => 'AU1',
-    ]))->capture();
+        'name' => 'visa',
+    ]));
+}
 
-    expect($api->calls[0]['method'])->toBe('creditcard');
-    expect($api->calls[0]['action'])->toBe('capture');
-    expect($api->calls[0]['payload']['originalTransactionKey'])->toBe('AU1');
-    expect($api->calls[0]['payload']['returnURL'])->toBe('http://localhost/buckaroo/return');
-    expect($api->calls[0]['payload']['pushURL'])->toBe('http://localhost/buckaroo/push');
+it('captures an authorized payment at Buckaroo', function () {
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', captureResponse())
+            ->expectJsonSubset([
+                'AmountDebit' => 25,
+                'OriginalTransactionKey' => 'AU1',
+                'ReturnURL' => 'http://localhost/buckaroo/return',
+                'PushURL' => 'http://localhost/buckaroo/push',
+                'Services' => ['ServiceList' => [['name' => 'visa', 'action' => 'Capture']]],
+            ]),
+    ]);
+
+    visaCapture()->capture();
+
+    $this->helpers->mockBuckaroo()->assertAllConsumed();
 });
 
 it('stores the capture and reports it completed', function () {
-    fakeBuckarooApi(captureResponse());
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', captureResponse()),
+    ]);
 
-    [$response, $capture] = CaptureService::make(PaymentMethodFactory::make('creditcard'))->capture();
+    [$response, $capture] = visaCapture()->capture();
 
     $capture->refresh();
     expect($capture->transaction_key)->toBe('CP1');

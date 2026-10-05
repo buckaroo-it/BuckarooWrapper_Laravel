@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Event;
 beforeEach(fn () => Event::fake([PayTransactionCompleted::class, RefundTransactionCompleted::class]));
 
 it('tells Buckaroo the push arrived so it stops retrying', function (array $stored, array $push) {
-    createTransaction($stored);
+    $this->helpers->createTransaction($stored);
 
-    $this->post('/buckaroo/push', signForm(pushFields($push)))
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData($push))
         ->assertOk()
         ->assertExactJson(['status' => true]);
 })->with([

@@ -6,19 +6,22 @@ use Illuminate\Support\Facades\Event;
 
 beforeEach(fn () => Event::fake([PayTransactionCompleted::class, RefundTransactionCompleted::class]));
 
-function refundPushFields(array $fields = []): array
+/**
+ * Push fields that turn the default push into one for refund `RF1` of `TX1`.
+ */
+function refundFields(array $fields = []): array
 {
-    return pushFields(array_merge([
+    return array_merge([
         'brq_transactions' => 'RF1',
         'brq_relatedtransaction_refund' => 'TX1',
         'brq_amount_credit' => '10.00',
-    ], $fields));
+    ], $fields);
 }
 
 it('does not move a paid transaction back to pending', function () {
-    $transaction = createTransaction(['status' => 'paid', 'status_code' => '190']);
+    $transaction = $this->helpers->createTransaction(['status' => 'paid', 'status_code' => '190']);
 
-    $this->post('/buckaroo/push', signForm(pushFields(['brq_statuscode' => '791'])))
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_statuscode' => '791']))
         ->assertOk();
 
     expect($transaction->fresh()->status)->toBe('paid');
@@ -27,9 +30,9 @@ it('does not move a paid transaction back to pending', function () {
 });
 
 it('completes a pending transaction on a paid push', function () {
-    $transaction = createTransaction();
+    $transaction = $this->helpers->createTransaction();
 
-    $this->post('/buckaroo/push', signForm(pushFields()))
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData())
         ->assertOk();
 
     $transaction->refresh();
@@ -41,8 +44,8 @@ it('completes a pending transaction on a paid push', function () {
 });
 
 it('processes a duplicate paid push every time', function () {
-    $transaction = createTransaction();
-    $payload = signForm(pushFields());
+    $transaction = $this->helpers->createTransaction();
+    $payload = $this->helpers->pushPayloadFormData();
 
     $this->post('/buckaroo/push', $payload)->assertOk();
     $this->post('/buckaroo/push', $payload)->assertOk();
@@ -52,26 +55,26 @@ it('processes a duplicate paid push every time', function () {
 });
 
 it('lets a final status change to another final status', function () {
-    $transaction = createTransaction(['status' => 'failed', 'status_code' => '490']);
+    $transaction = $this->helpers->createTransaction(['status' => 'failed', 'status_code' => '490']);
 
-    $this->post('/buckaroo/push', signForm(pushFields()))->assertOk();
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData())->assertOk();
 
     expect($transaction->fresh()->status)->toBe('paid');
     Event::assertDispatchedTimes(PayTransactionCompleted::class, 1);
 });
 
 it('does not fire the pay event when the customer cancelled', function () {
-    $transaction = createTransaction();
+    $transaction = $this->helpers->createTransaction();
 
-    $this->post('/buckaroo/push', signForm(pushFields(['brq_statuscode' => '890'])))->assertOk();
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_statuscode' => '890']))->assertOk();
 
     expect($transaction->fresh()->status)->toBe('cancelled');
     Event::assertNotDispatched(PayTransactionCompleted::class);
 });
 
 it('does not move a paid refund back to pending', function () {
-    createTransaction(['status' => 'paid', 'status_code' => '190']);
-    $refund = createTransaction([
+    $this->helpers->createTransaction(['status' => 'paid', 'status_code' => '190']);
+    $refund = $this->helpers->createTransaction([
         'transaction_key' => 'RF1',
         'related_transaction_key' => 'TX1',
         'status' => 'paid',
@@ -79,7 +82,7 @@ it('does not move a paid refund back to pending', function () {
         'service_action' => 'refund',
     ]);
 
-    $this->post('/buckaroo/push', signForm(refundPushFields(['brq_statuscode' => '791'])))
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(refundFields(['brq_statuscode' => '791'])))
         ->assertOk();
 
     expect($refund->fresh()->status)->toBe('paid');
@@ -87,14 +90,14 @@ it('does not move a paid refund back to pending', function () {
 });
 
 it('completes a pending refund on a paid refund push', function () {
-    createTransaction(['status' => 'paid', 'status_code' => '190']);
-    $refund = createTransaction([
+    $this->helpers->createTransaction(['status' => 'paid', 'status_code' => '190']);
+    $refund = $this->helpers->createTransaction([
         'transaction_key' => 'RF1',
         'related_transaction_key' => 'TX1',
         'service_action' => 'refund',
     ]);
 
-    $this->post('/buckaroo/push', signForm(refundPushFields()))->assertOk();
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(refundFields()))->assertOk();
 
     expect($refund->fresh()->status)->toBe('paid');
     expect((float) $refund->fresh()->amount)->toBe(-10.0);
@@ -102,33 +105,33 @@ it('completes a pending refund on a paid refund push', function () {
 });
 
 it('updates a refund on a pending refund push without firing the refund event', function () {
-    createTransaction(['status' => 'paid', 'status_code' => '190']);
-    $refund = createTransaction([
+    $this->helpers->createTransaction(['status' => 'paid', 'status_code' => '190']);
+    $refund = $this->helpers->createTransaction([
         'transaction_key' => 'RF1',
         'related_transaction_key' => 'TX1',
         'status' => 'open',
         'service_action' => 'refund',
     ]);
 
-    $this->post('/buckaroo/push', signForm(refundPushFields(['brq_statuscode' => '791'])))->assertOk();
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(refundFields(['brq_statuscode' => '791'])))->assertOk();
 
     expect($refund->fresh()->status)->toBe('pending');
     Event::assertNotDispatched(RefundTransactionCompleted::class);
 });
 
 it('stores a new partial payment even when the first payment is paid', function () {
-    createTransaction([
+    $this->helpers->createTransaction([
         'related_transaction_key' => 'GRP1',
         'status' => 'paid',
         'status_code' => '190',
         'order' => 'ORD-1',
     ]);
 
-    $this->post('/buckaroo/push', signForm(pushFields([
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData([
         'brq_transactions' => 'TX2',
         'brq_relatedtransaction_partialpayment' => 'GRP1',
         'brq_statuscode' => '791',
-    ])))->assertOk();
+    ]))->assertOk();
 
     $this->assertDatabaseHas('buckaroo_transactions', [
         'transaction_key' => 'TX2',
@@ -141,13 +144,13 @@ it('stores a new partial payment even when the first payment is paid', function 
 });
 
 it('does not store the same partial payment twice', function () {
-    createTransaction(['related_transaction_key' => 'GRP1', 'status' => 'paid', 'status_code' => '190']);
-    createTransaction(['transaction_key' => 'TX2', 'related_transaction_key' => 'GRP1', 'status' => 'pending']);
+    $this->helpers->createTransaction(['related_transaction_key' => 'GRP1', 'status' => 'paid', 'status_code' => '190']);
+    $this->helpers->createTransaction(['transaction_key' => 'TX2', 'related_transaction_key' => 'GRP1', 'status' => 'pending']);
 
-    $this->post('/buckaroo/push', signForm(pushFields([
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData([
         'brq_transactions' => 'TX2',
         'brq_relatedtransaction_partialpayment' => 'GRP1',
-    ])))->assertOk();
+    ]))->assertOk();
 
     $this->assertDatabaseCount('buckaroo_transactions', 2);
     $this->assertDatabaseHas('buckaroo_transactions', ['transaction_key' => 'TX2', 'status' => 'paid']);
@@ -156,5 +159,5 @@ it('does not store the same partial payment twice', function () {
 it('fails when the transaction is unknown', function () {
     $this->withoutExceptionHandling();
 
-    $this->post('/buckaroo/push', signForm(pushFields(['brq_transactions' => 'UNKNOWN'])));
+    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_transactions' => 'UNKNOWN']));
 })->throws(Exception::class, 'Transaction [UNKNOWN] not found');

@@ -4,6 +4,8 @@ use Buckaroo\Laravel\Api\PayService;
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
 use Buckaroo\Laravel\Handlers\PaymentMethodFactory;
 use Buckaroo\Laravel\Models\BuckarooTransaction;
+use Buckaroo\Laravel\Tests\Support\BuckarooMockRequest;
+use Buckaroo\Resources\Constants\Endpoints;
 use Buckaroo\Transaction\Response\TransactionResponse;
 use Illuminate\Support\Facades\Event;
 
@@ -44,26 +46,28 @@ function idealPayment(): PayService
 }
 
 it('sends the payment to Buckaroo with the return and push URLs', function () {
-    $api = fakeBuckarooApi(payResponse());
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', payResponse())
+            ->expectJsonSubset([
+                'Currency' => 'EUR',
+                'AmountDebit' => 10.5,
+                'Invoice' => 'INV-1',
+                'Order' => 'ORD-1',
+                'ReturnURL' => 'http://localhost/buckaroo/return',
+                'PushURL' => 'http://localhost/buckaroo/push',
+                'Services' => ['ServiceList' => [['name' => 'ideal', 'action' => 'Pay']]],
+            ]),
+    ]);
 
     idealPayment()->pay();
 
-    expect($api->calls)->toBe([[
-        'method' => 'ideal',
-        'action' => 'pay',
-        'payload' => [
-            'returnURL' => 'http://localhost/buckaroo/return',
-            'pushURL' => 'http://localhost/buckaroo/push',
-            'currency' => 'EUR',
-            'amountDebit' => 10.5,
-            'invoice' => 'INV-1',
-            'order' => 'ORD-1',
-        ],
-    ]]);
+    $this->helpers->mockBuckaroo()->assertAllConsumed();
 });
 
 it('stores a processed payment and reports it completed', function () {
-    fakeBuckarooApi(payResponse());
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', payResponse()),
+    ]);
 
     [$response, $transaction] = idealPayment()->pay();
 
@@ -88,10 +92,12 @@ it('stores a processed payment and reports it completed', function () {
 });
 
 it('waits for the push when the customer must be redirected', function () {
-    fakeBuckarooApi(payResponse([
-        'Status' => ['Code' => ['Code' => 790, 'Description' => 'Pending input'], 'SubCode' => null],
-        'RequiredAction' => ['RedirectURL' => 'https://testcheckout.buckaroo.nl/html/redirect.ashx?r=ABC', 'Name' => 'Redirect'],
-    ]));
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', payResponse([
+            'Status' => ['Code' => ['Code' => 790, 'Description' => 'Pending input'], 'SubCode' => null],
+            'RequiredAction' => ['RedirectURL' => 'https://testcheckout.buckaroo.nl/html/redirect.ashx?r=ABC', 'Name' => 'Redirect'],
+        ])),
+    ]);
 
     [$response, $transaction] = idealPayment()->pay();
 
@@ -101,18 +107,27 @@ it('waits for the push when the customer must be redirected', function () {
 });
 
 it('authorizes instead of paying when asked', function () {
-    $api = fakeBuckarooApi(payResponse(['Status' => ['Code' => ['Code' => 190]]]));
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', payResponse(['ServiceCode' => 'visa']))
+            ->expectJsonSubset(['Services' => ['ServiceList' => [['name' => 'visa', 'action' => 'Authorize']]]]),
+    ]);
 
-    [, $transaction] = PayService::make(PaymentMethodFactory::make('creditcard')->shouldAuthorize())->pay();
+    [, $transaction] = PayService::make(
+        PaymentMethodFactory::make('creditcard')
+            ->setPayload(['currency' => 'EUR', 'amountDebit' => 25, 'invoice' => 'INV-1', 'name' => 'visa'])
+            ->shouldAuthorize()
+    )->pay();
 
-    expect($api->calls[0]['action'])->toBe('authorize');
     expect($transaction->service_action)->toBe('authorize');
+    $this->helpers->mockBuckaroo()->assertAllConsumed();
 });
 
 it('links a partial payment to its group transaction', function () {
-    fakeBuckarooApi(payResponse([
-        'RelatedTransactions' => [['RelationType' => 'partialpayment', 'RelatedTransactionKey' => 'GRP1']],
-    ]));
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', payResponse([
+            'RelatedTransactions' => [['RelationType' => 'partialpayment', 'RelatedTransactionKey' => 'GRP1']],
+        ])),
+    ]);
 
     [, $transaction] = idealPayment()->pay();
 
@@ -121,7 +136,9 @@ it('links a partial payment to its group transaction', function () {
 
 it('stores the payment in the configured transaction model', function () {
     config(['buckaroo.transaction_model' => ShopTransaction::class]);
-    fakeBuckarooApi(payResponse());
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('POST', Endpoints::TEST . 'json/Transaction/', payResponse()),
+    ]);
 
     [, $transaction] = idealPayment()->pay();
 

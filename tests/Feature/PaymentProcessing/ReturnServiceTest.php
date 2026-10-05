@@ -7,17 +7,17 @@ use Illuminate\Support\Facades\Event;
 
 beforeEach(fn () => Event::fake([PayTransactionCompleted::class]));
 
-function returnService(array $fields): ReturnService
+function returnService(array $payload): ReturnService
 {
-    $request = ReplyHandlerRequest::create('/buckaroo/return', 'POST', signForm($fields));
+    $request = ReplyHandlerRequest::create('/buckaroo/return', 'POST', $payload);
 
     return ReturnService::make($request);
 }
 
 it('completes a pending payment on return when no push arrived yet', function () {
-    $transaction = createTransaction(['service_action' => 'pay']);
+    $transaction = $this->helpers->createTransaction(['service_action' => 'pay']);
 
-    $result = returnService(pushFields(['brq_statuscode' => '791']))->handleReturnRequest();
+    $result = returnService($this->helpers->pushPayloadFormData(['brq_statuscode' => '791']))->handleReturnRequest();
 
     expect($result->is($transaction))->toBeTrue();
     expect($transaction->fresh()->service_action)->toBe('return/pay');
@@ -25,53 +25,53 @@ it('completes a pending payment on return when no push arrived yet', function ()
 });
 
 it('treats a P190 sub status as pending', function () {
-    createTransaction();
+    $this->helpers->createTransaction();
 
-    returnService(pushFields(['brq_statuscode' => '190', 'brq_statuscode_detail' => 'P190']))->handleReturnRequest();
+    returnService($this->helpers->pushPayloadFormData(['brq_statuscode' => '190', 'brq_statuscode_detail' => 'P190']))->handleReturnRequest();
 
     Event::assertDispatchedTimes(PayTransactionCompleted::class, 1);
 });
 
 it('leaves a final return to the push', function () {
-    $transaction = createTransaction();
+    $transaction = $this->helpers->createTransaction();
 
-    returnService(pushFields(['brq_statuscode' => '190']))->handleReturnRequest();
+    returnService($this->helpers->pushPayloadFormData(['brq_statuscode' => '190']))->handleReturnRequest();
 
     expect($transaction->fresh()->service_action)->toBe('pay');
     Event::assertNotDispatched(PayTransactionCompleted::class);
 });
 
 it('does not fire again for a payment the push already handled', function () {
-    $transaction = createTransaction(['service_action' => 'push/pay']);
+    $transaction = $this->helpers->createTransaction(['service_action' => 'push/pay']);
 
-    returnService(pushFields(['brq_statuscode' => '791']))->handleReturnRequest();
+    returnService($this->helpers->pushPayloadFormData(['brq_statuscode' => '791']))->handleReturnRequest();
 
     expect($transaction->fresh()->service_action)->toBe('push/pay');
     Event::assertNotDispatched(PayTransactionCompleted::class);
 });
 
 it('does not fire again for a partial payment the push already stored', function () {
-    createTransaction(['related_transaction_key' => 'GRP1', 'status' => 'paid', 'status_code' => '190']);
-    $partial = pushFields([
+    $this->helpers->createTransaction(['related_transaction_key' => 'GRP1', 'status' => 'paid', 'status_code' => '190']);
+    $partial = $this->helpers->pushPayloadFormData([
         'brq_transactions' => 'TX2',
         'brq_relatedtransaction_partialpayment' => 'GRP1',
         'brq_statuscode' => '791',
     ]);
 
-    $this->post('/buckaroo/push', signForm($partial))->assertOk();
+    $this->post('/buckaroo/push', $partial)->assertOk();
     returnService($partial)->handleReturnRequest();
 
     Event::assertDispatchedTimes(PayTransactionCompleted::class, 1);
 });
 
 it('processes any return when forced', function () {
-    createTransaction(['service_action' => 'push/pay']);
+    $this->helpers->createTransaction(['service_action' => 'push/pay']);
 
-    returnService(pushFields(['brq_statuscode' => '190']))->forceProcess()->handleReturnRequest();
+    returnService($this->helpers->pushPayloadFormData(['brq_statuscode' => '190']))->forceProcess()->handleReturnRequest();
 
     Event::assertDispatchedTimes(PayTransactionCompleted::class, 1);
 });
 
 it('fails when the transaction is unknown', function () {
-    returnService(pushFields(['brq_transactions' => 'UNKNOWN']));
+    returnService($this->helpers->pushPayloadFormData(['brq_transactions' => 'UNKNOWN']));
 })->throws(Exception::class, 'Transaction [UNKNOWN] not found');

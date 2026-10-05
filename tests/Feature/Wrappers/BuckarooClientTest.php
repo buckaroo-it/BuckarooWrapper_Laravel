@@ -4,7 +4,10 @@ use Buckaroo\Config\DefaultConfig;
 use Buckaroo\Handlers\HMAC\Generator;
 use Buckaroo\Handlers\Reply\ReplyHandler;
 use Buckaroo\Laravel\Facades\Buckaroo;
+use Buckaroo\Laravel\Tests\Support\BuckarooMockRequest;
+use Buckaroo\Laravel\Tests\TestCase;
 use Buckaroo\PaymentMethods\PaymentFacade;
+use Buckaroo\Resources\Constants\Endpoints;
 
 function sdkAcceptsSignature(array $payload): bool
 {
@@ -29,8 +32,8 @@ function resplitFields(array $fields): array
 it('builds the SDK client from the package config', function () {
     $config = Buckaroo::api()->getClientConfig();
 
-    expect($config->websiteKey())->toBe(TEST_WEBSITE_KEY);
-    expect($config->secretKey())->toBe(TEST_SECRET_KEY);
+    expect($config->websiteKey())->toBe(TestCase::WEBSITE_KEY);
+    expect($config->secretKey())->toBe(TestCase::SECRET_KEY);
     expect($config->isLiveMode())->toBeFalse();
 });
 
@@ -40,7 +43,7 @@ it('can be pointed at another account', function () {
     Buckaroo::api()->setBuckarooClient($config);
 
     expect(Buckaroo::api()->getClientConfig())->toBe($config);
-    expect(Buckaroo::api()->validateBody(signForm(pushFields(), 'other-secret-key')))->toBeTrue();
+    expect(Buckaroo::api()->validateBody($this->helpers->pushPayloadFormData([], 'other-secret-key')))->toBeTrue();
 });
 
 it('forwards SDK calls to the Buckaroo client', function () {
@@ -52,15 +55,15 @@ it('rejects calls the SDK client does not have', function () {
 })->throws(BadMethodCallException::class, 'Method refundEverything does not exist.');
 
 it('accepts a correctly signed form reply', function () {
-    expect(Buckaroo::api()->validateBody(signForm(pushFields())))->toBeTrue();
+    expect(Buckaroo::api()->validateBody($this->helpers->pushPayloadFormData()))->toBeTrue();
 });
 
 it('rejects a form reply signed with another secret', function () {
-    expect(Buckaroo::api()->validateBody(signForm(pushFields(), 'another-secret')))->toBeFalse();
+    expect(Buckaroo::api()->validateBody($this->helpers->pushPayloadFormData([], 'another-secret')))->toBeFalse();
 });
 
 it('rejects a form reply whose signed customer name was re-split into other fields', function () {
-    $original = signForm(resplitFields([
+    $original = $this->helpers->signFormData(resplitFields([
         'brq_customer_name' => 'Abrq_statuscode=190brq_t=',
         'brq_statuscode' => '490',
     ]));
@@ -77,7 +80,7 @@ it('rejects a form reply whose signed customer name was re-split into other fiel
 });
 
 it('rejects a form reply whose signed additional parameter was re-split into other fields', function () {
-    $original = signForm([
+    $original = $this->helpers->signFormData([
         'add_note' => 'xbrq_statuscode=190brq_t=',
         'brq_statuscode' => '490',
         'brq_transactions' => 'TX1',
@@ -95,7 +98,7 @@ it('rejects a form reply whose signed additional parameter was re-split into oth
 });
 
 it('rejects a signed value that contains a signed-key pattern', function (string $field, string $value) {
-    expect(Buckaroo::api()->validateBody(signForm(pushFields([$field => $value]))))->toBeFalse();
+    expect(Buckaroo::api()->validateBody($this->helpers->pushPayloadFormData([$field => $value])))->toBeFalse();
 })->with([
     'custom parameter, mixed case' => ['cust_reference', 'BRQ_StatusCode=190'],
     'html-encoded equals sign' => ['brq_customer_name', 'A brq_statuscode&#61;190'],
@@ -103,7 +106,7 @@ it('rejects a signed value that contains a signed-key pattern', function (string
 ]);
 
 it('accepts equals signs in values that are not a signed-key pattern', function (string $field, string $value) {
-    expect(Buckaroo::api()->validateBody(signForm(pushFields([$field => $value]))))->toBeTrue();
+    expect(Buckaroo::api()->validateBody($this->helpers->pushPayloadFormData([$field => $value])))->toBeTrue();
 })->with([
     'name with an equals sign' => ['brq_customer_name', 'J. de Vries = buyer'],
     'prefix without equals sign' => ['brq_description', 'Order 42 brq_ promo'],
@@ -112,7 +115,7 @@ it('accepts equals signs in values that are not a signed-key pattern', function 
 ]);
 
 it('ignores the pattern in fields that are not signed', function () {
-    expect(Buckaroo::api()->validateBody(signForm(pushFields()) + ['note' => 'brq_statuscode=490']))->toBeTrue();
+    expect(Buckaroo::api()->validateBody($this->helpers->pushPayloadFormData() + ['note' => 'brq_statuscode=490']))->toBeTrue();
 });
 
 it('validates a JSON reply by its HMAC header only', function () {
@@ -127,39 +130,43 @@ it('validates a JSON reply by its HMAC header only', function () {
     $header = 'hmac ' . (new Generator(Buckaroo::api()->getClientConfig(), $payload, $url))->generate();
 
     expect(Buckaroo::api()->validateBody($payload, $header, $url))->toBeTrue();
-    expect(Buckaroo::api()->validateBody($payload, 'hmac ' . TEST_WEBSITE_KEY . ':wrong:nonce:1', $url))->toBeFalse();
+    expect(Buckaroo::api()->validateBody($payload, 'hmac ' . TestCase::WEBSITE_KEY . ':wrong:nonce:1', $url))->toBeFalse();
 });
 
 it('refuses every reply while the secret is blank', function () {
-    Buckaroo::api()->setBuckarooClient(TEST_WEBSITE_KEY, '   ', 'test');
-    $payload = signForm(pushFields(), '');
+    Buckaroo::api()->setBuckarooClient(TestCase::WEBSITE_KEY, '   ', 'test');
+    $payload = $this->helpers->pushPayloadFormData([], '');
 
     expect(sdkAcceptsSignature($payload))->toBeTrue();
     expect(Buckaroo::api()->validateBody($payload))->toBeFalse();
 });
 
 it('resolves without credentials and refuses every reply', function () {
-    useDefaultPackageConfig();
+    $this->helpers->useDefaultPackageConfig();
 
     expect(Buckaroo::api()->getClientConfig())->toBeNull();
-    expect(Buckaroo::api()->validateBody(signForm(pushFields(), '')))->toBeFalse();
+    expect(Buckaroo::api()->validateBody($this->helpers->pushPayloadFormData([], '')))->toBeFalse();
 });
 
 it('names the missing credentials when the API is called without them', function () {
-    useDefaultPackageConfig();
+    $this->helpers->useDefaultPackageConfig();
 
     Buckaroo::api()->method('ideal');
 })->throws(RuntimeException::class, 'Set BPE_WEBSITE_KEY and BPE_SECRET_KEY');
 
-it('confirms live credentials', function () {
-    $websiteKey = $_ENV['BPE_WEBSITE_KEY'] ?? null;
-    $secretKey = $_ENV['BPE_SECRET_KEY'] ?? null;
-
-    if (empty($websiteKey) || empty($secretKey)) {
-        $this->markTestSkipped('Buckaroo credentials are not configured.');
-    }
-
-    Buckaroo::api()->setBuckarooClient($websiteKey, $secretKey);
+it('confirms credentials that Buckaroo accepts', function () {
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('GET', Endpoints::TEST . 'json/Transaction/Specification/ideal?serviceVersion=2', []),
+    ]);
 
     expect(Buckaroo::api()->confirmCredential())->toBeTrue();
+    $this->helpers->mockBuckaroo()->assertAllConsumed();
+});
+
+it('rejects credentials that Buckaroo refuses', function () {
+    $this->helpers->mockBuckaroo()->mockTransportRequests([
+        BuckarooMockRequest::json('GET', '*/json/Transaction/Specification/ideal*', ['Message' => 'Unauthorized'], 401),
+    ]);
+
+    expect(Buckaroo::api()->confirmCredential())->toBeFalse();
 });

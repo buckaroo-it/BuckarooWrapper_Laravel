@@ -38,7 +38,7 @@ class FormDataParser extends ResponseParser
 
     public function hasRedirect(): bool
     {
-        return $this->getCaseInsensitive('brq_redirect_url') === true;
+        return !empty($this->getCaseInsensitive('brq_redirect_url'));
     }
 
     public function getRedirectUrl(): string
@@ -179,7 +179,7 @@ class FormDataParser extends ResponseParser
 
     public function isTest(): bool
     {
-        return $this->getCaseInsensitive('brq_test');
+        return filter_var($this->getCaseInsensitive('brq_test'), FILTER_VALIDATE_BOOLEAN);
     }
 
     public function isPendingApproval(): bool

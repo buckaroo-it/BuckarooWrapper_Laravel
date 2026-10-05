@@ -29,6 +29,6 @@ class PublishCommand extends Command
     {
         $this->call('vendor:publish', ['--tag' => 'buckaroo-config']);
         $this->call('vendor:publish', ['--tag' => 'buckaroo-database']);
-        $this->call('vendor:publish', ['--tag' => 'buckaroo-controllers']);
+        $this->call('vendor:publish', ['--tag' => 'buckaroo-routes']);
     }
 }

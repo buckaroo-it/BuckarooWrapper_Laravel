@@ -31,11 +31,10 @@ class CaptureService extends BaseService
 
     public function storeBuckarooTransaction(ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
-        return parent::storeBuckarooTransaction($transactionResponse, [
+        return parent::storeBuckarooTransaction($transactionResponse, array_merge([
             'related_transaction_key' => $transactionResponse->getRelatedTransactionPartialPayment(),
             'service_action' => $this->paymentGateway->getPayAction(),
             'amount' => $transactionResponse->getAmount() ?? $transactionResponse->getAmountDebit(),
-            ...$additionalData,
-        ]);
+        ], $additionalData));
     }
 }

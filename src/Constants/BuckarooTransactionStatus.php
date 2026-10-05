@@ -34,6 +34,11 @@ class BuckarooTransactionStatus
         };
     }
 
+    public static function isFinal(string $status): bool
+    {
+        return in_array($status, [self::STATUS_PAID, self::STATUS_FAILED, self::STATUS_CANCELLED], true);
+    }
+
     public static function cases(): array
     {
         return [

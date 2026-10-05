@@ -13,6 +13,10 @@ class PushService extends BaseService
 {
     public function handlePushRequest(): array
     {
+        if ($this->revertsFinalStatus()) {
+            return ['status' => true];
+        }
+
         if ($this->buckarooTransaction->hasServiceAction('pay') || $this->buckarooTransaction->hasServiceAction('authorize') || $this->buckarooTransaction->hasServiceAction('extraInfo')) {
             $this->handlePayAction();
         } elseif ($this->buckarooTransaction->hasServiceAction('refund')) {
@@ -20,6 +24,16 @@ class PushService extends BaseService
         }
 
         return ['status' => true];
+    }
+
+    /**
+     * An older push (out of order, or re-sent) must not move a final status back to a non-final one.
+     */
+    protected function revertsFinalStatus(): bool
+    {
+        return $this->buckarooTransaction->transaction_key == $this->responseParser->getTransactionKey()
+            && BuckarooTransactionStatus::isFinal($this->buckarooTransaction->status)
+            && !BuckarooTransactionStatus::isFinal(BuckarooTransactionStatus::fromTransactionStatus($this->responseParser->getStatusCode()));
     }
 
     protected function handlePayAction()
@@ -37,7 +51,7 @@ class PushService extends BaseService
 
     protected function updateTransaction(array $additionalData = [])
     {
-        return $this->buckarooTransaction->update([
+        return $this->buckarooTransaction->update(array_merge([
             'payment_method' => $this->responseParser->getPaymentMethod(),
             'amount' => $this->responseParser->getAmount(),
             'status_code' => $this->responseParser->getStatusCode(),
@@ -46,8 +60,7 @@ class PushService extends BaseService
             'status' => BuckarooTransactionStatus::fromTransactionStatus($this->responseParser->getStatusCode()),
             'service_action' => "push/{$this->buckarooTransaction->service_action}",
             'related_transaction_key' => $this->responseParser->getRelatedTransactionPartialPayment(),
-            ...$additionalData,
-        ]);
+        ], $additionalData));
     }
 
     protected function relatedTransactionDoesntExists()
@@ -61,7 +74,7 @@ class PushService extends BaseService
     protected function handleRelatedTransaction()
     {
         return app(PayService::class)->storeBuckarooTransaction($this->responseParser, [
-            'action' => "push/{$this->buckarooTransaction->service_action}",
+            'service_action' => "push/{$this->buckarooTransaction->service_action}",
             'order' => $this->buckarooTransaction->order,
         ]);
     }

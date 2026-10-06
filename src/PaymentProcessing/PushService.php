@@ -32,7 +32,7 @@ class PushService extends BaseService
     protected function revertsFinalStatus(): bool
     {
         return $this->buckarooTransaction->transaction_key == $this->responseParser->getTransactionKey()
-            && BuckarooTransactionStatus::isFinal($this->buckarooTransaction->status)
+            && BuckarooTransactionStatus::isFinal(BuckarooTransactionStatus::fromTransactionStatus($this->buckarooTransaction->status_code))
             && !BuckarooTransactionStatus::isFinal(BuckarooTransactionStatus::fromTransactionStatus($this->responseParser->getStatusCode()));
     }
 

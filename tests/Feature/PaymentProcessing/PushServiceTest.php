@@ -2,18 +2,8 @@
 
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
 use Buckaroo\Laravel\Events\RefundTransactionCompleted;
+use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Schema;
-
-class StatusCodeOnlyTransaction extends Buckaroo\Laravel\Models\BuckarooTransaction
-{
-    protected $table = 'buckaroo_transactions';
-
-    public function getFillable()
-    {
-        return array_values(array_diff(parent::getFillable(), ['status']));
-    }
-}
 
 beforeEach(fn () => Event::fake([PayTransactionCompleted::class, RefundTransactionCompleted::class]));
 
@@ -173,10 +163,11 @@ it('fails when the transaction is unknown', function () {
     $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_transactions' => 'UNKNOWN']));
 })->throws(Exception::class, 'Transaction [UNKNOWN] not found');
 
-it('handles pushes with a transaction model that has no status column', function ($storedCode, $incomingCode, $expectedCode, $eventCount) {
+it('uses status_code when the loaded transaction has no status attribute', function ($storedCode, $incomingCode, $expectedCode, $eventCount) {
     $transaction = $this->helpers->createTransaction(['status_code' => $storedCode]);
-    Schema::table('buckaroo_transactions', fn ($table) => $table->dropColumn('status'));
-    config(['buckaroo.transaction_model' => StatusCodeOnlyTransaction::class]);
+    BuckarooTransaction::retrieved(function (BuckarooTransaction $transaction) {
+        unset($transaction->status);
+    });
     $this->withoutExceptionHandling();
 
     $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_statuscode' => $incomingCode]))

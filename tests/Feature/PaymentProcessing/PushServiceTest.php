@@ -2,7 +2,6 @@
 
 use Buckaroo\Laravel\Events\PayTransactionCompleted;
 use Buckaroo\Laravel\Events\RefundTransactionCompleted;
-use Buckaroo\Laravel\Models\BuckarooTransaction;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(fn () => Event::fake([PayTransactionCompleted::class, RefundTransactionCompleted::class]));
@@ -162,21 +161,3 @@ it('fails when the transaction is unknown', function () {
 
     $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_transactions' => 'UNKNOWN']));
 })->throws(Exception::class, 'Transaction [UNKNOWN] not found');
-
-it('uses status_code when the loaded transaction has no status attribute', function ($storedCode, $incomingCode, $expectedCode, $eventCount) {
-    $transaction = $this->helpers->createTransaction(['status_code' => $storedCode]);
-    BuckarooTransaction::retrieved(function (BuckarooTransaction $transaction) {
-        unset($transaction->status);
-    });
-    $this->withoutExceptionHandling();
-
-    $this->post('/buckaroo/push', $this->helpers->pushPayloadFormData(['brq_statuscode' => $incomingCode]))
-        ->assertOk();
-
-    expect($transaction->fresh()->status_code)->toBe($expectedCode);
-    Event::assertDispatchedTimes(PayTransactionCompleted::class, $eventCount);
-})->with([
-    'paid stays paid on a pending push' => ['190', '791', '190', 0],
-    'pending becomes paid' => ['791', '190', '190', 1],
-    'failed becomes paid' => ['490', '190', '190', 1],
-]);

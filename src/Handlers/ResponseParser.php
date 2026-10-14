@@ -32,7 +32,8 @@ abstract class ResponseParser extends Collection implements ResponseParserInterf
 
     protected function getCaseInsensitive($key, $default = null)
     {
-        $foundKey = $this->keys()->first(fn($k) => strtolower($k) === strtolower($key));
+        $foundKey = $this->keys()->first(fn ($k) => strtolower($k) === strtolower($key));
+
         return $foundKey ? $this->get($foundKey, $default) : $default;
     }
 

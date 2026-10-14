@@ -31,11 +31,10 @@ class RefundService extends BaseService
 
     public function storeBuckarooTransaction(ResponseParserInterface $transactionResponse, array $additionalData = []): BuckarooTransaction
     {
-        return parent::storeBuckarooTransaction($transactionResponse, [
+        return parent::storeBuckarooTransaction($transactionResponse, array_merge([
             'related_transaction_key' => $transactionResponse->getRefundParentKey(),
             'service_action' => $this->paymentGateway->getRefundAction(),
             'amount' => $transactionResponse->getAmountCredit() * -1,
-            ...$additionalData,
-        ]);
+        ], $additionalData));
     }
 }

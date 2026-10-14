@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'website_key' => env('BPE_WEBSITE_KEY', 'XXX'),
-    'secret_key' => env('BPE_SECRET_KEY', 'XXX'),
+    'website_key' => env('BPE_WEBSITE_KEY', ''),
+    'secret_key' => env('BPE_SECRET_KEY', ''),
     'mode' => env('BPE_MODE', 'live'),
 
     'transaction_model' => env('BPE_TRANSACTION_MODEL', Buckaroo\Laravel\Models\BuckarooTransaction::class),

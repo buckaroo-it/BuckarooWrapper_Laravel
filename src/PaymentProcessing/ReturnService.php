@@ -35,10 +35,9 @@ class ReturnService extends BaseService
 
     protected function updateTransaction(array $additionalData = [])
     {
-        return $this->buckarooTransaction->update([
+        return $this->buckarooTransaction->update(array_merge([
             'service_action' => "return/{$this->buckarooTransaction->service_action}",
-            ...$additionalData,
-        ]);
+        ], $additionalData));
     }
 
     public function forceProcess(bool $force = true): self
